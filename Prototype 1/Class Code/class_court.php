@@ -1,0 +1,2 @@
+<?phpclass Program {	private $ID;	private $name;	private $address;	private $city;	private $state;	private $zip;		public function __construct();		private function getFromID();	private function addCourt();	private function updateCourt();	private function removeCourt();	private function printActivityReport();}
+?>
