@@ -47,7 +47,11 @@ Passwords should contain a combination of letters (both upper and lower case) an
 		</tr>
 		<tr>
 			<td align="right" valign="top">Password</td>
-			<td valign="top" height="50"><input type="password" name="password1" id="password1"  class="input password wide" /></td>
+			<td valign="top" height="50">
+				<div style="width: 250px;">
+				<input type="password" name="password1" id="password1"  class="input password wide" />
+				</div>
+			</td>
 		</tr>
 		<tr>
 			<td align="right">Retype Password</td>

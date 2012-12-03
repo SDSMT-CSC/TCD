@@ -25,14 +25,14 @@ session_start();
 <script>
 jQuery(function($)
 {
-	$("#tabs").tabs();
 	$("#container").corner();
 	$("#submit").button();
 	
 	$("#main").corner("top 5px");
 	$("#defendant").corner("top 5px");
 	$("#volunteer").corner("top 5px");
-	$("#court-management").corner("top 5px");
+	$("#workshop").corner("top 5px");
+	$("#court").corner("top 5px");
 	$("#reports").corner("top 5px");
 	$("#statistics").corner("top 5px");
 	
@@ -51,6 +51,12 @@ jQuery(function($)
 	$("#<? echo $menuarea ?>").addClass("selected");
 	<? } ?>	
 	
+	$(".listing").each(function() {
+			$(this).children('tbody').children(':even').css("background-color", "#EFF4F6");
+    });
+	
+	$(".delete").button();
+	$(".add").button();
 });
 
 </script>

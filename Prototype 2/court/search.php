@@ -1,11 +1,11 @@
-<?php 
-$menuarea = "defendant";
+<?
+$menuarea = "court";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 ?>
 
-<h1>Search All Defendants</h1>
+<h1>Search All Courts</h1>
 
 
-<?php 
+<?
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");
 ?>

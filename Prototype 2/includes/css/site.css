@@ -24,9 +24,10 @@ a:hover { color: #72AECB; text-decoration: underline; }
 #login label { float: left; width: 150px; line-height: 24px; padding-left: 20px; color: #858479; }
 #login .input { margin: 2px 0; padding: 3px; background-color: #faf9f5; font-size: 1.0em; border: solid 1px #bbbaab; width: 150px; line-height: 1.0em; }
 
+form { clear:both }
 table { font-size: 1.0em; width: 100%; }
 fieldset { border: 1px solid #ccc; background-color: #ffffff;  color: #858479;  margin-bottom: 5px; }
-fieldset input, select { margin: 2px 0; padding: 3px; background-color: #faf9f5; font-size: 1.0em; border: solid 1px #bbbaab; }
+fieldset input, select, textarea { margin: 2px 0; padding: 3px; background-color: #faf9f5; font-size: 1.0em; border: solid 1px #bbbaab; }
 legend { padding: 2px 4px; }
 .submitrow { text-align: right; }
 .error { color: #dd5d08; }
@@ -36,15 +37,21 @@ legend { padding: 2px 4px; }
 .pstrength-minchar { font-size : 10px; }
 .info { padding: 0 5px 10px 5px; color: #333333; }
 
-.listing { border-collapse: collapse; border: 1px solid #cccccc; }
-.listing th { background-color: #cccccc; padding: 4px; }
-.listing tbody td { text-align: center; padding: 6px; }
+.listing { border-collapse: collapse; border: 1px solid #cccccc; margin-bottom: 10px; }
+.listing th { text-align: left; background: #ccc url(/includes/css/images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x; padding: 4px; }
+.listing tbody td { padding: 6px; }
+.listing tbody td a { color: #BF5A3F; }
+.listing tbody td a:hover { color: #72AECB; }
 .listing tfoot td { background: none; text-align: left; }
 
-#control-header {   }
+.ui-dialog input { margin: 2px 0; padding: 3px; background-color: #faf9f5; font-size: 1.0em; border: solid 1px #bbbaab; }
+
+#tabs { display: none; }
+
+#control-header { clear:both;  }
 #control-header .left { float: left; width: 400px; }
 #control-header .right { float: right; padding-right: 3px; }
-#control { text-align: center; width: 350px; padding: 4px;  }
+#control { text-align: center; padding: 4px;  }
 
 /***********************************************************
 	MAIN WINDOW

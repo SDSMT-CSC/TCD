@@ -1,14 +1,6 @@
 {
   "aaData": [
     [
-      "12320",
-      "Smith",
-			"Mike",
-      "11/15/2012 11:00am",
-      "Lawrence County Court House",
-      "<a href=\"/court/view.php\">Edit</a>"
-    ],
-    [
       "12345",
       "Doe",
 			"John",
