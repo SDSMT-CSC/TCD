@@ -21,10 +21,9 @@ jQuery(function($)
 <table id="data-table">
 	<thead>
 			<tr>
-				<th width="50">Citation#</th>
+				<th width="75">Citation#</th>
 				<th width="75">Court Case#</th>
-				<th width="75">Last Name</th>
-				<th width="75">First Name</th>
+				<th width="125">Defendant</th>
 				<th width="125">Location</th>
 				<th width="150">Added</th>
 				<th width="50">Modify</th>

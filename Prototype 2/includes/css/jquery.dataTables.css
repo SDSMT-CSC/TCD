@@ -13,7 +13,7 @@ table.dataTable {
 }
 
 table.dataTable thead th {
-	 background: #ccc url(/includes/css/images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x;
+	background-color: #cccccc;
 	padding: 6px;
 	cursor: pointer;
 	*cursor: hand;
@@ -96,6 +96,7 @@ table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }
  * Pagination
  */
 .dataTables_paginate {
+	float: right;
 	text-align: right;
 	padding: 10px 0;
 }

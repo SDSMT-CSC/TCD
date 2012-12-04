@@ -4,38 +4,129 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 ?>
 
 <script>
-jQuery(function($)
-{
-	$("#tabs").tabs();
-  $("#tabs").show(); 
-
-	$("#previous-defendant").button();
-	$("#update-defendant").button().click(function() {  });
-	$("#delete-defendant").button().click(function() {  });
-	$("#next-defendant").button().click(function() {	});
+ $(function () {
+	 
+		$( "#previous-defendant" ).button().click(function() {		});
+		$( "#update-defendant" ).button().click(function() {		});
+		$( "#next-defendant" ).button().click(function() {		});
 		
-	$("#expunged").datepicker();
-	$("#closed").datepicker();
-	$("#citation-date").datepicker();
+		
+		$( ".delete" ).button();
+		$( ".add" ).button();
+		
+		$("#expunged").datepicker();
+		$("#closed").datepicker();
+		$("#citation-date").datepicker();
+		$(".listing tbody tr:even").css("background-color", "#EFF4F6");
+		
+		$("#school-dialog").dialog({
+				resizable: true,
+				autoOpen:false,
+				modal: true,
+				width:400,
+				height:200,
+				buttons: {
+					'Add School': function() {
+						$(this).dialog('close');
+							// TO DO: add school
+						},
+					Cancel: function() {
+						$(this).dialog('close');
+					}
+				}
+			
+			});
+			
+			$("#officer-dialog").dialog({
+				resizable: true,
+				autoOpen:false,
+				modal: true,
+				width:400,
+				height:300,
+				buttons: {
+					'Add Officer': function() {
+						$(this).dialog('close');
+							// TO DO: add school
+						},
+					Cancel: function() {
+						$(this).dialog('close');
+					}
+				}
+			
+			});
+			
+			$("#common-locatio-dialog").dialog({
+				resizable: true,
+				autoOpen:false,
+				modal: true,
+				width:400,
+				height:200,
+				buttons: {
+					'Add Location': function() {
+						$(this).dialog('close');
+							// TO DO: add school
+						},
+					Cancel: function() {
+						$(this).dialog('close');
+					}
+				}
+			
+			});
+		
+		$('#add-school').click(function(){
+				$('#school-dialog').dialog('open');
+		});
+		
+		$('#add-officer').click(function(){
+				$('#officer-dialog').dialog('open');
+		});
+		
+		$('#add-common-location').click(function(){
+				$('#common-location-dialog').dialog('open');
+		});
 		
 });
-
 </script>
 
+<div id="school-dialog" title="Add New School">
+	<form>
+		<label>School Name</label>
+		<input type="text" name="school-name" />
+	</form>
+</div>
 
-<div id="control-header">	
+<div id="officer-dialog" title="Add New Officer">
+	<form>
+		<label>Officer ID</label>
+		<input type="text" name="officer-id" /><br />
+		<label>Last Name</label>
+		<input type="text" name="officer-last-name" /><br />
+		<label>First Initial</label>
+		<input type="text" name="officer-first-name" />
+	</form>
+</div>
+
+<div id="common-location-dialog" title="Add New Common Location">
+	<form>
+		<label>Common Location</label>
+		<input type="text" name="common-location-name" />
+	</form>
+</div>
+
+<form name="updateDefendant" id="updateDefendant" method="post">
+
+<div id="control-header">
+	
 	<div class="left"><h1>Defendant Information</h1></div>	
 	<div class="right">
 		<div id="control" class="ui-state-error">
 			<button id="previous-defendant">Previous</button>
-			<button id="delete-defendant">Delete</button>
-			<button id="update-defendant">Update</button>
+			<button id="update-defendant">Update Defendant</button>
 			<button id="next-defendant">Next</button>
 		</div>
 	</div>
-</div>
 
-<form name="updateDefendant" id="updateDefendant" method="post">
+</div>
 
 <fieldset>
 	<legend>Primary Defendant Information</legend>
@@ -46,16 +137,16 @@ jQuery(function($)
 			<td><input type="text" name="last-name" value="Doe" /></td>
 			<td>Date of Birth:</td>
 			<td><input type="text" name="last-name" size="10" value="05/25/1997" /></td>
-			<td>Court Case #:</td>
-			<td><input type="text" name="court-case" size="10" value="1234" /></td>
+			<td>Agency Case #:</td>
+			<td><input type="text" name="agency-case" size="10" /></td>
 		</tr>
 		<tr>
 			<td>First Name:</td>
 			<td><input type="text" name="first-name" value="John" /> MI: <input type="text" name="middle" size="5" /></td>
 			<td>Home Phone:</td>
 			<td><input type="text" name="last-name" value="(605) 555-5555" /></td>
-			<td>Agency Case #:</td>
-			<td><input type="text" name="agency-case" size="10" /></td>
+			<td>Court Case #:</td>
+			<td><input type="text" name="court-case" size="10" value="1234" /></td>
 		</tr>
 		<tr>
 			<td colspan="2"></td>
@@ -90,13 +181,13 @@ jQuery(function($)
 		<? include("tab_citation.php"); ?>
 	</div>
 	<div id="tabs-intake">
-		<? include("tab_intake.php"); ?>
+
 	</div>
 	<div id="tabs-court">
-		<? include("tab_court.php"); ?>
+
 	</div>
 	<div id="tabs-sentance">
-		<? include("tab_sentence.php"); ?>
+
 	</div>	
 	<div id="tabs-expunge">
 

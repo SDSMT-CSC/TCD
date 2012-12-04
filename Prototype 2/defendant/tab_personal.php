@@ -1,38 +1,3 @@
-
-	<script>
-	 $(function () {		
-		$("#school-dialog").dialog({
-				resizable: false,
-				autoOpen:false,
-				modal: true,
-				width:400,
-				height:150,
-				buttons: {
-					'Add School': function() {
-						$(this).dialog('close');
-							// TO DO: add school
-						},
-					Cancel: function() {
-						$(this).dialog('close');
-					}
-				}
-			
-			});
-			
-		
-		$('#add-school').click(function(){
-				$('#school-dialog').dialog('open');
-		});
-	 });
-	 </script>
- 
-	<div id="school-dialog" title="Add New School">
-		<form>
-			<label>School Name</label>
-			<input type="text" name="school-name" />
-		</form>
-	</div>
-
 	<table>
 		<tr>
 			<td width="600" valign="top">
