@@ -48,6 +48,15 @@ $(function () {
 						<td>Email:</td>
 						<td><input type="text" name ="email" value="Brianna.robertson@gmail.com"/></td>
 					</tr>
+					<tr>
+						<td>Active?</td>
+						<td>
+							<select name="active">
+								<option>Yes</option>
+								<option>No</option>
+							</select>
+						</td>
+					</tr>
 				</table>
 			</fieldset>
 		</td>

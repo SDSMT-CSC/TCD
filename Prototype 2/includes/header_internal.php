@@ -9,8 +9,8 @@ session_start();
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>Teen Court Database</title>
-<link rel="shortcut icon" href="favicon.ico">
 
+<link rel="shortcut icon" href="/favicon.ico">
 <style type="text/css" media="screen">
 	@import "/includes/css/site.css";
 	@import "/includes/css/jquery-ui-teencourt.css";
@@ -25,14 +25,16 @@ session_start();
 <script>
 jQuery(function($)
 {
-	$("#tabs").tabs();
 	$("#container").corner();
 	$("#submit").button();
+	$(".delete").button();
+	$(".add").button();
 	
 	$("#main").corner("top 5px");
 	$("#defendant").corner("top 5px");
 	$("#volunteer").corner("top 5px");
-	$("#court-management").corner("top 5px");
+	$("#workshop").corner("top 5px");
+	$("#court").corner("top 5px");
 	$("#reports").corner("top 5px");
 	$("#statistics").corner("top 5px");
 	
@@ -50,6 +52,10 @@ jQuery(function($)
 	<? if( $menuarea ) { ?>
 	$("#<? echo $menuarea ?>").addClass("selected");
 	<? } ?>	
+	
+	$(".listing").each(function() {
+			$(this).children('tbody').children(':even').css("background-color", "#EFF4F6");
+    });
 	
 });
 

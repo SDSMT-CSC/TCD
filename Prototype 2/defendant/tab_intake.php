@@ -1,5 +1,5 @@
 	<script>
- 	$(function () {
+	jQuery(function($) {
 		
 		$("#intake-date").datepicker();
 		$("#reschedule-date").datepicker();
@@ -14,11 +14,11 @@
 		<table style="width: 500px;">
 			<tr>
 				<td>Intake Date: </td>
-				<td><input type="text" name="intake-date" id="intake-date" /></td>
+				<td><input type="text" name="intake-date" id="intake-date" value="11/20/2012" /></td>
 			</tr>
 			<tr>
 				<td>Intake Time: </td>
-				<td><input type="text" name="intake-time" id="intake-time" /></td>
+				<td><input type="text" name="intake-time" id="intake-time" value="5:32 PM" /></td>
 			</tr>
 			<tr>
 				<td>Intake Reschedule Date: </td>

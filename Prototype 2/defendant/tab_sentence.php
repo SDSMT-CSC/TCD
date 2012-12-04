@@ -1,11 +1,15 @@
+	
 	<script>
- 	$(function () {
+	jQuery(function($) {
 		
 		$("#sentance-completion").datepicker();
 		
  	});
 	</script>
 	
+	TODO: Reworking Sentance Section - Court Programs will most likely have different sentencing options.
+	
+	<!--
 	<fieldset>
 		<legend>Sentence Information</legend>
 		
@@ -21,3 +25,4 @@
 			</tr>
 		</table>		
 	</fieldset>
+	-->

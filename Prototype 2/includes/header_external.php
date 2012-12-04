@@ -11,7 +11,7 @@
 	<meta http-equiv="Cache-Control" content="private">
 	<meta http-equiv="Pragma" content="no-cache">
 	
-	<link rel="shortcut icon" href="favicon.ico">
+	<link rel="shortcut icon" href="/favicon.ico">
 	<style type="text/css" media="screen">
 		@import "/includes/css/site.css";
 		@import "/includes/css/jquery-ui-teencourt.css";
@@ -23,8 +23,6 @@
 	
 	<? if( $areaname == "registration") { ?>
 	<script src="/includes/js/jquery.pstrength.js" type="text/javascript"></script>
-	<script src="/includes/js/jquery.validate.min.js" type="text/javascript"></script>
-	<script src="/includes/js/validationRules.js" type="text/javascript"></script>
 	<link type="text/css" rel="Stylesheet" href="<?php echo CaptchaUrls::LayoutStylesheetUrl() ?>" />
 	<? } ?>
 	

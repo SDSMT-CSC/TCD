@@ -1,2 +1,3 @@
-<p>Check with Marlene if adding court vs. court management here would be acceptable.</p>
-<p>At most, this tab would show any current court information for the defendant.</p>
+
+
+TODO: List court that the defendant belongs to - link to create new court

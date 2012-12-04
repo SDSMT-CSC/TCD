@@ -5,7 +5,7 @@ $submit = $_POST["submit"];
 ?>
 
 
-<h1>Password Recovery</h1>
+<h1>Forgot your password?</h1>
 
 <? if( !$_POST ) { ?>
 <script>
@@ -15,12 +15,12 @@ jQuery(function($)
 });
 </script>
 
-<div style="padding: .7em">If you can't remember your password, just enter your email address and your current one will be sent to you. Once you login, visit y our profile page to change it.</div>
+<div style="padding: .7em">If you can't remember your password, enter your registered email address and it will be sent to you. Once you login, visit your profile page to change it.</div>
 
 <form id="registerForm" name="registerForm" method="post" >
 
 <fieldset class="ui-corner-all">
-	<legend>Password  Form</legend>
+	<legend>Password Recovery Form</legend>
 	<table>
 		<tr>
 			<td align="right">Email Address</td>

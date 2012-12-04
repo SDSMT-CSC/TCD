@@ -10,7 +10,7 @@ jQuery(function($)
 				"aaSorting": [],
         "sPaginationType": "full_numbers",
 				"bProcessing": true,
-        "sAjaxSource": '/data/court_listing.php'
+        "sAjaxSource": '/data/court_upcoming.php'
 	} );
 
 });
@@ -21,8 +21,9 @@ jQuery(function($)
 <table id="data-table">
 	<thead>
 			<tr>
-				<th width="50">Court#</th>
-				<th width="125">Defendant</th>
+				<th width="50">Court Case#</th>
+				<th width="75">Last Name</th>
+				<th width="75">First Name</th>
 				<th width="125">Date</th>
 				<th width="150">Location</th>
 				<th width="50">Modify</th>
