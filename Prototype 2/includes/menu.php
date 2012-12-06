@@ -25,7 +25,14 @@
 				<li><a href="/court/new.php">New Court</a></li>
 				<li><a href="/court/search.php">Search Courts</a></li>
 			</ul>
-		
+		</li>
+		<li>
+			<a id="workshop" href="/workshop/index.php">Workshops</a>
+			<ul>
+				<li><a href="/workshop/index.php">List Workshops</a></li>
+				<li><a href="/workshop/new.php">New Workshop</a></li>
+				<li><a href="/workshop/search.php">Search Workshops</a></li>
+			</ul>
 		</li>
 		<li><a id="reports" href="/reports/index.php">Reports</a></li>
 		<li><a id="statistics" href="/statistics/index.php">Statistics</a></li>

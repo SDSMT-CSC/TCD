@@ -129,7 +129,7 @@
   width: 250px !important;
   padding: 9px 6px 6px 11px !important;
   font-size: 11px !important;
-  filter: alpha(opacity:90) !important;
+  filter: alpha(opacity 90) !important;
   KHTMLOpacity: 0.90 !important;
   MozOpacity: 0.90 !important;
   opacity: 0.90 !important;
