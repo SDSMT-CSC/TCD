@@ -1,6 +1,0 @@
-<?
-
-header("location: index.php");
-
-
-?>
