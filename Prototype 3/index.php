@@ -1,11 +1,18 @@
 <?php
 include("includes/class_core.php");
+include("includes/class_user.php");
+
 session_start();
 
 if($_POST["submit"] == "Enter")
 {
 	$email = $_POST["email"];
 	$password = $_POST["password"];
+	
+	//$user = new User();
+	//$user->getFromLogin( $email, $password );
+	//$user->display();
+	
 	
 		$_SESSION["valid"] = true;
 		header("location: /main.php");
@@ -26,7 +33,7 @@ if(isset($_GET["error"])) { $message = "Unable to login"; }
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>Teen Court Database</title>
 	<meta http-equiv="content-type" content="text/html;charset=UTF-8">
@@ -37,7 +44,7 @@ if(isset($_GET["error"])) { $message = "Unable to login"; }
 	<meta http-equiv="Cache-Control" content="private">
 	<meta http-equiv="Pragma" content="no-cache">
 	
-	<link rel="shortcut icon" href="favicon.ico">
+	<link rel="shortcut icon" href="/favicon.ico">
 	<style type="text/css" media="screen">
 		@import "/includes/css/site.css";
 		@import "/includes/css/jquery-ui-teencourt.css";
@@ -45,7 +52,6 @@ if(isset($_GET["error"])) { $message = "Unable to login"; }
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js" type="text/javascript"></script>
-	<script src="/includes/js/jquery.corner.js" type="text/javascript"></script>
 </head>
 
 <body>
@@ -54,7 +60,6 @@ if(isset($_GET["error"])) { $message = "Unable to login"; }
 $(function() {
 	$("#username").focus();
 	$("#submit").button();
-	$("#login-container").corner("20px");
 });
 </script>
 

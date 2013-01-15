@@ -1,19 +1,15 @@
 <?php 
 $areaname = "registration";
-require($_SERVER['DOCUMENT_ROOT']."/BotDetect.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_external.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/includes/recaptchalib.php");
 
 $submit = $_POST["submit"];
-
-// setup captcha
-$RegisterCaptcha = new Captcha("RegisterCaptcha");
-$RegisterCaptcha->UserInputID = "CaptchaCode";
 ?>
 
 
 <h1>User Registration</h1>
 
-<? if( !$_POST ) { ?>
+<? if( !$submit ) { ?>
 <script>
 jQuery(function($)
 {
@@ -21,6 +17,12 @@ jQuery(function($)
 	$('.password').pstrength();
 });
 </script>
+
+<script type="text/javascript">
+ var RecaptchaOptions = {
+    theme : 'clean'
+ };
+ </script>
 
 <div class="ui-state-highlight ui-corner-all" style="margin-top: 10px; padding: 0 .7em;">
 <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
@@ -58,10 +60,12 @@ Passwords should contain a combination of letters (both upper and lower case) an
 			<td><input type="password" name="password2" id="password2" class="input wide" /></td>
 		</tr>
 		<tr>
-			<td align="right" valign="bottom" style="padding-bottom:3px;">Prove you are a real person!<br>Retype the characters from the picture</td>			
+			<td align="right" valign="top" style="padding-bottom:3px;">Prove you are a real person!<br>Retype the characters from the picture</td>			
 			<td>
-			<?php echo $RegisterCaptcha->Html(); ?>
-			<input name="CaptchaCode" id="CaptchaCode" type="text" class="input wide" />
+				<?php 
+  				$publickey = "6Le_gNsSAAAAAMQuZZBUxdtnFeSWqNLW_AwAxEc4"; 
+  				echo recaptcha_get_html($publickey);
+				?>
 			</td>
 		</tr>
 		<tr>
@@ -70,28 +74,22 @@ Passwords should contain a combination of letters (both upper and lower case) an
 	</table>
 	</fieldset>
 </form>
-<? } else {
+<?php 
+} else {
 	
-	 // validate the Captcha to check we're not dealing with a bot
-    $isHuman = $RegisterCaptcha->Validate();
-    		
-    if (!$isHuman) {
-      // Captcha validation failed, show error message
-      ?>
-			<div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-			<p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-			<strong>Alert:</strong> Captcha error, please <a href="/register.php">resubmit the form</a> .</p>
-			</div>
-			<?
-    } else {
-      // Captcha validation passed, perform protected action
-      ?>
-			<div class="ui-state-highlight ui-corner-all" style="margin-top: 10px; padding: 0 .7em;">
-			<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
-			An email has been sent to your account, please verify it by clicking on the link. You will then have access to Teen Court Database. Thank you for registering!</p>
-			</div>
-			<?
-    } 
+	$privatekey = "6Le_gNsSAAAAAOZkcUElnPjfuceX6fmOFcJgTqB9";
+  	$resp = recaptcha_check_answer ($privatekey,
+                                $_SERVER["REMOTE_ADDR"],
+                                $_POST["recaptcha_challenge_field"],
+                                $_POST["recaptcha_response_field"]);
+
+  if (!$resp->is_valid) {
+    // What happens when the CAPTCHA was entered incorrectly
+    die ("The reCAPTCHA wasn't entered correctly. Go back and try it again." .
+         "(reCAPTCHA said: " . $resp->error . ")");
+  } else {
+    // Your code here to handle a successful verification
+  }
 }?>
 	
 <?php  

@@ -16,7 +16,7 @@ a:hover { color: #72AECB; text-decoration: underline; }
 /***********************************************************
 	LOGIN WIDGET
 ***********************************************************/
-#login-container { margin: 150px auto 0 auto; padding: 10px; width: 350px; background: #ffffff url(/images/background_lines.png) bottom left repeat-x; border: 2px solid #888888; }
+#login-container { margin: 150px auto 0 auto; padding: 10px; width: 350px; background: #ffffff url(/images/background_lines.png) bottom left repeat-x; border: 2px solid #888888; border-radius: 10px; -moz-border-radius: 10px; }
 #login-container .header {  height: 50px; background: transparent url(/images/logo_login.png) top center no-repeat; }
 #login ul { margin: 0; padding: 0; list-style: none; overflow: hidden; }
 #login li.form-row { padding: 5px 0; clear: both; position: relative; }
@@ -48,6 +48,7 @@ legend { padding: 2px 4px; }
 .ui-accordion input, select, textarea { margin: 2px 0; padding: 3px; background-color: #faf9f5; font-size: 1.0em; border: solid 1px #bbbaab; }
 
 #tabs { display: none; }
+#registerForm table { width: auto; }
 
 #control-header { clear:both;  }
 #control-header .left { float: left; width: 400px; }
@@ -57,7 +58,7 @@ legend { padding: 2px 4px; }
 /***********************************************************
 	MAIN WINDOW
 ***********************************************************/
-#container { width: 960px; margin: 10px auto; overflow: hidden;  border: 1px solid #858479;  }
+#container { width: 960px; margin: 10px auto; overflow: hidden;  border: 1px solid #858479; border-radius: 10px; -moz-border-radius: 10px;  }
 
 #header-external { background: #9c9b8e url(/images/logo_header.png) 0 5px no-repeat; height: 60px; overflow: hidden; border-bottom: 1px solid #464646; }
 #footer-external { width: 960px; margin: 0 auto; padding: 0; color: #858479; }
@@ -82,11 +83,11 @@ legend { padding: 2px 4px; }
 #menu ul { list-style: none; padding: 0; margin: 0; }
 #menu ul li { float: left; position: relative; margin-right: 2px; }
 #menu ul li ul { display: none; width: 150px; }
-#menu ul li a { background: #464646; color: #cccccc; overflow: hidden; padding: .5em 1em; display: block; line-height: 1.4; text-decoration: none; }
+#menu ul li a { background: #464646; color: #cccccc; overflow: hidden; padding: .5em 1em; display: block; line-height: 1.4; text-decoration: none;  border-radius: 5px 5px 0 0; -moz-border-radius-topleft: 5px; -moz-border-radius-topright: 5px; }
 #menu ul li a:hover { color: #ffffff; background: #2c6079; overflow: hidden; }
 #menu ul li:hover ul { display:block; position:absolute; background: #2c6079; }
 #menu ul li:hover ul li { width: 150px; border-top: 1px solid #6298b3; }
-#menu ul li:hover ul li a { background: #72AECB; color: #d2e8f2; display: block; padding: 5px; text-decoration: none; }
+#menu ul li:hover ul li a { background: #72AECB; color: #d2e8f2; display: block; padding: 5px; text-decoration: none; border-radius: 0; -moz-border-radius: 0; }
 #menu ul li:hover ul li a:hover { background:#97C4D9; color:#ffffff; text-decoration: none; }
 #menu .over {  color: #ffffff; background: #2c6079; }
 #menu .selected {  color: #464646; background: #ffffff; }

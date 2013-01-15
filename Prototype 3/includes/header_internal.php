@@ -19,24 +19,14 @@ session_start();
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
-<script src="/includes/js/jquery.corner.js" type="text/javascript"></script>
 <script src="/includes/js/jquery.dataTables.min.js" type="text/javascript"></script>
 
 <script>
 jQuery(function($)
 {
-	$("#container").corner();
 	$("#submit").button();
 	$(".delete").button();
 	$(".add").button();
-	
-	$("#main").corner("top 5px");
-	$("#defendant").corner("top 5px");
-	$("#volunteer").corner("top 5px");
-	$("#workshop").corner("top 5px");
-	$("#court").corner("top 5px");
-	$("#reports").corner("top 5px");
-	$("#statistics").corner("top 5px");
 	
 	$("#menu ul li ul").hover( 
 		 function () {
