@@ -9,24 +9,19 @@ if($_POST["submit"] == "Enter")
 	$email = $_POST["email"];
 	$password = $_POST["password"];
 	
-	//$user = new User();
-	//$user->getFromLogin( $email, $password );
-	//$user->display();
+	$user = new User();
 	
-	
-		$_SESSION["valid"] = true;
-		header("location: /main.php");
-	/*
-	if($email)
+	if( $user->getFromLogin( $email, $password ) )
 	{
-		header("location: /index.php?error");
+		$_SESSION["valid"] = true;
+		$_SESSION["userID"] = $user->getUserID();
+		header("location: /main.php");
 	}
 	else
 	{	
-		$_SESSION["valid"] = true;
-		header("location: /main.php");
+		header("location: /index.php?error");
 	}
-	*/
+	
 }
 
 if(isset($_GET["error"])) { $message = "Unable to login"; }
@@ -52,14 +47,34 @@ if(isset($_GET["error"])) { $message = "Unable to login"; }
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="/includes/js/jquery.validate.min.js" type="text/javascript"></script>
 </head>
 
 <body>
 
 <script>
 $(function() {
-	$("#username").focus();
+	$("#email").focus();
 	$("#submit").button();
+	
+	$("#loginForm").validate({
+		errorElement: "div",
+		wrapper: "div",
+		errorPlacement: function(error, element) {
+			  error.insertBefore(element);
+				error.addClass('message');
+		},
+		rules: {
+			email: {
+				required: true,
+				email: true
+			},
+			password: {
+				required: true
+			}
+		}
+	});
+
 });
 </script>
 
@@ -69,12 +84,12 @@ $(function() {
 	<div id="login">
 		<ul>
     	<li class="form-row">
-				<label for="username">Email Address</label>
-				<input type="text" name="email" id="email" class="input" />
+				<label for="email">Email Address</label>
+				<input type="text" name="email" id="email" />
 			</li>
 			<li class="form-row">
 				<label for="password">Password</label>
-				<input type="password" name="password" id="password" class="input" />
+				<input type="password" name="password" id="password" />
 			</li>
 			<li class="button-row">
 				<input type="submit" class="submitButton" name="submit" id="submit" value="Enter" />
