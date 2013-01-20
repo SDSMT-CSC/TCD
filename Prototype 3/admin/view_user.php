@@ -45,18 +45,25 @@ $(function () {
 						<td><input type="text" name="password"/></td>
 					</tr>
 					<tr>
-						<td>Access level:</td>
-						<td><select name="type">
-							<option>Admin</option>
-							<option>Program Manager</option>
-							<option>Program User</option>
-							<option>Program Clerk</option>
-						</select></td>
 						<td>Associated Program:</td>
 						<td><select name="program">
 							<option></option>
 							<option>Lawrence County Teen Court</option>
 						</select></td>
+						<td></td>
+						<td></td>
+					</tr>
+				</table>
+			</fieldset>
+			<fieldset>
+				<legend>User Type</legend>
+				<table>
+					<tr>
+						<td>Access level:</td>
+						<td><input type="checkbox" name="userLevel" value="admin"/> Site Admin</td>
+						<td><input type="checkbox" name="userLevel" value="programAdmin"/> Program Admin</td>
+						<td><input type="checkbox" name="userLevel" value="programManager"/> Program Manager</td>
+						<td><input type="checkbox" name="userLevel" value="programuser"/> Program User</td>
 					</tr>
 				</table>
 			</fieldset>

@@ -55,7 +55,9 @@ $(function () {
 			<fieldset>
 				<legend>Court Mailing Information</legend>
 				<table>
-					<tr></tr>
+					<tr>
+						<td>Copy over Physical Address: <input type="checkbox" name="copy" /></td>
+					</tr>
 					<tr>
 						<td>Mailing Address</td>
 						<td><input type="text" name="mAddress"/></td>
