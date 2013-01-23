@@ -1,6 +1,27 @@
 <?
-ini_set("session.gc_maxlifetime", "3600");
+include("includes/class_core.php");
+include("includes/class_user.php");
+
 session_start();
+date_default_timezone_set($_SESSION['timezone']);
+
+$cur_time = new DateTime();
+$out_time = new DateTime($_SESSION["timestamp"]);
+$out_time->modify("+1 hour");
+
+if( ($cur_time > $out_time) || (!isset($_SESSION["valid"]) && !$_SESSION["valid"]) )
+{
+		header("location: /index.php");
+		die();
+}
+else
+{
+		$user = new User();
+		$user->getFromID( $_SESSION["userID"] );
+		$user->display();
+	
+		$_SESSION["timestamp"] = date( 'Y-m-d H:i:s', time() );	
+}
 
 ?>
 

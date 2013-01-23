@@ -19,6 +19,7 @@ class User {
     $this->lastName = NULL;
     $this->email = NULL;
     $this->password = NULL;
+		$this->timezone = NULL;
     $this->lastLogin = NULL;
   }
   
@@ -82,7 +83,7 @@ class User {
   {
     // database connection and sql query
     $core = Core::dbOpen();
-    $sql = "SELECT * FROM user WHERE userID = :userID";
+    $sql = "SELECT u.*, tz.timezone FROM user u JOIN timezone tz ON u.timezoneID = tz.timezoneID WHERE u.userID = :userID";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':userID', $id);
     Core::dbClose();
@@ -99,6 +100,7 @@ class User {
         $this->firstName = $row["firstName"];
         $this->lastName = $row["lastName"];
         $this->email = $row["email"];
+        $this->timezone = $row["timezone"];
         $this->hash = $row["hash"];
         $this->lastLogin = $row["loginDate"];
         
@@ -181,6 +183,7 @@ class User {
   }
   
   public function getUserID() { return $this->userID; }
+  public function getTimezone() { return $this->timezone; }
   public function getLastLogin() { return $this->lastLogin; }
   
   // for testing only
@@ -192,6 +195,7 @@ class User {
     echo "Firstname: " . $this->firstName . "<br>";
     echo "Lastname: " . $this->lastName . "<br>";
     echo "Email: " . $this->email . "<br>";
+    echo "Timezone: " . $this->timezone;
     echo "</code>";
   }
 

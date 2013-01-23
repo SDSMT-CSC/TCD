@@ -15,7 +15,8 @@ if($_POST["submit"] == "Enter")
 	{
 		$_SESSION["valid"] = true;
 		$_SESSION["userID"] = $user->getUserID();
-		$_SESSION["logTimestamp"] = date( 'Y-m-d H:i:s', time() );
+		$_SESSION["timezone"] = $user->getTimezone();
+		
 		header("location: /main.php");
 	}
 	else
