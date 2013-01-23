@@ -18,11 +18,10 @@ else
 {
 		$user = new User();
 		$user->getFromID( $_SESSION["userID"] );
-		$user->display();
-	
+		$user_type = $user->getType();
+		
 		$_SESSION["timestamp"] = date( 'Y-m-d H:i:s', time() );	
 }
-
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

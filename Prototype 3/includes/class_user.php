@@ -183,6 +183,7 @@ class User {
   }
   
   public function getUserID() { return $this->userID; }
+  public function getType() { return $this->type; }
   public function getTimezone() { return $this->timezone; }
   public function getLastLogin() { return $this->lastLogin; }
   
@@ -192,6 +193,7 @@ class User {
     echo "<code>";
     echo "UserID: " . $this->userID . "<br>";
     echo "ProgramID: " . $this->programID . "<br>";
+    echo "Type: " . $this->type . "<br>";
     echo "Firstname: " . $this->firstName . "<br>";
     echo "Lastname: " . $this->lastName . "<br>";
     echo "Email: " . $this->email . "<br>";
