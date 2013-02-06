@@ -1,5 +1,5 @@
-<?php 
-$menuarea = "main";
+<?php
+$menuarea = "admin";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 ?>
 
@@ -7,26 +7,26 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 jQuery(function($)
 {
 	$("#data-table").dataTable( { 
-				"aaSorting": [],
+		"aaSorting": [],
         "sPaginationType": "full_numbers",
-				"bProcessing": true,
-        "sAjaxSource": '/data/court_upcoming.php'
+		"bProcessing": true,
+        "sAjaxSource": '/data/program_listing.php'
 	} );
 
 });
 </script>
 
-<h1>Upcoming Court Dates</h1>
+<h1>Active Court Programs</h1>
 
 <table id="data-table">
 	<thead>
 		<tr>
-			<th width="50">Court Case#</th>
-			<th width="75">Last Name</th>
-			<th width="75">First Name</th>
-			<th width="125">Date</th>
-			<th width="150">Location</th>
-			<th width="50">Modify</th>
+			<th width="50">Code</th>
+			<th width="200">Program Name</th>
+			<th width="100">City</th>
+			<th width="50">State</th>
+			<th width="50">Zip</th>
+			<th width="125">Modify</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -35,6 +35,6 @@ jQuery(function($)
 </table>
 
 
-<?php 
+<?php
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");
 ?>

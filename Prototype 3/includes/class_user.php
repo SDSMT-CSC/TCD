@@ -41,7 +41,7 @@ class User {
     
     // database connection and sql query
     $core = Core::dbOpen();
-    $sql = "SELECT userID, hash FROM user WHERE email = :email";
+    $sql = "SELECT userID, hash FROM user WHERE email = :email AND active = 1";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':email', $email);
     Core::dbClose();
@@ -62,7 +62,7 @@ class User {
           
           // generate a new hash and update it in the database along with login time
           $core = Core::dbOpen();
-          $sql = "UPDATE user SET hash = :hash, lastLogin = now() WHERE userID = :userID";
+          $sql = "UPDATE user SET hash = :hash, lastLogin = now() WHERE userID = :userID AND active = 1";
           $stmt = $core->dbh->prepare($sql);
           $stmt->bindParam(':hash', $this->newHash());
           $stmt->bindParam(':userID', $this->userID);

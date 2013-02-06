@@ -15,20 +15,24 @@ if($_POST["submit"] == "Enter")
 	{
 		$_SESSION["valid"] = true;
 		$_SESSION["userID"] = $user->getUserID();
-		$_SESSION["timezone"] = $user->getTimezone();
+		$_SESSION["logTimestamp"] = date( 'Y-m-d H:i:s', time() );
 		
-		header("location: /main.php");
+		if( $user->getType() == 1 )
+		{
+			header("location: /admin/programs.php");
+		}
+		else 
+		{
+			header("location: /main.php");	
+		}
 	}
 	else
 	{	
 		header("location: /index.php?error");
 	}
+	
 }
 
-if(isset($_GET["logout"])) 
-{ 
-		session_destroy();
-}
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -82,6 +86,7 @@ $(function() {
 });
 </script>
 
+
 <form id="loginForm" name="loginForm" method="post"action="index.php">
 <div id="login-container">
 	<div class="header"></div>
@@ -106,7 +111,13 @@ $(function() {
 <div class="register">
 <a href="/register.php">Register Your Account</a> | <a href="/recover_password.php">Forgot Password</a>
 </div>
- 
+
+<? if(isset($_GET["error"])) {  ?>
+<div class="ui-state-error login-error">
+	<span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+	There was a problem with your login. Contact your program administrator if the problem persists.
+</div>
+<? } ?> 
  
 </body>
 </html>

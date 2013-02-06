@@ -1,5 +1,7 @@
 <div id="menu">
 	<ul>
+		
+		<? if ( $user_type != 1 ) { ?>
 		<li><a id="main" href="/main.php">Home</a>
 		<li>
 			<a id="defendant" href="/defendant/index.php">Defendants</a>
@@ -36,10 +38,17 @@
 		</li>
 		<li><a id="reports" href="/reports/index.php">Reports</a></li>
 		<li><a id="statistics" href="/statistics/index.php">Statistics</a></li>
+		<? } ?>
 		
-		<!--
+		<? if ( $user_type == 2 ) { ?>
 		<li><a id="program-management" href="#">Program Management</a></li>
 		<li><a id="surveys" href="#">Surveys</a></li>
-		-->
+		<? } ?>
+		
+		<? if ( $user_type == 1 || $user_type == 2 ) { ?>
+		<li><a id="statistics" href="/admin/programs.php">Programs</a></li>
+		<li><a id="statistics" href="/admin/users.php">Users</a></li>
+		<? } ?>
+		
 	</ul>
 </div>

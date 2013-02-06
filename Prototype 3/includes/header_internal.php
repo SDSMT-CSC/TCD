@@ -1,6 +1,6 @@
 <?
-include("includes/class_core.php");
-include("includes/class_user.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_core.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_user.php");
 
 session_start();
 date_default_timezone_set($_SESSION['timezone']);
