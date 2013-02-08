@@ -1,6 +1,6 @@
 <?php
-include("includes/class_core.php");
-include("includes/class_user.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_core.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_user.php");
 
 session_start();
 
@@ -17,6 +17,8 @@ if($_POST["submit"] == "Enter")
 		$_SESSION["userID"] = $user->getUserID();
 		$_SESSION["logTimestamp"] = date( 'Y-m-d H:i:s', time() );
 		
+		// if user is an admin, send them to admin landing page
+		// otherwise to main landing page
 		if( $user->getType() == 1 )
 		{
 			header("location: /admin/programs.php");
@@ -69,8 +71,9 @@ $(function() {
 		errorElement: "div",
 		wrapper: "div",
 		errorPlacement: function(error, element) {
-			  error.insertBefore(element);
+			  error.insertAfter(element);
 				error.addClass('message');
+				error.addClass('message-login');
 		},
 		rules: {
 			email: {

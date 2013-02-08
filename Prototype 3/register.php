@@ -1,20 +1,68 @@
 <?php 
 $areaname = "registration";
+
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_core.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_user.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_external.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/includes/recaptchalib.php");
 
 $submit = $_POST["submit"];
+$error = 0;
 ?>
-
 
 <h1>User Registration</h1>
 
-<? if( !$submit ) { ?>
+<? 
+if( !$submit ) { 
+
+		// check email
+
+		// check captcha
+
+
+		$user = new User();
+		if( $user->emailExists( $_POST["email"] ) )
+		{
+			$error = 1;
+		}
+		
+		$privatekey = "6Le_gNsSAAAAAOZkcUElnPjfuceX6fmOFcJgTqB9";
+		$resp = recaptcha_check_answer ($privatekey,
+																	$_SERVER["REMOTE_ADDR"],
+																	$_POST["recaptcha_challenge_field"],
+																	$_POST["recaptcha_response_field"]);
+		
+		/*
+		if (!$resp->is_valid) {
+			// incorrect CAPTCHA
+			die ("The reCAPTCHA wasn't entered correctly. Go back and try it again.");
+		} else {
+		// successful verification
+		}
+		*/		
+}
+?>
 <script>
 jQuery(function($)
 {
 	$("#submit").button();
 	$('.password').pstrength();
+	$("#recaptcha_response_field").css("border-color","#bbbaab");
+	$("#recaptcha_response_field").blur();
+	
+	$("#registerForm").validate({
+		errorElement: "div",
+		wrapper: "div",
+		errorPlacement: function(error, element) {
+			  error.insertAfter(element);
+				error.addClass('message');
+		},
+		rules: {
+			code: { required: true },
+			password1: { required: true },
+			email: { required: true, email: true }
+		}
+	});
 });
 </script>
 
@@ -41,23 +89,19 @@ Passwords should contain a combination of letters (both upper and lower case) an
 	<table>
 		<tr>
 			<td align="right">Teen/Youth Court Program Code</td>
-			<td><input type="text" name="program-code" id="program-code" class="input wide" /></td>
+			<td><input type="text" name="code" id="code" class="wide" /></td>
 		</tr>
 		<tr>
 			<td align="right">Email Address</td>
-			<td><input type="text" name="email" id="email" class="input wide" /></td>
+			<td><input type="text" name="email" id="email" class="wide" /></td>
 		</tr>
 		<tr>
 			<td align="right" valign="top">Password</td>
-			<td valign="top" height="50">
-				<div style="width: 250px;">
-				<input type="password" name="password1" id="password1"  class="input password wide" />
-				</div>
-			</td>
+			<td><input type="password" name="password1" id="password1"  class="wide password" /></td>
 		</tr>
 		<tr>
 			<td align="right">Retype Password</td>
-			<td><input type="password" name="password2" id="password2" class="input wide" /></td>
+			<td><input type="password" name="password2" id="password2" class="wide" /></td>
 		</tr>
 		<tr>
 			<td align="right" valign="top" style="padding-bottom:3px;">Prove you are a real person!<br>Retype the characters from the picture</td>			
@@ -69,28 +113,12 @@ Passwords should contain a combination of letters (both upper and lower case) an
 			</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right"><input type="submit" class="submitButton" name="submit" id="submit" value="Register Account" style="margin-right: 25px;" /></td>
+			<td></td>
+      <td><input type="submit" class="submitButton" name="submit" id="submit" value="Register Account"/></td>
 		</tr>
 	</table>
 	</fieldset>
 </form>
-<?php 
-} else {
-	
-	$privatekey = "6Le_gNsSAAAAAOZkcUElnPjfuceX6fmOFcJgTqB9";
-  	$resp = recaptcha_check_answer ($privatekey,
-                                $_SERVER["REMOTE_ADDR"],
-                                $_POST["recaptcha_challenge_field"],
-                                $_POST["recaptcha_response_field"]);
-
-  if (!$resp->is_valid) {
-    // What happens when the CAPTCHA was entered incorrectly
-    die ("The reCAPTCHA wasn't entered correctly. Go back and try it again." .
-         "(reCAPTCHA said: " . $resp->error . ")");
-  } else {
-    // Your code here to handle a successful verification
-  }
-}?>
 	
 <?php  
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_external.php");

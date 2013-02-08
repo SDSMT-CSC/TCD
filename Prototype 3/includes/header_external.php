@@ -19,6 +19,7 @@
 	
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js" type="text/javascript"></script>
+	<script src="/includes/js/jquery.validate.min.js" type="text/javascript"></script>
 	<? if( $areaname == "registration") { ?><script src="/includes/js/jquery.pstrength.js" type="text/javascript"></script><? } ?>
 </head>
 

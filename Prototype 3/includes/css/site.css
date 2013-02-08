@@ -23,11 +23,12 @@ code { font-size: 12px; }
 #login li.form-row { padding: 5px 0; clear: both; position: relative; }
 #login li.button-row { padding: 5px 0; text-align: right; padding-right: 15px; clear: both; position: relative; }
 #login label { float: left; width: 150px; line-height: 24px; padding-left: 20px; color: #858479; }
-#login input[type=text], input[type=password]  { 
-	margin: 2px 0; padding: 3px; background-color: #faf9f5; font-size: 1.0em; border: solid 1px #bbbaab; width: 150px; outline: none;
+
+input[type=text], input[type=password], #recaptcha_response_field  { 
+	margin: 2px 0; padding: 3px; background-color: #faf9f5; font-size: 1.0em; border: solid 1px #bbbaab; outline: none;
  -webkit-transition: all 0.30s ease-in-out; -moz-transition: all 0.30s ease-in-out; -ms-transition: all 0.30s ease-in-out; -o-transition: all 0.30s ease-in-out;
 }
-#login input[type=text]:focus, input[type=password]:focus { border: 1px solid #97c4d9 ; box-shadow: 0 0 5px #97c4d9 ; }
+input[type=text]:focus, input[type=password]:focus, #recaptcha_response_field:focus { border: 1px solid #97c4d9 ; box-shadow: 0 0 5px #97c4d9 ; }
 
 .login-error { margin: 0 auto; width: 350px; position: relative; top: -300px; padding: 8px;
 border-radius: 5px; -moz-border-radius: 5px; }
@@ -39,13 +40,15 @@ fieldset input, select, textarea { margin: 2px 0; padding: 3px; background-color
 legend { padding: 2px 4px; }
 
 div.message{
-		position: absolute;
+	  display:inline-block;
 		white-space: nowrap;
 		top: 5px;
   	left: 330px;
     background: transparent url(images/msg_arrow.png) no-repeat scroll left center;
     padding-left: 5px;
 }
+
+div.message-login { position: absolute; }
 
 div.error{
 		background: #97c4d9 url(images/ui-bg_highlight-soft_75_97c4d9_1x100.png) 50% 50% repeat-x;

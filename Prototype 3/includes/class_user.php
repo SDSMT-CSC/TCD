@@ -8,6 +8,7 @@ class User {
   private $email;
   private $password;
   private $lastLogin;
+	private $active;
   
   // constructor for user object
   public function __construct()
@@ -186,6 +187,31 @@ class User {
   public function getType() { return $this->type; }
   public function getTimezone() { return $this->timezone; }
   public function getLastLogin() { return $this->lastLogin; }
+	
+	
+	
+	// checks to see if an email exists within the system
+	// used on the registration page and add user
+	public function emailExists( $email )
+	{
+		 // database connection and sql query
+		$core = Core::dbOpen();
+		$sql = "SELECT userid FROM user WHERE email = :email";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':email', $email);
+		Core::dbClose();
+		
+		 if( $stmt->execute())
+      {
+        $row = $stmt->fetch();
+        if( $row["userid"] )
+				{
+					return true;
+				}
+				
+				return false;
+			}
+	}
   
   // for testing only
   public function display()
