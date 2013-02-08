@@ -1,27 +1,23 @@
 <?php
 $menuarea = "admin";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 
-$core = Core::dbOpen();
-$result = mysql_query("SELECT programID, type, firstName, lastName, email FROM user");
-$stmt = $core->dbh->prepare($sql);
-$stmt->execute();
-$rows = array();
-while($r = mysql_fetch_assoc($stmt))
-	$rows[] = $r;
-$table = json_encode($rows);
-Core::dbClose();
-
+$data = new Data();
+$table = $data->fetchProgramData();
+print_r($table);
 ?>
 
 <script>
+var table = <?php echo json_encode($table); ?>;
+alert(table);
 jQuery(function($)
 {
 	$("#data-table").dataTable( { 
 				"aaSorting": [],
         "sPaginationType": "full_numbers",
 				"bProcessing": true,
-        "sAjaxSource": $table
+        "sAjaxSource": table
 	} );
 
 });
