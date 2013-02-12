@@ -1,11 +1,16 @@
 <?php
 class Data{
 	public function buildDataTable($data) {
+		//get the last array and key for building the table
 		$lastElement = end($data);
+		end($lastElement);
+		$lastKey = key($lastElement);
+
+		//go through array, build table
 		foreach($data as $userElement) {
 			echo "[\n";
 			foreach($userElement as $key => $value) {
-				if($key == "email")
+				if($key == $lastKey)
 					echo "\"$value\"\n";
 				else
 					echo "\"$value\",\n";
