@@ -2,20 +2,19 @@
 class User {
   private $userID;
   private $programID;
-  private $type;
+  private $typeID;
   private $firstName;
   private $lastName;
   private $email;
   private $password;
   private $lastLogin;
-	private $active;
   
   // constructor for user object
   public function __construct()
   {
     $this->userID = 0;
     $this->programID = NULL;
-    $this->type = NULL;
+    $this->typeID = NULL;
     $this->firstName = NULL;
     $this->lastName = NULL;
     $this->email = NULL;
@@ -42,7 +41,7 @@ class User {
     
     // database connection and sql query
     $core = Core::dbOpen();
-    $sql = "SELECT userID, hash FROM user WHERE email = :email AND active = 1";
+    $sql = "SELECT userID, hash FROM user WHERE email = :email";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':email', $email);
     Core::dbClose();
@@ -63,7 +62,7 @@ class User {
           
           // generate a new hash and update it in the database along with login time
           $core = Core::dbOpen();
-          $sql = "UPDATE user SET hash = :hash, lastLogin = now() WHERE userID = :userID AND active = 1";
+          $sql = "UPDATE user SET hash = :hash, lastLogin = now() WHERE userID = :userID";
           $stmt = $core->dbh->prepare($sql);
           $stmt->bindParam(':hash', $this->newHash());
           $stmt->bindParam(':userID', $this->userID);
@@ -97,7 +96,7 @@ class User {
         
         $this->userID = $id;
         $this->programID = $row["programID"];
-        $this->type = $row["type"];
+        $this->typeID = $row["typeID"];
         $this->firstName = $row["firstName"];
         $this->lastName = $row["lastName"];
         $this->email = $row["email"];
@@ -184,34 +183,10 @@ class User {
   }
   
   public function getUserID() { return $this->userID; }
-  public function getType() { return $this->type; }
+	public function getProgramID() { return $this->programID; }
+  public function getType() { return $this->typeID; }
   public function getTimezone() { return $this->timezone; }
   public function getLastLogin() { return $this->lastLogin; }
-	
-	
-	
-	// checks to see if an email exists within the system
-	// used on the registration page and add user
-	public function emailExists( $email )
-	{
-		 // database connection and sql query
-		$core = Core::dbOpen();
-		$sql = "SELECT userid FROM user WHERE email = :email";
-		$stmt = $core->dbh->prepare($sql);
-		$stmt->bindParam(':email', $email);
-		Core::dbClose();
-		
-		 if( $stmt->execute())
-      {
-        $row = $stmt->fetch();
-        if( $row["userid"] )
-				{
-					return true;
-				}
-				
-				return false;
-			}
-	}
   
   // for testing only
   public function display()
@@ -219,7 +194,7 @@ class User {
     echo "<code>";
     echo "UserID: " . $this->userID . "<br>";
     echo "ProgramID: " . $this->programID . "<br>";
-    echo "Type: " . $this->type . "<br>";
+    echo "TypeID: " . $this->typeID . "<br>";
     echo "Firstname: " . $this->firstName . "<br>";
     echo "Lastname: " . $this->lastName . "<br>";
     echo "Email: " . $this->email . "<br>";

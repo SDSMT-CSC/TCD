@@ -1,45 +1,52 @@
 <?php
 class Data{
-	public function buildDataTable($data) {
-		//get the last array and key for building the table
-		$lastElement = end($data);
-		end($lastElement);
-		$lastKey = key($lastElement);
-
-		//go through array, build table
-		foreach($data as $userElement) {
-			echo "[\n";
-			foreach($userElement as $key => $value) {
-				if($key == $lastKey)
-					echo "\"$value\"\n";
-				else
-					echo "\"$value\",\n";
-			}
-			if($userElement == $lastElement)
-				echo "]\n";
-			else
-				echo "],\n";
-		}
-	}
 	
-	public function fetchUserData() {
+	public $data;
+	
+	public function fetchUserListing(  $user_programID, $user_type ) {
 		//database connection and SQL query
 		$core = Core::dbOpen();
-		$sql = "SELECT p.code, u.type, u.firstName, u.lastName, u.email FROM user u 
-				JOIN program p ON u.programID = p.programID";
-				
-		$stmt = $core->dbh->prepare($sql);
+		
+		// if user_type == 1 or 2 then display every user, otherwise
+		// only get users for that persons program
+		if( $user_type == 1 || $user_type == 2 ) {
+			$sql = "SELECT u.userID, p.code, ut.type, u.firstName, u.lastName, u.email 
+							FROM user u 
+							JOIN user_type ut ON u.typeID = ut.typeID
+							JOIN program p ON u.programID = p.programID";
+			$stmt = $core->dbh->prepare($sql);
+		}
+		else {
+			$sql = "SELECT u.userID, p.code, ut.type, u.firstName, u.lastName, u.email 
+							FROM user u 
+							JOIN user_type ut ON u.typeID = ut.typeID
+							JOIN program p ON u.programID = p.programID WHERE programID = :programID";
+			$stmt = $core->dbh->prepare($sql);
+			$stmt->bindParam(':programID', $user_programID );
+		}
 		Core::dbClose();
 		
 		try {
 			if($stmt->execute()) {
-				$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-				//$json = json_encode($rows);
-				return $rows;
+				
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+						$row = array();
+						
+						$row[] = $aRow["code"];
+						$row[] = $aRow["type"];
+						$row[] = $aRow["firstName"];
+						$row[] = $aRow["lastName"];
+						$row[] = $aRow["email"];
+						$row[] = "<a href=\"/admin/view_user.php?id=". $aRow["userID"] ."\">Edit</a>";				
+						
+						$output['aaData'][] = $row;
+				}
+				
+				return json_encode($output);				
 			}
 		}
 		catch (PDOException $e) {
-      		echo "Program Data Read Failed!";
+      		echo "User Data Read Failed!";
     	}
 	}
 }

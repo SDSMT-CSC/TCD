@@ -1,27 +1,5 @@
 <?
-include($_SERVER['DOCUMENT_ROOT']."/includes/class_core.php");
-include($_SERVER['DOCUMENT_ROOT']."/includes/class_user.php");
-
-session_start();
-date_default_timezone_set($_SESSION['timezone']);
-
-$cur_time = new DateTime();
-$out_time = new DateTime($_SESSION["timestamp"]);
-$out_time->modify("+1 hour");
-
-if( ($cur_time > $out_time) || (!isset($_SESSION["valid"]) && !$_SESSION["valid"]) )
-{
-		header("location: /index.php");
-		die();
-}
-else
-{
-		$user = new User();
-		$user->getFromID( $_SESSION["userID"] );
-		$user_type = $user->getType();
-		
-		$_SESSION["timestamp"] = date( 'Y-m-d H:i:s', time() );	
-}
+include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
