@@ -3,6 +3,7 @@ $areaname = "registration";
 
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_core.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_user.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_program.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_external.php");
 require_once($_SERVER['DOCUMENT_ROOT']."/includes/recaptchalib.php");
 
@@ -11,6 +12,12 @@ $error = 0;
 ?>
 
 <h1>User Registration</h1>
+<div class="ui-state-highlight ui-corner-all" style="margin-top: 10px; padding: 0 .7em;">
+<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+To gain access to the Teen Court Database, enter the program code given to you
+by your program administrator and your login information. An email will be sent
+to your account that must be verified before access is granted.</p>
+</div>
 
 <? 
 if( !$submit ) { 
@@ -31,7 +38,8 @@ jQuery(function($)
 				error.addClass('message');
 		},
 		rules: {
-			code: { required: true },
+			code: { required: true,  remote: "/includes/check_program.php" },
+			firstname: { required: true },
 			password1: { required: true, minlength: 6 },
 			password2: { required: true, minlength: 6, equalTo: "#password1" },
 			email: { required: true, email: true, remote: "/includes/check_email.php" },
@@ -57,13 +65,6 @@ var RecaptchaOptions = {
  }
 </script>
 
-<div class="ui-state-highlight ui-corner-all" style="margin-top: 10px; padding: 0 .7em;">
-<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
-To gain access to the Teen Court Database, enter the program code given to you
-by your program administrator and your login information. An email will be sent
-to your account that must be verified before access is granted.</p>
-</div>
-
 <div style="padding: .5em; font-style: italic;">Due to sensetive data contained in this website, it is advised you do not use a frequent password. 
 Passwords should contain a combination of letters (both upper and lower case) and numbers along with special characters.</div>
 
@@ -75,6 +76,14 @@ Passwords should contain a combination of letters (both upper and lower case) an
 		<tr>
 			<td align="right">Teen/Youth Court Program Code</td>
 			<td><input type="text" name="code" id="code" class="wide" /></td>
+		</tr>
+		<tr>
+			<td align="right">First Name</td>
+			<td><input type="text" name="firstname" id="firstname" class="wide" /></td>
+		</tr>
+		<tr>
+			<td align="right">Last Name</td>
+			<td><input type="text" name="lastname" id="lastname" class="wide" /></td>
 		</tr>
 		<tr>
 			<td align="right">Email Address</td>
@@ -126,7 +135,6 @@ Passwords should contain a combination of letters (both upper and lower case) an
 }
 else
 {
-	
 		$privatekey = "6Le_gNsSAAAAAOZkcUElnPjfuceX6fmOFcJgTqB9";
 		$resp = recaptcha_check_answer ($privatekey,
 																		$_SERVER["REMOTE_ADDR"],
@@ -134,13 +142,30 @@ else
 																		$_REQUEST["recaptcha_response_field"]);
 		
 		
-		if (!$resp->is_valid) {
-			die("WRONG!");
-		} else {
+		if (!$resp->is_valid) 
+		{
+			die("<p>ReCapthca was entered wrong, please go <a href=\"/register.php\">back</a> and fill out the form.</p>");
+		} 
+		else 
+		{
+			$program = new Program;
+			$program->getFromCode( $_POST["code"] );
+			
+			$user = new User;
+			$user->setFirstName( $_POST["firstname"] );
+			$user->setLastName( $_POST["lastname"] );
+			$user->setEmail( $_POST["email"] );
+			$user->setPassword( $_POST["password"] );
+			$user->setProgramID( $program->getProgramID() );
+			$user->setTimezoneID( $program->getTimezoneID() );
 		
-			echo "OK!";
+			$user->display();
+			$user->updateUser();
+			
+			echo "<p>Thank you for registering. Your program administrator will review and activate your account.<br>
+						If you have any questions, contact them or the site administrator</p>";
+			
 		}
-		
 }
 ?>
 

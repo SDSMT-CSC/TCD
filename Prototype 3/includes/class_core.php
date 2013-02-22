@@ -7,11 +7,11 @@ class Core {
 	private $db_password = 't33nc0urtw3b12';
 
 	// database handler
-    public $dbh;
-    private static $instance;
+  public $dbh;
+  private static $instance;
 
 	// construct the core class
-    private function __construct() {
+  private function __construct() {
     	// building data source name
     	$dsn = 'mysql:host=' . $this->db_host . ';dbname=' . $this->db_name;
 		// open the database
@@ -24,7 +24,7 @@ class Core {
 	}
 	 
 	// create an instance to open db communication
-    public static function dbOpen() {
+  public static function dbOpen() {
         if (!isset(self::$instance)) {
           $object = __CLASS__;
         	self::$instance = new $object;
@@ -33,12 +33,12 @@ class Core {
     }
 
 	// close the db connection
-    public static function dbClose() {
+  public static function dbClose() {
 		if (!isset(self::$instance)) {
 			$this->dbh = null;
 		}
 	}
-	
+		
 	public function convertDate( $dateToConvert ) {
 		
 		date_default_timezone_set('America/Denver');

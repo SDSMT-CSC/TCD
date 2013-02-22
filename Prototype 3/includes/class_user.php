@@ -8,6 +8,7 @@ class User {
   private $email;
   private $password;
   private $lastLogin;
+  private $active;
   
   // constructor for user object
   public function __construct()
@@ -19,6 +20,7 @@ class User {
     $this->lastName = NULL;
     $this->email = NULL;
     $this->password = NULL;
+		$this->timezoneID = NULL;
 		$this->timezone = NULL;
     $this->lastLogin = NULL;
   }
@@ -166,28 +168,103 @@ class User {
     return $hash;
   }
   
-  
-  public function addUser()
-  {
-    
-  }
-  
+  /*	function: updateUser
+	 *	adds user data to the database
+	 */
   public function updateUser()
   {
-    
+			// database connection and sql query
+			$core = Core::dbOpen();
+			
+			if( $this->userID == 0 ) // add new user
+			{
+				$this->active = 0;
+				$this->typeID = 5;
+				$sql = "INSERT INTO user (programID,typeID,firstName,lastName,email,timezoneID,hash,active)
+								VALUES (:programID, :typeID, :firstname, :lastname, :email, :timezoneID, :hash, :active)";
+			}
+			else
+			{
+				
+			}
+			
+			
+			$stmt = $core->dbh->prepare($sql);
+			if( $this->userID > 0 ) { $stmt->bindParam(':userID', $id); }
+			$stmt->bindParam(':programID',$this->programID);
+			$stmt->bindParam(':typeID',$this->typeID);
+			$stmt->bindParam(':firstname',$this->firstName);
+			$stmt->bindParam(':lastname',$this->lastName);
+			$stmt->bindParam(':email',$this->email);
+			$stmt->bindParam(':timezoneID',$this->timezoneID);
+			$stmt->bindParam(':hash',$this->newHash());
+			$stmt->bindParam(':active',$this->active);
+			Core::dbClose();
+			
+		try
+    {
+      
+			if( $stmt->execute()) {
+			  return true;
+      }
+			
+			print_r($stmt->errorInfo());
+			
+    } catch ( PDOException $e ) {
+      echo "Set User Information Failed!";
+    }			
   }
-  
+	
+	
   public function removeUser()
   {
     
   }
   
+	/*	function: emailExists
+	 *	checks the database to see if an email address exists for a user
+	 */
+	public function emailExists( $email )
+	{
+		// database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT userID FROM user WHERE email = :email";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':email', $email);
+    Core::dbClose();
+    
+    try
+    {
+      if( $stmt->execute()) 
+			{
+        $row = $stmt->fetch();
+        if( $stmt->rowCount() > 0 ) {				
+        	return true;
+				}
+
+				return false;
+      }
+    } catch ( PDOException $e ) {
+      echo "Search for email failed!";
+    }
+	}
+	
+	// getters
   public function getUserID() { return $this->userID; }
 	public function getProgramID() { return $this->programID; }
   public function getType() { return $this->typeID; }
   public function getTimezone() { return $this->timezone; }
   public function getLastLogin() { return $this->lastLogin; }
-  
+	public function getEmail() { return $this->email; }
+ 
+ 	// setters
+	public function setFirstName( $val ) {  $this->firstName = $val; }
+	public function setLastName( $val ) {  $this->lastName = $val; }
+  public function setEmail( $val ) {  $this->email = $val; }
+  public function setPassword( $val ) {  $this->password = $val; }
+  public function setProgramID( $val ) {  $this->programID = $val; }
+  public function setTimezoneID( $val ) {  $this->timezoneID = $val; }
+ 
   // for testing only
   public function display()
   {
@@ -198,6 +275,7 @@ class User {
     echo "Firstname: " . $this->firstName . "<br>";
     echo "Lastname: " . $this->lastName . "<br>";
     echo "Email: " . $this->email . "<br>";
+    echo "TimezoneID: " . $this->timezoneID . "<br>";
     echo "Timezone: " . $this->timezone;
     echo "</code>";
   }
