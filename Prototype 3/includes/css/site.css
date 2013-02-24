@@ -57,25 +57,6 @@ div.error{
 		color: #ffffff;
 }
 
-
-/*
-div.errorbox { 
-width: 165px;
-position: absolute;
-left: 100%;
-padding-left: 13px;
-top: 6px;
-margin-left: -20px;
-background: transparent url(/images/error_pointer.png) left center no-repeat;
-}
-div.error {
-padding: 4px;
-color: #ffffff !important;
-border: 1px solid #72aecb;
-background: #97c4d9 url(images/ui-bg_highlight-soft_75_97c4d9_1x100.png) 50% 50% repeat-x;
-}
-*/
-
 .submitrow { text-align: right; }
 .register {  margin: 10px auto; width: 350px; text-align: right; }
 .wide { width: 240px; }
@@ -99,7 +80,7 @@ background: #97c4d9 url(images/ui-bg_highlight-soft_75_97c4d9_1x100.png) 50% 50%
 #control-header { clear:both;  }
 #control-header .left { float: left; width: 400px; }
 #control-header .right { float: right; padding-right: 3px; }
-#control { text-align: center; padding: 4px;  }
+#control { text-align: center; padding: 4px; margin-bottom: 5px;  }
 
 /***********************************************************
 	MAIN WINDOW

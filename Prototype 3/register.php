@@ -148,17 +148,19 @@ else
 		} 
 		else 
 		{
-			$program = new Program;
-			$program->getFromCode( $_POST["code"] );
+			$mod_program = new Program;
+			$mod_program->getFromCode( $_POST["code"] );
 			
-			$user = new User;
-			$user->setFirstName( $_POST["firstname"] );
-			$user->setLastName( $_POST["lastname"] );
-			$user->setEmail( $_POST["email"] );
-			$user->setPassword( $_POST["password"] );
-			$user->setProgramID( $program->getProgramID() );
-			$user->setTimezoneID( $program->getTimezoneID() );
-		
+			$mod_user = new User;
+			$mod_user->setFirstName( $_POST["firstname"] );
+			$mod_user->setLastName( $_POST["lastname"] );
+			$mod_user->setEmail( $_POST["email"] );
+			$mod_user->setPassword( $_POST["password"] );
+			$mod_user->setProgramID( $mod_program->getProgramID() );
+			$mod_user->setTimezoneID( $mod_program->getTimezoneID() );
+			$mod_user->setActive( 0 );
+			$mod_user->setType( 5 );
+				
 			$user->display();
 			$user->updateUser();
 			

@@ -1,5 +1,6 @@
 <?php
 class User {
+	
   private $userID;
   private $programID;
   private $typeID;
@@ -8,7 +9,9 @@ class User {
   private $email;
   private $password;
   private $lastLogin;
-  private $active;
+	private	$timezoneID;
+	private	$timezone;
+	private $active;
   
   // constructor for user object
   public function __construct()
@@ -23,6 +26,7 @@ class User {
 		$this->timezoneID = NULL;
 		$this->timezone = NULL;
     $this->lastLogin = NULL;
+		$this->active = 0;
   }
   
   /*
@@ -43,7 +47,7 @@ class User {
     
     // database connection and sql query
     $core = Core::dbOpen();
-    $sql = "SELECT userID, hash FROM user WHERE email = :email";
+    $sql = "SELECT userID, hash FROM user WHERE email = :email AND active = 1";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':email', $email);
     Core::dbClose();
@@ -103,8 +107,10 @@ class User {
         $this->lastName = $row["lastName"];
         $this->email = $row["email"];
         $this->timezone = $row["timezone"];
+        $this->timezoneID = $row["timezoneID"];
         $this->hash = $row["hash"];
         $this->lastLogin = $row["loginDate"];
+        $this->active = $row["active"];
         
         return true;
       }
@@ -172,43 +178,49 @@ class User {
 	 *	adds user data to the database
 	 */
   public function updateUser()
-  {
+  {		
 			// database connection and sql query
 			$core = Core::dbOpen();
 			
 			if( $this->userID == 0 ) // add new user
 			{
-				$this->active = 0;
-				$this->typeID = 5;
 				$sql = "INSERT INTO user (programID,typeID,firstName,lastName,email,timezoneID,hash,active)
 								VALUES (:programID, :typeID, :firstname, :lastname, :email, :timezoneID, :hash, :active)";
 			}
 			else
 			{
-				
+				$sql = "UPDATE user SET programID = :programID, typeID = :typeID, firstName = :firstname, 
+								lastName = :lastname, email = :email, timezoneID = :timezoneID, active = :active ";
+
+				 if( $this->password != "" ) { $sql .= ", hash = :hash "; }
+				 
+				$sql .= " WHERE userID = :userID";
 			}
 			
-			
 			$stmt = $core->dbh->prepare($sql);
-			if( $this->userID > 0 ) { $stmt->bindParam(':userID', $id); }
-			$stmt->bindParam(':programID',$this->programID);
-			$stmt->bindParam(':typeID',$this->typeID);
-			$stmt->bindParam(':firstname',$this->firstName);
-			$stmt->bindParam(':lastname',$this->lastName);
-			$stmt->bindParam(':email',$this->email);
-			$stmt->bindParam(':timezoneID',$this->timezoneID);
-			$stmt->bindParam(':hash',$this->newHash());
-			$stmt->bindParam(':active',$this->active);
+			if( $this->userID > 0 ) { $stmt->bindParam(':userID', $this->userID); }
+			if( $this->password != "" ) { $stmt->bindParam(':hash', $this->newHash() ); }
+			$stmt->bindParam(':programID', $this->programID);
+			$stmt->bindParam(':typeID', $this->typeID);
+			$stmt->bindParam(':firstname', $this->firstName);
+			$stmt->bindParam(':lastname', $this->lastName);
+			$stmt->bindParam(':email', $this->email);
+			$stmt->bindParam(':timezoneID', $this->timezoneID);
+			$stmt->bindParam(':active', $this->active);
 			Core::dbClose();
 			
 		try
-    {
-      
+    {			
 			if( $stmt->execute()) {
+				
+				// if it's a new user, get the last insertId
+				if( $this->userID == 0 )
+				{
+					$this->userID = $core->dbh->lastInsertId(); 
+				}
+				
 			  return true;
       }
-			
-			print_r($stmt->errorInfo());
 			
     } catch ( PDOException $e ) {
       echo "Set User Information Failed!";
@@ -251,19 +263,27 @@ class User {
 	
 	// getters
   public function getUserID() { return $this->userID; }
+	public function getFirstName() {  return $this->firstName; }
+	public function getLastName() {  return $this->lastName; }
+  public function getName() { return $this->firstName . " " . $this->lastName; }
 	public function getProgramID() { return $this->programID; }
   public function getType() { return $this->typeID; }
   public function getTimezone() { return $this->timezone; }
+  public function getTimezoneID() { return $this->timezoneID; }
   public function getLastLogin() { return $this->lastLogin; }
 	public function getEmail() { return $this->email; }
+	public function isActive() { return $this->active; }
  
  	// setters
+  public function setUserID( $val ) {  $this->userID = $val; }
+  public function setProgramID( $val ) {  $this->programID = $val; }
+  public function setType( $val ) {  $this->typeID = $val; }
 	public function setFirstName( $val ) {  $this->firstName = $val; }
 	public function setLastName( $val ) {  $this->lastName = $val; }
   public function setEmail( $val ) {  $this->email = $val; }
   public function setPassword( $val ) {  $this->password = $val; }
-  public function setProgramID( $val ) {  $this->programID = $val; }
   public function setTimezoneID( $val ) {  $this->timezoneID = $val; }
+	public function setActive( $val ) { $this->active = $val; }
  
   // for testing only
   public function display()
@@ -275,6 +295,8 @@ class User {
     echo "Firstname: " . $this->firstName . "<br>";
     echo "Lastname: " . $this->lastName . "<br>";
     echo "Email: " . $this->email . "<br>";
+    echo "Password: " . $this->password . "<br>";
+    echo "Active: " . $this->active . "<br>";
     echo "TimezoneID: " . $this->timezoneID . "<br>";
     echo "Timezone: " . $this->timezone;
     echo "</code>";

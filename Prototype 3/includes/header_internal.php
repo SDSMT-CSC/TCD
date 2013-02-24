@@ -18,6 +18,7 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
 <script src="/includes/js/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="/includes/js/jquery.validate.min.js" type="text/javascript"></script>
 
 <script>
 jQuery(function($)
@@ -60,14 +61,13 @@ jQuery(function($)
 	<!-- BEGIN HEADER -->
 	<div id="header">
 		<div class="left">
-			<strong>Lawrence County Teen Court</strong><br />
-			PO Box 227<br />
-			Deadwood, SD  57732<br />
-			605-722-8889 | <a href="/contact.php">Contact Administrator</a>
+			<strong><? echo $program->getName() ?></strong><br />
+			<? echo $program->getAddress() ?><br />
+			<? echo $program->getPhone() ?> | <a href="/contact.php">Contact Administrator</a>
 		</div>
 		<div class="right">		
 			<div class="identity">605-555-5555 | <a href="/help.php">Help</a> | <a href="/contact.php">Support</a></div>
-			<div class="user">Logged in as: <a href="/profile.php">Andrew Thompson</a> | <a href="/index.php?logout">Logout</a></div>
+			<div class="user">Logged in as: <a href="/profile.php"><? echo $user->getName(); ?></a> | <a href="/index.php?logout">Logout</a></div>
 		</div>		 
 	</div>
 	<!-- END HEADER -->
