@@ -1,28 +1,9 @@
-{
-  "aaData": [
-    [
-      "12320",
-      "Smith",
-			"Mike",
-      "11/15/2012 11:00am",
-      "Lawrence County Court House",
-      "<a href=\"/court/view.php\">Edit</a>"
-    ],
-    [
-      "12345",
-      "Doe",
-			"John",
-      "12/20/2012 4:00pm",
-      "Lawrence County Court House",
-      "<a href=\"/court/view.php\">Edit</a>"
-    ],
-    [
-      "124456",
-      "Swan",
-			"Tammy",
-      "12/08/2012 2:00pm",
-      "Lawrence County Court House",
-      "<a href=\"/court/view.php\">Edit</a>"
-    ]
-  ]
-}
+<?php
+header("Content-Type: application/json");
+include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
+
+//pulls the data, and gets the table
+$data = new Data();
+echo $data->fetchTrialListing( $user_programID, $user_type );
+?>

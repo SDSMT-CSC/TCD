@@ -1,12 +1,9 @@
-{
-  "aaData": [
-    [
-      "TCDB32",
-      "Teen Court Database",
-      "Deadwood",
-      "SD",
-      "57732",
-      "<a href=\"/admin/view_program.php?id=1\">Edit</a>"
-    ]
-  ]
-}
+<?php
+header("Content-Type: application/json");
+include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
+
+//pulls the data, and gets the table
+$data = new Data();
+echo $data->fetchProgramListing( $user_programID, $user_type );
+?>

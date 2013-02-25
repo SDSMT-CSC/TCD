@@ -21,8 +21,7 @@ jQuery(function($)
 <table id="data-table">
 	<thead>
 			<tr>
-				<th width="50">Date</th>
-				<th width="50">Time</th>
+				<th width="150">Date</th>
 				<th width="150">Topic</th>
 				<th width="125">Instructor</th>
 				<th width="125">Officer</th>
