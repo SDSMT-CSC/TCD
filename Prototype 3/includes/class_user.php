@@ -29,16 +29,16 @@ class User {
 		$this->active = 0;
   }
   
-  /*
-   *  function: getFromLogin
-   *   purpose: Checks the email and password the user entered at login
-   *     with record in the database. If the email address exists, the
-   *     password is checked with the current hash. If the hash is the
-   *     same, proceed with user access and login.
-   *  input: $email = email address user entered at login
-   *         $password = password user entered at login
-   *  output: boolean true/false
-   */
+	/*************************************************************************************************
+  	function: getFromLogin
+    purpose: Checks the email and password the user entered at login
+        with record in the database. If the email address exists, the
+        password is checked with the current hash. If the hash is the
+        same, proceed with user access and login.
+    input: $email = email address user entered at login
+           $password = password user entered at login
+    output: boolean true/false
+	*************************************************************************************************/
   public function getFromLogin( $email, $password )
   {
     // values entered from the login form
@@ -85,6 +85,12 @@ class User {
     return false;
   }
   
+	/*************************************************************************************************
+		function: getFromID
+		purpose: gets user information from a user id
+    input: $id = user id
+		output: boolean true/false
+	*************************************************************************************************/
   public function getFromID( $id )
   {
     // database connection and sql query
@@ -121,12 +127,12 @@ class User {
     return false;
   }
   
-  /* 
-   *  function: checkHash
-   *  purpose: checks a current hash against the algorithm to verify integrity
-   *  input: $hash = 128 character hashed string
-   *  output: boolean true/false
-   */
+	/*************************************************************************************************
+     function: checkHash
+     purpose: checks a current hash against the algorithm to verify integrity
+     input: $hash = 128 character hashed string
+     output: boolean true/false
+	*************************************************************************************************/
   private function checkHash( $hash )
   {
     // The first 64 characters of the hash is the salt
@@ -150,12 +156,12 @@ class User {
     return false;
   }
 
-  /* 
-   *  function: newHash
-   *  purpose: generate a new hash based on email and password
-   *  input: none
-   *  output: 128 character hash string
-   */
+	/*************************************************************************************************
+     function: newHash
+     purpose: generate a new hash based on email and password
+     input: none
+     output: 128 character hash string
+	*************************************************************************************************/
   private function newHash()
   {
     $salt = hash('sha256', uniqid(mt_rand(), true) . 't33nh4sh' . strtolower($this->email));
@@ -174,9 +180,12 @@ class User {
     return $hash;
   }
   
-  /*	function: updateUser
-	 *	adds user data to the database
-	 */
+	/*************************************************************************************************
+		function: updateUser
+		purpose: adds the user if userid is 0, otherwise updates the user record
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
   public function updateUser()
   {		
 			// database connection and sql query
@@ -209,33 +218,61 @@ class User {
 			$stmt->bindParam(':active', $this->active);
 			Core::dbClose();
 			
-		try
-    {			
-			if( $stmt->execute()) {
-				
-				// if it's a new user, get the last insertId
-				if( $this->userID == 0 )
-				{
-					$this->userID = $core->dbh->lastInsertId(); 
+			try
+			{			
+				if( $stmt->execute()) {
+					
+					// if it's a new user, get the last insertId
+					if( $this->userID == 0 )
+					{
+						$this->userID = $core->dbh->lastInsertId(); 
+					}
+					
+					return true;
 				}
 				
-			  return true;
-      }
+			} catch ( PDOException $e ) {
+				echo "Set User Information Failed!";
+			}
 			
-    } catch ( PDOException $e ) {
-      echo "Set User Information Failed!";
-    }			
+			return false;
   }
 	
-	
-  public function removeUser()
+	/*************************************************************************************************
+		function: removeUser
+		purpose: marks the user as deleted and inactive in the database,
+						 doesn't actually remove the user
+		input: $id = user id
+    output: boolean true/false
+	*************************************************************************************************/
+  public function removeUser( $id )
   {
-    
+			// database connection and sql query
+			$core = Core::dbOpen();
+			$sql = "UPDATE user SET active = 0, deleted = 1 WHERE userid = :userid";
+    	$stmt = $core->dbh->prepare($sql);
+			$stmt->bindParam(':userid', $id);
+			Core::dbClose();
+			
+			try
+			{			
+				if( $stmt->execute()) {
+					return true;
+				}
+				
+			} catch ( PDOException $e ) {
+				echo "Set User Information Failed!";
+			}
+			
+			return false;
   }
   
-	/*	function: emailExists
-	 *	checks the database to see if an email address exists for a user
-	 */
+	/*************************************************************************************************
+		function: emailExists
+	 	purpose: checks the database to see if an email address exists for a user
+		input: $email = email address to check
+    output: boolean true/false
+	*************************************************************************************************/
 	public function emailExists( $email )
 	{
 		// database connection and sql query
@@ -259,6 +296,8 @@ class User {
     } catch ( PDOException $e ) {
       echo "Search for email failed!";
     }
+		
+		return false;
 	}
 	
 	// getters

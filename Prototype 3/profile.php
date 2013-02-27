@@ -1,5 +1,9 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
+
+$data = new Data();
+
 ?>
 
 <script src="/includes/js/jquery.pstrength.js" type="text/javascript"></script>
@@ -26,6 +30,22 @@ jQuery(function($) {
 		}
 	});
 	
+	$("#user-profile").validate({
+		errorElement: "div",
+		wrapper: "div",
+		errorPlacement: function(error, element) {
+			  error.insertAfter(element);
+				error.addClass('message');
+		},
+		rules: {
+			firstname: { required: true },
+			password1: { required: true, minlength: 6 },
+			password2: { required: true, minlength: 6, equalTo: "#password1" },
+			email: { required: true, email: true }
+		}
+	});
+	
+	
 	$('#add-number').click(function(){ $('#phone-dialog').dialog('open'); });
 	
 });
@@ -42,7 +62,7 @@ jQuery(function($) {
 
 
 <div id="phone-dialog" title="Add Phone Number">
-	<form>
+	<form name="phone-number" id="phone-number">
 		<table>
 			<tr>
 				<td>Type:</td>
@@ -60,25 +80,21 @@ jQuery(function($) {
 	</form>
 </div>
 
-<form>
+<form name="user-profile" id="user-profile">
 <fieldset>
 	<legend>Login Information</legend>
 	<table>
 		<tr>
 			<td>Email Address: </td>
-			<td><input type="text" name="email" id="email" value="andrew.thompson@mines.sdsmt.edu" style="width: 250px;" /></td>
+			<td><input type="text" name="email" id="email" value="<? echo $user->getEmail() ?>" class="wide" /></td>
 		</tr>
 		<tr>
 			<td valign="top">Reset Password: </td>
-			<td>
-				<div style="width: 200px; height: 60px">
-				<input type="password" name="password1" id="password1" style="width: 200px;" class="password" />
-				</div>			
-			</td>
+			<td><input type="password" name="password1" id="password1" class="wide password" /></td>
 		</tr>
 		<tr>
 			<td>Retype Password: </td>
-			<td><input type="password" name="password2" id="password2" style="width: 200px;" /></td>
+			<td><input type="password" name="password2" id="password2"  class="wide"/></td>
 		</tr>			
 	</table>	
 </fieldset>
@@ -89,11 +105,19 @@ jQuery(function($) {
 	<table>
 		<tr>
 			<td>First Name: </td>
-			<td><input type="text" name="first-name" id="first-name" /></td>
+			<td><input type="text" name="first-name" id="first-name" value="<? echo $user->getFirstName() ?>" /></td>
 		</tr>
 		<tr>
 			<td>Last Name: </td>
-			<td><input type="text" name="last-name" id="last-name" /></td>
+			<td><input type="text" name="last-name" id="last-name" value="<? echo $user->getLastName() ?>" /></td>
+		</tr>
+		<tr>
+			<td>Timezone: </td>
+			<td>
+        <select name="timezoneID">
+          <? echo $data->fetchTimezoneDropdown( $user->getTimezoneID() ); ?>
+        </select>
+      </td>
 		</tr>
 	</table>
 </fieldset>

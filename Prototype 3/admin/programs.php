@@ -6,6 +6,8 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 <script>
 jQuery(function($)
 {
+	$( "#new-program" ).button().click(function() {	window.location.href = "view_program.php";	});
+	
 	$("#data-table").dataTable( { 
 		"aaSorting": [],
         "sPaginationType": "full_numbers",
@@ -16,7 +18,14 @@ jQuery(function($)
 });
 </script>
 
-<h1>Active Court Programs</h1>
+<div id="control-header">
+	<div class="left"><h1>Active Court Programs</h1></div>	
+	<div class="right">
+		<div id="control" class="ui-state-error">
+			<button id="new-program">New Program</button>
+		</div>
+	</div>
+</div>
 
 <table id="data-table">
 	<thead>

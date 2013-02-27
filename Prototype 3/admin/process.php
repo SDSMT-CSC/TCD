@@ -1,7 +1,7 @@
 <?
 include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 
-$action = $_POST["action"];
+$action = $_REQUEST["action"];
 
 if( $action == "Add User" || $action == "Edit User" )
 {
@@ -22,5 +22,15 @@ if( $action == "Add User" || $action == "Edit User" )
 		
 	// redirect to the user page	
 	header("location: view_user.php?id=".$mod_user->getUserID() );
+}
+
+if( $action == "Delete User" )
+{
+	$mod_user = new User();
+	$mod_user->getFromID($_GET["id"]);
+	$mod_user->removeUser($_GET["id"]);
+	
+	// redirect to user list
+	header("location: users.php");
 }
 ?>

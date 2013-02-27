@@ -69,10 +69,32 @@ $(function () {
 		}
 	});
 	
+	$("#confirm-dialog").dialog({
+				resizable: false,
+				autoOpen:false,
+				modal: true,
+				width:300,
+				height:175,
+				buttons: {
+					'Delete User': function() {
+							window.location.href = 'process.php?action=Delete%20User&id=<? echo $id ?>';
+						},
+					Cancel: function() {
+						$(this).dialog('close');
+					}
+				}
+			
+			});
+			
+		$('#delete-user').click(function(){$('#confirm-dialog').dialog('open');});
+	
+	
 });
 </script>
 
-
+<div id="confirm-dialog" title="Delete User">
+<p>Are you sure you want to delete this user?</p>
+</div>
 
 <div id="control-header">
 	<div class="left"><h1><? echo $action ?></h1></div>	

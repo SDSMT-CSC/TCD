@@ -1,13 +1,16 @@
 <?php
 $menuarea = "admin";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
+
+$data = new Data();
+$id = $_GET["id"];
 ?>
 
 <script>
 $(function () {
-	$( "#previous-program" ).button().click(function() {		});
 	$( "#update-program" ).button().click(function() {		});
-	$( "#next-program" ).button().click(function() {		});
+	$( "#delete-program" ).button().click(function() {		});
 });
 </script>
 
@@ -16,9 +19,13 @@ $(function () {
 	<div class="left"><h1>Add New Court Program</h1></div>	
 	<div class="right">
 		<div id="control" class="ui-state-error">
-			<button id="previous-program">Previous</button>
-			<button id="update-program">Update Court</button>
-			<button id="next-program">Next</button>
+    	<button id="program-list">Back to List</button>
+			<? if( $action == "Add Program" ) { ?>
+			<button id="add-program">Add User</button>
+			<? } else { ?>
+			<button id="update-program">Update Program</button>
+			<button id="delete-program">Delete Program</button>
+      <? } ?>
 		</div>
 	</div>
 	
