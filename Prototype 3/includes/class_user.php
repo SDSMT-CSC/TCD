@@ -290,13 +290,107 @@ class User {
         if( $stmt->rowCount() > 0 ) {				
         	return true;
 				}
-
-				return false;
       }
     } catch ( PDOException $e ) {
       echo "Search for email failed!";
     }
 		
+		return false;
+	}
+	
+	/*************************************************************************************************
+		function: fetchPhoneNumbers
+	 	purpose: gets the users phone numbers
+		input: none
+    output: array of numbers or NULL if empty
+	*************************************************************************************************/
+	public function fetchPhoneNumbers()
+	{
+		// database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT * FROM user_phone WHERE userID = :userID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':userID', $this->userID);
+    Core::dbClose();
+		
+		try
+    {
+      if( $stmt->execute()) 
+			{
+				$ouput = array();
+        while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+						$row = array();
+						
+						$row["phoneID"] = $aRow["phoneID"];
+						$row["phoneNum"] = $aRow["phoneNum"];
+						$row["ext"] = $aRow["ext"];
+						$row["type"] = $aRow["type"];
+						
+						$output[] = $row;
+				}
+				
+				return $output;
+      }
+    } catch ( PDOException $e ) {
+      echo "Fetch phone numbers failed!";
+    }
+		return NULL;
+	}
+	
+	/*************************************************************************************************
+		function: addPhone
+		purpose: to add a phone number to the user
+		intput: $type = the type of phone number cell, work, home, etc
+						$number = the phone number
+						$ext = extension if any
+		output: boolean true/false
+	*************************************************************************************************/
+	public function addPhone( $type, $number, $ext )
+	{
+		// database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "INSERT INTO user_phone (type, userID, phoneNum, ext ) VALUES ( :type, :userID, :number, :ext )";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':type', $type);
+    $stmt->bindParam(':userID', $this->userID);
+    $stmt->bindParam(':number', $number);
+    $stmt->bindParam(':ext', $ext);
+    Core::dbClose();
+
+		try
+    {
+      if( $stmt->execute()) {
+				return true;
+			}
+		} catch ( PDOException $e ) {
+      echo "Add phone number failed!";
+    }
+		return false;
+	}
+	
+	/*************************************************************************************************
+		function: removePhone
+		purpose: to remove a phone number from the user
+		input: $id = phone number ID
+		output: boolean true/false
+	*************************************************************************************************/
+	public function removePhone( $id )
+	{
+		// database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "DELETE FROM user_phone WHERE phoneID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':id', $id);
+    Core::dbClose();
+
+		try
+    {			
+      if( $stmt->execute()) {
+				return true;
+			}
+		} catch ( PDOException $e ) {
+      echo "Remove phone number failed!";
+    }
 		return false;
 	}
 	

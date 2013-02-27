@@ -4,6 +4,34 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 
 $data = new Data();
 
+$action = $_REQUEST["action"];
+
+if( $action == "UpdateUser" )
+{
+	$user->setEmail( $_POST["email"] );
+	$user->setFirstName( $_POST["firstname"] );
+	$user->setLastName( $_POST["lastname"] );
+	$user->setTimezoneID( $_POST["timezoneID"] );
+	
+	if( $_POST["password1"] )
+	{
+		$user->setPassword( $_POST["password1"] );
+	}
+	
+	$user->updateUser();
+	
+}
+
+if( $action == "AddPhone" )
+{
+	$user->addPhone( $_POST["type"], $_POST["number"], $_POST["ext"] );
+}
+
+if( $action == "remphone" )
+{
+	$user->removePhone( $_GET["id"] );
+}
+
 ?>
 
 <script src="/includes/js/jquery.pstrength.js" type="text/javascript"></script>
@@ -12,6 +40,7 @@ jQuery(function($) {
 
 	$('.password').pstrength();
 	$("#update-profile").button();
+	$("#update-profile").click(function(){ $('#user-profile').submit(); });
 	
 	$("#phone-dialog").dialog({
 		resizable: false,
@@ -22,7 +51,7 @@ jQuery(function($) {
 		buttons: {
 			'Add Number': function() {
 				$(this).dialog('close');
-					// TO DO: add number
+				$("#phone-number").submit();
 				},
 			Cancel: function() {
 				$(this).dialog('close');
@@ -39,8 +68,6 @@ jQuery(function($) {
 		},
 		rules: {
 			firstname: { required: true },
-			password1: { required: true, minlength: 6 },
-			password2: { required: true, minlength: 6, equalTo: "#password1" },
 			email: { required: true, email: true }
 		}
 	});
@@ -62,30 +89,32 @@ jQuery(function($) {
 
 
 <div id="phone-dialog" title="Add Phone Number">
-	<form name="phone-number" id="phone-number">
+	<form name="phone-number" id="phone-number" method="post">
+  	<input type="hidden" name="action" value="AddPhone" />
 		<table>
 			<tr>
 				<td>Type:</td>
-				<td><input type="text" name="item" /></td>
+				<td><input type="text" name="type" /></td>
 			</tr>
 			<tr>
 				<td>Number:</td>
-				<td><input type="text" name="item" /></td>
+				<td><input type="text" name="number" /></td>
 			</tr>
 			<tr>
 				<td>Extension:</td>
-				<td><input type="text" name="item" /></td>
+				<td><input type="text" name="ext" /></td>
 			</tr>
 		</table>
 	</form>
 </div>
 
-<form name="user-profile" id="user-profile">
+<form name="user-profile" id="user-profile" method="post">
+<input type="hidden" name="action" value="UpdateUser" />
 <fieldset>
 	<legend>Login Information</legend>
 	<table>
 		<tr>
-			<td>Email Address: </td>
+			<td width="200">Email Address: </td>
 			<td><input type="text" name="email" id="email" value="<? echo $user->getEmail() ?>" class="wide" /></td>
 		</tr>
 		<tr>
@@ -98,18 +127,16 @@ jQuery(function($) {
 		</tr>			
 	</table>	
 </fieldset>
-
-
 <fieldset>
 	<legend>Personal Information</legend>
 	<table>
 		<tr>
-			<td>First Name: </td>
-			<td><input type="text" name="first-name" id="first-name" value="<? echo $user->getFirstName() ?>" /></td>
+			<td width="200">First Name: </td>
+			<td><input type="text" name="firstname" id="firstname" value="<? echo $user->getFirstName() ?>" /></td>
 		</tr>
 		<tr>
 			<td>Last Name: </td>
-			<td><input type="text" name="last-name" id="last-name" value="<? echo $user->getLastName() ?>" /></td>
+			<td><input type="text" name="lastname" id="lastname" value="<? echo $user->getLastName() ?>" /></td>
 		</tr>
 		<tr>
 			<td>Timezone: </td>
@@ -121,7 +148,7 @@ jQuery(function($) {
 		</tr>
 	</table>
 </fieldset>
-
+</form>
 
 <fieldset>
 		<legend>Phone Numbers</legend>
@@ -135,18 +162,24 @@ jQuery(function($) {
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>Work</td>
-					<td>605-555-5555</td>
-					<td>34</td>
-					<td><a href="view.php">Remove</a></td>
-				</tr>
-				<tr>
-					<td>Cell</td>
-					<td>605-949-1234</td>
-					<td></td>
-					<td><a href="view.php">Remove</a></td>
-				</tr>
+				<?
+				$phoneArray = $user->fetchPhoneNumbers();
+				if( $phoneArray )
+				{
+					foreach( $user->fetchPhoneNumbers() as $row )
+					{
+						echo '<tr>';
+						echo '<td>' . $row["type"] . '</td>';
+						echo '<td>' . $row["phoneNum"] . '</td>';
+						echo '<td>' . $row["ext"] . '</td>';
+						echo '<td><a href="profile.php?action=remphone&id=' . $row["phoneID"] . '">Remove</a></td>';
+						echo '</tr>';
+					}
+				}
+				else {
+					echo '<tr><td align="center" colspan="4">No phone number entered</td></tr>';
+				}
+				?>
 			</tbody>
 		</table>
 		<div>
@@ -154,7 +187,6 @@ jQuery(function($) {
 		</div>
 </fieldset>
 
-</form>
 
 
 
