@@ -9,8 +9,8 @@ jQuery(function($)
 	$("#data-table").dataTable( { 
 				"aaSorting": [],
         "sPaginationType": "full_numbers",
-				"bProcessing": true,
-        "sAjaxSource": '/data/defendant_listing_current.php'
+				"bProcessing": false,
+        "sAjaxSource": '/data/defendants_current.php'
 	} );
 
 });
@@ -30,9 +30,7 @@ jQuery(function($)
 				<th width="50"></th>
 			</tr>
 	</thead>
-	<tbody>
-
-	</tbody>
+	<tbody></tbody>
 </table>
 
 <?php 

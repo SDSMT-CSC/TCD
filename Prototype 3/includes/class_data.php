@@ -52,7 +52,8 @@ class Data{
 		}
 		catch (PDOException $e) {
       		echo "User Data Read Failed!";
-    	}
+    }
+		return '{"aaData":[]}';
 	}
 
 	/*************************************************************************************************
@@ -98,7 +99,8 @@ class Data{
 		} 
 		catch (PDOException $e) {
       		echo "User Data Read Failed!";
-    	}
+    }
+		return '{"aaData":[]}';
 	}
 	
 	/*************************************************************************************************
@@ -184,7 +186,7 @@ class Data{
 	/*************************************************************************************************
 	
 	*************************************************************************************************/
-	public function fetchTrialListing(  $user_programID, $user_type ) {
+	public function fetchCourtListing(  $user_programID, $user_type ) {
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
@@ -211,7 +213,6 @@ class Data{
 		
 		try {
 			if($stmt->execute()) {
-				
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
 						
@@ -224,13 +225,13 @@ class Data{
 						
 						$output['aaData'][] = $row;
 				}
-				
 				return json_encode($output);				
 			}
 		}
 		catch (PDOException $e) {
       		echo "Trial Data Read Failed!";
-    	}
+    }	
+		return '{"aaData":[]}';
 	}
 
 	/*************************************************************************************************
@@ -281,7 +282,8 @@ class Data{
 		}
 		catch (PDOException $e) {
       		echo "Defendant Data Read Failed!";
-    	}
+    }
+		return '{"aaData":[]}';
 	}
 
 	/*************************************************************************************************
@@ -329,7 +331,8 @@ class Data{
 		}
 		catch (PDOException $e) {
       		echo "Volunteer Data Read Failed!";
-    	}
+    }
+		return '{"aaData":[]}';
 	}
 
 	/*************************************************************************************************
@@ -378,7 +381,8 @@ class Data{
 		}
 		catch (PDOException $e) {
       		echo "Workshop Data Read Failed!";
-    	}
+    }
+		return '{"aaData":[]}';
 	}
-}
+} // end class
 ?>

@@ -9,6 +9,7 @@ $id = $_GET["id"];
 
 <script>
 $(function () {
+	$( "#program-list" ).button().click(function() { window.location.href = 'programs.php'; });
 	$( "#update-program" ).button().click(function() {		});
 	$( "#delete-program" ).button().click(function() {		});
 });

@@ -8,9 +8,9 @@ jQuery(function($)
 {
 	$("#data-table").dataTable( { 
 		"aaSorting": [],
-        "sPaginationType": "full_numbers",
-		"bProcessing": true,
-        "sAjaxSource": '/data/workshop_listing.php'
+    "sPaginationType": "full_numbers",
+		"bProcessing": false,
+    "sAjaxSource": '/data/workshops.php'
 	} );
 
 });
@@ -28,11 +28,8 @@ jQuery(function($)
 				<th width="50">Modify</th>
 			</tr>
 	</thead>
-	<tbody>
-
-	</tbody>
+	<tbody></tbody>
 </table>
-
 
 <?php
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");

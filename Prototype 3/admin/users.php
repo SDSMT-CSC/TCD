@@ -12,8 +12,8 @@ jQuery(function($)
 	$("#data-table").dataTable( { 
 				"aaSorting": [],
         "sPaginationType": "full_numbers",
-				"bProcessing": true,
-        "sAjaxSource": '/data/user_listing.php'
+				"bProcessing": false,
+        "sAjaxSource": '/data/users.php'
 	} );
 
 });
@@ -33,7 +33,7 @@ jQuery(function($)
 	<thead>
 			<tr>
 				<th width="50">Program</th>
-				<th width="100">Type</th>
+				<th width="150">Type</th>
 				<th width="100">First name</th>
 				<th width="100">Last name</th>
 				<th width="150">Email</th>

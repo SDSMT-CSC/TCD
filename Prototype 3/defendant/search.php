@@ -8,8 +8,8 @@ jQuery(function($) {
 	$("#data-table").dataTable( { 
 				"aaSorting": [],
         "sPaginationType": "full_numbers",
-				"bProcessing": true,
-        "sAjaxSource": '/data/defendant_listing.php'
+				"bProcessing": false,
+        "sAjaxSource": '/data/defendants.php'
 	} );
 	
 	 $( "#accordion" ).accordion({
@@ -101,8 +101,7 @@ jQuery(function($) {
 				<th width="150">Added</th>
 				<th width="50"></th>
 			</tr>
-	</thead>
-	<tbody>
+	</thead><tbody>
 	</tbody>
 </table>
 

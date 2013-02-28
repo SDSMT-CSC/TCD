@@ -10,9 +10,9 @@ jQuery(function($)
 	
 	$("#data-table").dataTable( { 
 		"aaSorting": [],
-        "sPaginationType": "full_numbers",
-		"bProcessing": true,
-        "sAjaxSource": '/data/program_listing.php'
+    "sPaginationType": "full_numbers",
+		"bProcessing": false,
+    "sAjaxSource": '/data/programs.php'
 	} );
 
 });
