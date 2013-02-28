@@ -18,8 +18,12 @@ if( $action == "Add User" || $action == "Edit User" )
 	$mod_user->setActive( $_POST["active"] );
 	$mod_user->setPassword( $_POST["password"] );
 	
-	$mod_user->updateUser();
-		
+	if( $mod_user->updateUser() )
+	{
+		// log the event
+		$user->addEvent("Updated user: " . $mod_user->getEmail() );
+	}
+	
 	// redirect to the user page	
 	header("location: view_user.php?id=".$mod_user->getUserID() );
 }
@@ -28,7 +32,13 @@ if( $action == "Delete User" )
 {
 	$mod_user = new User();
 	$mod_user->getFromID($_GET["id"]);
-	$mod_user->removeUser($_GET["id"]);
+	$email = $mod_user->getEmail(); // get the email address before removing
+	
+	if( $mod_user->removeUser($_GET["id"]) )
+	{
+		// log the event
+		$user->addEvent("Updated user: " . $email );
+	}
 	
 	// redirect to user list
 	header("location: users.php");

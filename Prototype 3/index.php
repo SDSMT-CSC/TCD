@@ -17,6 +17,8 @@ if($_POST["submit"] == "Enter")
 		$_SESSION["userID"] = $user->getUserID();
 		$_SESSION["timezone"] = $user->getTimezone();
 		$_SESSION["timestamp"] = date( 'Y-m-d H:i:s', time() );
+
+		$user->addEvent("Login");
 		
 		// if user is an admin, send them to admin landing page
 		// otherwise to main landing page

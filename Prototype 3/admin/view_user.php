@@ -40,6 +40,9 @@ if( isset($id) ) {
 <script>
 $(function () {
 	
+	$("#tabs").tabs();
+  $("#tabs").show(); 
+	
 	$( "#user-list" ).button().click(function() {	window.location.href = "users.php";	});	
 	$( "#add-user" ).button().click(function() {	$("#newUser").submit();	});	
 	$( "#update-user" ).button().click(function() {	$("#newUser").submit();	});
@@ -88,6 +91,12 @@ $(function () {
 			
 		$('#delete-user').click(function(){$('#confirm-dialog').dialog('open');});
 	
+	$("#data-table").dataTable( { 
+				"aaSorting": [],
+        "sPaginationType": "full_numbers",
+				"bProcessing": true,
+        "sAjaxSource": '/data/user_history.php'
+	} );
 	
 });
 </script>
@@ -115,73 +124,92 @@ $(function () {
 <input type="hidden" name="action" value="<? echo $action ?>" />
 <input type="hidden" name="userID" value="<? echo $id ?>" />
 
-<fieldset>
-  <legend>User Information</legend>
-  <table>
-    <tr>
-      <td width="200">Active:</td>
-      <td>
-        <select name="active">
-          <option value="1"<? if($active == 1) echo " selected"; ?>>Yes</option>
-          <option value="0"<? if($active == 0) echo " selected"; ?>>No</option>
-        </select>
-      </td>
-    </tr>
-    <tr>
-      <td>First Name:</td>
-      <td><input type="text" name="firstname" value="<? echo $firstname ?>" /></td>
-    <tr>
-      <td>Last Name:</td>
-      <td><input type="text" name="lastname" value="<? echo $lastname ?>" /></td>
-    </tr>
-    <tr>
-      <td>Email Address:</td>
-      <td><input type="text" name="email" value="<? echo $email ?>" /></td>
-    </tr>
-    <tr>
-      <td>Force Password:</td>
-      <td><input type="password" name="password"/></td>
-    </tr>
-  </table>
-</fieldset>
-    
-<fieldset>
-  <legend>Program Information</legend>
-  <table>
-    <tr>
-      <td width="200">Program:</td>
-      <td>
-        <? 
-        if( $user_type > 2 ) { 
-            echo $program->getName();
-        } else {
-        ?>
-        <select name="programID">
-          <? echo $data->fetchProgramDropdown( $programID ); ?>
-        </select>
-        <? } ?>
-      </td>
-    </tr>
-    <tr>
-      <td>Access Level:</td>
-      <td>
-        <select name="typeID">
-          <? echo $data->fetchUserTypeDropdown( $type, $user_type); ?>
-        </select>
-      </td>
-    </tr>
-    <tr>
-      <td>Timezone:</td>
-      <td>
-        <select name="timezoneID">
-          <? echo $data->fetchTimezoneDropdown( $timezoneID ); ?>
-        </select>
-      </td>
-    </tr>
-  </table>
-</fieldset>
-
-</form>
+<div id="tabs">
+	<ul>
+		<li><a href="#tab-details">User Details</a></li>
+		<li><a href="#tab-history">User History</a></li>
+  </ul>
+  <div id="tab-details">
+  <fieldset>
+    <legend>User Information</legend>
+    <table>
+      <tr>
+        <td width="200">Active:</td>
+        <td>
+          <select name="active">
+            <option value="1"<? if($active == 1) echo " selected"; ?>>Yes</option>
+            <option value="0"<? if($active == 0) echo " selected"; ?>>No</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>First Name:</td>
+        <td><input type="text" name="firstname" value="<? echo $firstname ?>" class="wide" /></td>
+      </tr>
+      <tr>
+        <td>Last Name:</td>
+        <td><input type="text" name="lastname" value="<? echo $lastname ?>" class="wide" /></td>
+      </tr>
+      <tr>
+        <td>Email Address:</td>
+        <td><input type="text" name="email" value="<? echo $email ?>" class="wide" /></td>
+      </tr>
+      <tr>
+        <td>Force Password:</td>
+        <td><input type="password" name="password" class="wide" /></td>
+      </tr>
+    </table>
+  </fieldset>
+  <fieldset>
+    <legend>Program Information</legend>
+    <table>
+      <tr>
+        <td width="200">Program:</td>
+        <td>
+          <? 
+          if( $user_type > 2 ) { 
+              echo $program->getName();
+          } else {
+          ?>
+          <select name="programID">
+            <? echo $data->fetchProgramDropdown( $programID ); ?>
+          </select>
+          <? } ?>
+        </td>
+      </tr>
+      <tr>
+        <td>Access Level:</td>
+        <td>
+          <select name="typeID">
+            <? echo $data->fetchUserTypeDropdown( $type, $user_type); ?>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td>Timezone:</td>
+        <td>
+          <select name="timezoneID">
+            <? echo $data->fetchTimezoneDropdown( $timezoneID ); ?>
+          </select>
+        </td>
+      </tr>
+    </table>
+  </fieldset>
+  </form>
+  </div>
+  <div id="tab-history">
+    <table id="data-table">
+      <thead>
+          <tr>
+            <th>Date</th>
+            <th>Event</th>
+            <th>IP Address</th>
+          </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
 
 <?php 
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");

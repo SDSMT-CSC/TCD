@@ -320,15 +320,12 @@ class User {
 				$ouput = array();
         while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
-						
 						$row["phoneID"] = $aRow["phoneID"];
 						$row["phoneNum"] = $aRow["phoneNum"];
 						$row["ext"] = $aRow["ext"];
 						$row["type"] = $aRow["type"];
-						
 						$output[] = $row;
 				}
-				
 				return $output;
       }
     } catch ( PDOException $e ) {
@@ -394,6 +391,71 @@ class User {
 		return false;
 	}
 	
+	/*************************************************************************************************
+		function: addEvent
+		purpose: logs a user action
+		input: $id = user's id
+		       $event = what the user did
+		output: boolean true/false
+	*************************************************************************************************/
+	public function addEvent( $event )
+	{
+		// database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "INSERT INTO user_log (userID, action, ip_address ) VALUES ( :userID, :event, :ip )";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':userID', $this->userID);
+    $stmt->bindParam(':event', $event);
+    $stmt->bindParam(':ip', $_SERVER['REMOTE_ADDR']);
+    Core::dbClose();
+
+		try
+    {
+      if( $stmt->execute()) {
+				return true;
+			}
+		} catch ( PDOException $e ) {
+      echo "Add history event failed!";
+    }
+		return false;		
+	}	
+	
+	/*************************************************************************************************
+		function: fetchHistory
+		purpose: gets a list of user's actions
+		input: none
+		output: boolean true/false
+	*************************************************************************************************/
+	public function fetchHistory()
+	{
+		// database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT UNIX_TIMESTAMP(date) as date, action, ip_address FROM user_log WHERE userID = :userID ORDER BY date";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':userID', $this->userID);
+    Core::dbClose();
+		
+		try
+    {
+      if( $stmt->execute()) 
+			{
+				$ouput = array();
+       while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+						$row = array();
+						
+						$row[] = date("n/j/y h:i a",$aRow["date"]);
+						$row[] = $aRow["action"];
+						$row[] = $aRow["ip_address"];			
+						$output['aaData'][] = $row;
+				}
+				return json_encode($output);				
+      }
+    } catch ( PDOException $e ) {
+      echo "Fetch user history failed!";
+    }
+		return NULL;		
+	}
+		
 	// getters
   public function getUserID() { return $this->userID; }
 	public function getFirstName() {  return $this->firstName; }
