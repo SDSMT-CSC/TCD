@@ -44,11 +44,11 @@ $(function () {
   $("#tabs").show(); 
 	
 	$( "#user-list" ).button().click(function() {	window.location.href = "users.php";	});	
-	$( "#add-user" ).button().click(function() {	$("#newUser").submit();	});	
-	$( "#update-user" ).button().click(function() {	$("#newUser").submit();	});
+	$( "#add-user" ).button().click(function() {	$("#user").submit();	});	
+	$( "#update-user" ).button().click(function() {	$("#user").submit();	});
 	$( "#delete-user" ).button().click(function() {	 });
 	
-	$("#newUser").validate({
+	$("#user").validate({
 		errorElement: "div",
 		wrapper: "div",
 		errorPlacement: function(error, element) {
@@ -95,7 +95,7 @@ $(function () {
 				"aaSorting": [],
         "sPaginationType": "full_numbers",
 				"bProcessing": true,
-        "sAjaxSource": '/data/user_history.php'
+        "sAjaxSource": '/data/user_history.php?id=<? echo $id ?>'
 	} );
 	
 });
@@ -120,7 +120,7 @@ $(function () {
 	</div>
 </div>
 
-<form name="newUser" id="newUser" method="post" action="process.php">
+<form name="user" id="user" method="post" action="process.php">
 <input type="hidden" name="action" value="<? echo $action ?>" />
 <input type="hidden" name="userID" value="<? echo $id ?>" />
 

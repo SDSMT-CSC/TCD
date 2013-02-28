@@ -1,6 +1,12 @@
 <?
 include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 
+// make sure only certain levels of user get access to this area
+if( $user_type > 3 )
+{
+	header("location: /main.php");
+}
+
 $action = $_REQUEST["action"];
 
 if( $action == "Add User" || $action == "Edit User" )
@@ -42,5 +48,12 @@ if( $action == "Delete User" )
 	
 	// redirect to user list
 	header("location: users.php");
+}
+
+if( $action == "Add Program" || $action == "Edit Program" )
+{
+	$mod_program = new Program();
+	
+		
 }
 ?>

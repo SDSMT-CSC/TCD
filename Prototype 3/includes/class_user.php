@@ -423,37 +423,37 @@ class User {
 	/*************************************************************************************************
 		function: fetchHistory
 		purpose: gets a list of user's actions
-		input: none
+		input: $id = userID
 		output: boolean true/false
 	*************************************************************************************************/
-	public function fetchHistory()
+	public function fetchHistory( $id )
 	{
 		// database connection and sql query
     $core = Core::dbOpen();
     $sql = "SELECT UNIX_TIMESTAMP(date) as date, action, ip_address FROM user_log WHERE userID = :userID ORDER BY date";
     $stmt = $core->dbh->prepare($sql);
-    $stmt->bindParam(':userID', $this->userID);
+    $stmt->bindParam(':userID', $id);
     Core::dbClose();
-		
+				
 		try
     {
-      if( $stmt->execute()) 
+      if( $stmt->execute() && $stmt->rowCount() > 0 ) 
 			{
-				$ouput = array();
        while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
-						$row = array();
+						$row = array();						
 						
 						$row[] = date("n/j/y h:i a",$aRow["date"]);
 						$row[] = $aRow["action"];
-						$row[] = $aRow["ip_address"];			
+						$row[] = $aRow["ip_address"];	
+								
 						$output['aaData'][] = $row;
 				}
-				return json_encode($output);				
+				return json_encode($output);	
       }
     } catch ( PDOException $e ) {
       echo "Fetch user history failed!";
     }
-		return NULL;		
+		return '{"aaData":[]}';			
 	}
 		
 	// getters

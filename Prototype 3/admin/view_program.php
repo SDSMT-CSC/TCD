@@ -5,13 +5,38 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 
 $data = new Data();
 $id = $_GET["id"];
+
+if( isset($id) ) {
+	$action = "Edit Program";
+
+} else {
+	$action = "Add Program";
+
+}
 ?>
 
 <script>
 $(function () {
 	$( "#program-list" ).button().click(function() { window.location.href = 'programs.php'; });
-	$( "#update-program" ).button().click(function() {		});
-	$( "#delete-program" ).button().click(function() {		});
+	$( "#add-program" ).button().click(function() { $("#program").submit();	});
+	$( "#update-program" ).button().click(function() { $("#program").submit(); });
+	$( "#delete-program" ).button().click(function() { 	});
+	
+	
+	$("#program").validate({
+		errorElement: "div",
+		wrapper: "div",
+		errorPlacement: function(error, element) {
+			  error.insertAfter(element);
+				error.addClass('message');
+		},
+		rules: {
+			name: { required: true },
+			code: {	required: true }
+		}
+	});
+	
+	
 });
 </script>
 
@@ -22,7 +47,7 @@ $(function () {
 		<div id="control" class="ui-state-error">
     	<button id="program-list">Back to List</button>
 			<? if( $action == "Add Program" ) { ?>
-			<button id="add-program">Add User</button>
+			<button id="add-program">Add Program</button>
 			<? } else { ?>
 			<button id="update-program">Update Program</button>
 			<button id="delete-program">Delete Program</button>
@@ -32,7 +57,8 @@ $(function () {
 	
 </div>
 
-<form name="newProgram" id="newProgram" method="post" action="new.php">
+<form name="program" id="program" method="post" action="process.php">
+<input type="hidden" name="action" value="<? echo $action ?>" />
 
 <table>
 	<tr>
@@ -42,15 +68,19 @@ $(function () {
 				<legend>Court Program Information</legend>
 				<table>
 					<tr>
-						<td>Court Name:</td>
-						<td><input type="text" name="name" size="40"/></td>
+						<td width="200">Court Name:</td>
+						<td><input type="text" name="name" class="wide"/></td>
+          </tr>
+          <tr>
 						<td>Code:</td>
-						<td><input type="text" name="code"/></td>
+						<td><input type="text" name="code" class="wide"/></td>
+          </tr>
+          <tr>
 						<td>Timezone:</td>
 						<td>
-							<select id="timezone" name="timezone">
-								<option>Mountain</option>
-							</select>
+              <select name="timezoneID">
+                <? echo $data->fetchTimezoneDropdown( $timezoneID ); ?>
+              </select>
 						</td>
 					</tr>
 				</table>
@@ -58,7 +88,7 @@ $(function () {
 		</td>
 	</tr>
 	<tr>
-		<td style="width:50%;vertical-align:top">
+		<td>
 			<fieldset>
 				<legend>Program Physical Address</legend>
 				<table>
@@ -68,39 +98,39 @@ $(function () {
 					</tr>
 					<tr>
 						<td>City</td>
-						<td><input type="text" name="pCity" value="Deadwood"/></td>
+						<td><input type="text" name="pCity" value=""/></td>
 					</tr>
 					<tr>
 						<td>State</td>
-						<td><input type="text" name="pState" value="SD"/></td>
+						<td><input type="text" name="pState" value=""/></td>
 					</tr>
 					<tr>
 						<td>Zip</td>
-						<td><input type="text" name="pZip" value="57732"/></td>
+						<td><input type="text" name="pZip" value=""/></td>
 					</tr>
 				</table>
 			</fieldset>
 		</td>
-		<td style="width:50%">
+		<td>
 			<fieldset>
 				<legend>Mailing Address</legend>
 				<table>
 					<tr></tr>
 					<tr>
 						<td>Street</td>
-						<td><input type="text" name="mAddress" value="PO Box 227"/></td>
+						<td><input type="text" name="mAddress" value=""/></td>
 					</tr>
 					<tr>
 						<td>City</td>
-						<td><input type="text" name="mCity" value="Deadwood"/></td>
+						<td><input type="text" name="mCity" value=""/></td>
 					</tr>
 					<tr>
 						<td>State</td>
-						<td><input type="text" name="mState" value="SD"/></td>
+						<td><input type="text" name="mState" value=""/></td>
 					</tr>
 					<tr>
 						<td>Zip</td>
-						<td><input type="text" name="mZip" value="57732"/></td>
+						<td><input type="text" name="mZip" value=""/></td>
 					</tr>
 				</table>
 			</fieldset>
