@@ -303,8 +303,7 @@ class Data{
 		}
 		else {
 			$sql = "SELECT v.volunteerID, v.firstName, v.lastName, v.phone, v.email
-							FROM volunteer v
-							JOIN program p ON v.programID = p.programID WHERE programID = :programID";
+							FROM volunteer v WHERE v.programID = :programID";
 			$stmt = $core->dbh->prepare($sql);
 			$stmt->bindParam(':programID', $user_programID );
 		}
