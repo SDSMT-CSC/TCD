@@ -3,12 +3,14 @@ $menuarea = "admin";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 
-$data = new Data();
 $id = $_GET["id"];
+$mod_program = new Program();
+$data = new Data();
 
 if( isset($id) ) {
 	$action = "Edit Program";
-
+	$mod_program->getFromID( $id );
+	
 } else {
 	$action = "Add Program";
 
@@ -80,6 +82,16 @@ $(function () {
 						<td>
               <select name="timezoneID">
                 <? echo $data->fetchTimezoneDropdown( $timezoneID ); ?>
+              </select>
+						</td>
+					</tr>
+          <tr>
+						<td>Expunge Type:</td>
+						<td>
+              <select name="expunge">
+              	<option value="1">Full</option>
+                <option value="2">Partial</option>
+                <option value="3">Sealed</option>
               </select>
 						</td>
 					</tr>

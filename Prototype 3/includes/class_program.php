@@ -14,6 +14,7 @@ class Program {
 	private $mail_state;
 	private $mail_zip;
 	private $phone;
+	private $expunge;
 	private $timezoneID;	
 
 	public function __construct()
@@ -30,6 +31,7 @@ class Program {
 			$this->mail_state = NULL;
 			$this->mail_zip = NULL;
 			$this->phone = NULL;
+			$this->expunge = NULL;
 			$this->timezoneID = NULL;	
 	}	
 	
@@ -53,12 +55,11 @@ class Program {
         if( $stmt->rowCount() > 0 ) {				
         	return true;
 				}
-
-				return false;
       }
     } catch ( PDOException $e ) {
       echo "Search for program failed!";
     }
+		return false;
 	}
 
 	public function getFromCode( $code )
@@ -87,10 +88,13 @@ class Program {
 					$this->mail_state = $row["mState"];
 					$this->mail_zip = $row["mZip"];
 					$this->timezoneID = $row["timezoneID"];	
+					$this->expunge = $row["expunge"];	
+					return true;
 			}
 		} catch ( PDOException $e ) {
       echo "Get program by code failed!";
     }		
+		return false;
 	}
 
 	public function getFromID( $id )
@@ -121,11 +125,13 @@ class Program {
 					$this->mail_zip = $row["mZip"];
 					$this->phone = $row["phone"];
 					$this->timezoneID = $row["timezoneID"];	
+					$this->expunge = $row["expunge"];	
+					return true;
 			}
 		} catch ( PDOException $e ) {
-      echo "Get program by code failed!";
+      echo "Get program by id failed!";
     }		
-		
+		return false;
 	}
 
 
@@ -139,11 +145,20 @@ class Program {
 	public function printActivityReport();
 	*/
 	
+	// getters
 	public function getProgramID() { return $this->programID; }
 	public function getName() { return $this->name; }
 	public function getPhone() { return $this->phone; }
 	public function getTimezoneID() { return $this->timezoneID; }
-	public function getAddress() { 
+	public function getPhysicalAddress() { return $this->phys_address; }
+	public function getPhysicalCity() { return $this->phys_city; }
+	public function getPhysicalState() { return $this->phys_state; }
+	public function getPhysicalZip() { return $this->phys_zip; }
+	public function getMailAddress() { return $this->mail_address; }
+	public function getMailCity() { return $this->mail_city; }
+	public function getMailState() { return $this->mail_state; }
+	public function getMailZip() { return $this->mail_zip; }
+	public function getFullAddress() { 
 		$str = $this->phys_address . "<br>";
 		if( $this->phys_city ) $str .= $this->phys_city . ", ";
 		if( $this->phys_state ) { $str .= $this->phys_state . "  "; }
