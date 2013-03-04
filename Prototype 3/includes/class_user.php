@@ -196,7 +196,7 @@ class User {
 				$sql = "INSERT INTO user (programID,typeID,firstName,lastName,email,timezoneID,hash,active)
 								VALUES (:programID, :typeID, :firstname, :lastname, :email, :timezoneID, :hash, :active)";
 			}
-			else
+			else  // update existing record
 			{
 				$sql = "UPDATE user SET programID = :programID, typeID = :typeID, firstName = :firstname, 
 								lastName = :lastname, email = :email, timezoneID = :timezoneID, active = :active ";

@@ -59,23 +59,12 @@ class Data{
 	/*************************************************************************************************
 	
 	*************************************************************************************************/
-	public function fetchProgramListing(  $user_programID, $user_type ) {
+	public function fetchProgramListing() {
 		//database connection and SQL query
 		$core = Core::dbOpen();
-		
-		// if user_type == 1 or 2 then display every program, otherwise
-		// only get that persons program (should probably return invalid as only admins need this)
-		if( $user_type == 1 || $user_type == 2 ) {
-			$sql = "SELECT p.programID, p.code, p.name, p.pCity, p.pState, p.pZip
-							FROM program p";
-			$stmt = $core->dbh->prepare($sql);
-		}
-		else {
-			$sql = "SELECT p.programID, p.code, p.name, p.PAddress, p.pCity, p.pZip
-							FROM program p WHERE programID = :programID";
-			$stmt = $core->dbh->prepare($sql);
-			$stmt->bindParam(':programID', $user_programID );
-		}
+		$sql = "SELECT p.programID, p.code, p.name, p.pCity, p.pState, p.pZip, p.active 
+						FROM program p";
+		$stmt = $core->dbh->prepare($sql);
 		Core::dbClose();
 		
 		try {
@@ -89,6 +78,7 @@ class Data{
 						$row[] = $aRow["pCity"];
 						$row[] = $aRow["pState"];
 						$row[] = $aRow["pZip"];
+            ( $aRow["active"] == 1 ) ? $row[] = "Yes" : $row[] = "No";
 						$row[] = "<a href=\"/admin/view_program.php?id=". $aRow["programID"] ."\">Edit</a>";				
 						
 						$output['aaData'][] = $row;
@@ -98,7 +88,7 @@ class Data{
 			}
 		} 
 		catch (PDOException $e) {
-      		echo "User Data Read Failed!";
+      		echo "Program Data Read Failed!";
     }
 		return '{"aaData":[]}';
 	}
@@ -289,24 +279,16 @@ class Data{
 	/*************************************************************************************************
 	
 	*************************************************************************************************/
-	public function fetchVolunteerListing(  $user_programID, $user_type ) {
+	public function fetchVolunteerListing(  $user_programID ) {
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
-		// if user_type == 1 or 2 then display every user, otherwise
-		// only get users for that persons program (should probably return invalid)
-		if( $user_type == 1 || $user_type == 2 ) {
-			$sql = "SELECT v.volunteerID, v.firstName, v.lastName, v.phone, v.email
-							FROM volunteer v
-							JOIN program p ON v.programID = p.programID";
-			$stmt = $core->dbh->prepare($sql);
-		}
-		else {
-			$sql = "SELECT v.volunteerID, v.firstName, v.lastName, v.phone, v.email
-							FROM volunteer v WHERE v.programID = :programID";
-			$stmt = $core->dbh->prepare($sql);
-			$stmt->bindParam(':programID', $user_programID );
-		}
+		//not worried about type, just get according to program
+		$sql = "SELECT v.volunteerID, v.firstName, v.lastName, v.phone, v.email
+						FROM volunteer v WHERE v.programID = :programID";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $user_programID );
+		Core::dbClose();
 		Core::dbClose();
 		
 		try {

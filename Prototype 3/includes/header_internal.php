@@ -63,7 +63,7 @@ jQuery(function($)
 		<div class="left">
 			<strong><? echo $program->getName() ?></strong><br />
 			<? echo $program->getFullAddress() ?><br />
-			<? echo $program->getPhone() ?> | <a href="/contact.php">Contact Administrator</a>
+			<? echo $program->phone ?> | <a href="/contact.php">Contact Administrator</a>
 		</div>
 		<div class="right">		
 			<div class="identity">605-555-5555 | <a href="/help.php">Help</a> | <a href="/contact.php">Support</a></div>

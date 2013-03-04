@@ -35,7 +35,8 @@ jQuery(function($)
 			<th width="100">City</th>
 			<th width="50">State</th>
 			<th width="50">Zip</th>
-			<th width="125">Modify</th>
+      <th width="50">Active</th>
+			<th width="50">Modify</th>
 		</tr>
 	</thead>
 	<tbody>

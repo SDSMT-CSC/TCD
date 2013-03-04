@@ -27,7 +27,7 @@ if( $action == "Add User" || $action == "Edit User" )
 	if( $mod_user->updateUser() )
 	{
 		// log the event
-		$user->addEvent("Updated user: " . $mod_user->getEmail() );
+		$user->addEvent($action . ": " . $mod_user->getEmail() );
 	}
 	
 	// redirect to the user page	
@@ -53,7 +53,33 @@ if( $action == "Delete User" )
 if( $action == "Add Program" || $action == "Edit Program" )
 {
 	$mod_program = new Program();
-	
-		
+  
+  if($action == "Edit Program") { $mod_program->setProgramID( $_POST["programID"] ); }
+  $mod_program->setCode( $_POST["code"] );
+  $mod_program->setName( $_POST["name"]);
+  $mod_program->phys_address = $_POST["pAddress"];
+  $mod_program->phys_city = $_POST["pCity"];
+  $mod_program->phys_state = $_POST["pState"];
+  $mod_program->phys_zip = $_POST["pZip"];
+  $mod_program->mail_address = $_POST["mAddress"];
+  $mod_program->mail_city = $_POST["mCity"];
+  $mod_program->mail_state = $_POST["mState"];
+  $mod_program->mail_zip = $_POST["mZip"];
+  $mod_program->phone = $_POST["phone"];
+  $mod_program->expunge = $_POST["expunge"];
+  $mod_program->timezoneID = $_POST["timezoneID"];
+  
+  
+  if( $mod_program->updateProgram() )
+  {
+    // log the event
+    $user->addEvent($action . ": " . $mod_program->getName() );  
+  }
+  
+  // redirect to the user page  
+  header("location: view_program.php?id=".$mod_program->getProgramID() );
 }
+
+
+
 ?>
