@@ -1,5 +1,5 @@
 <?php 
-$menuarea = "main";
+$menuarea = "defendant";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 ?>
 
@@ -10,24 +10,25 @@ jQuery(function($)
 				"aaSorting": [],
         "sPaginationType": "full_numbers",
 				"bProcessing": false,
-        "sAjaxSource": '/data/courts_upcoming.php'
+        "sAjaxSource": '/data/defendants_current.php'
 	} );
 
 });
 </script>
 
-<h1>Upcoming Court Dates</h1>
+<h1>Active Defendants</h1>
 
 <table id="data-table">
 	<thead>
-		<tr>
-			<th width="100">Court Case#</th>
-			<th width="75">Last Name</th>
-			<th width="75">First Name</th>
-			<th width="125">Date</th>
-			<th width="150">Location</th>
-			<th width="50">Modify</th>
-		</tr>
+			<tr>
+				<th width="50">Citation#</th>
+				<th width="75">Court Case#</th>
+				<th width="75">Last Name</th>
+				<th width="75">First Name</th>
+				<th width="125">Location</th>
+				<th width="150">Added</th>
+				<th width="50"></th>
+			</tr>
 	</thead>
 	<tbody></tbody>
 </table>

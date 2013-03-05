@@ -1,5 +1,5 @@
-<?php 
-$menuarea = "main";
+<?php
+$menuarea = "volunteer";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 ?>
 
@@ -10,28 +10,28 @@ jQuery(function($)
 				"aaSorting": [],
         "sPaginationType": "full_numbers",
 				"bProcessing": false,
-        "sAjaxSource": '/data/courts_upcoming.php'
+        "sAjaxSource": '/data/volunteers.php'
 	} );
 
 });
 </script>
 
-<h1>Upcoming Court Dates</h1>
+<h1>Active Volunteers</h1>
 
 <table id="data-table">
 	<thead>
-		<tr>
-			<th width="100">Court Case#</th>
-			<th width="75">Last Name</th>
-			<th width="75">First Name</th>
-			<th width="125">Date</th>
-			<th width="150">Location</th>
-			<th width="50">Modify</th>
-		</tr>
+			<tr>
+				<th width="50">Volunteer#</th>
+				<th width="75">First Name</th>
+				<th width="75">Last Name</th>
+				<th width="125">Phone#</th>
+				<th width="150">Email</th>
+				<th width="125">Modify</th>
+			</tr>
 	</thead>
 	<tbody></tbody>
 </table>
 
-<?php 
+<?php
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");
 ?>
