@@ -1,5 +1,5 @@
 <?php
-$menuarea = "admin";
+$menuarea = "users";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 ?>
 

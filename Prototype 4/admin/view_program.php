@@ -1,5 +1,5 @@
 <?php
-$menuarea = "admin";
+$menuarea = "programs";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 

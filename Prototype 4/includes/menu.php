@@ -7,7 +7,7 @@
 			<a id="defendant" href="/defendant/index.php">Defendants</a>
 			<ul>
 				<li><a href="/defendant/index.php">List Defendants</a></li>
-				<li><a href="/defendant/new.php">New Defendant</a></li>
+				<li><a href="/defendant/view.php">New Defendant</a></li>
 				<li><a href="/defendant/search.php">Search Defendants</a></li>
 			</ul>
 		</li>
@@ -39,18 +39,24 @@
 		<li><a id="reports" href="/reports/index.php">Reports</a></li>
 		<li><a id="statistics" href="/statistics/index.php">Statistics</a></li>
 		<? } ?>
-		
+    
 		<? if ( $user_type == 2 ) { ?>
-		<li><a id="program-management" href="#">Program Management</a></li>
 		<li><a id="surveys" href="#">Surveys</a></li>
 		<? } ?>
 		
 		<? if ( $user_type == 1 || $user_type == 2 ) { ?>
-		<li><a id="statistics" href="/admin/programs.php">Programs</a></li>
+		<li><a id="programs" href="/admin/programs.php">Programs</a></li>
+    <li><a id="users" href="/admin/users.php">Users</a></li>
 		<? } ?>
 		
-    <? if ( $user_type <= 3 ) { ?>
-    <li><a id="statistics" href="/admin/users.php">Users</a></li>
+		<? if ( $user_type == 2 || $user_type == 3 ) { ?>
+    <li><a id="program" href="/admin/program.php">My Program</a></li>
+		<? } ?>
+    
+    <? if ( $user_type == 3 ) { ?>
+    <li><a id="users" href="/admin/users.php">Users</a></li>
     <? } ?>
+
+
 	</ul>
 </div>

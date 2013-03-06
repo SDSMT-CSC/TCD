@@ -14,8 +14,7 @@ jQuery(function($)
 	$("#delete-defendant").button().click(function() {  });
 	$("#next-defendant").button().click(function() {	});
 		
-	$("#expunged").datepicker();
-	$("#closed").datepicker();
+	$("#dob").datepicker();
 	$("#citation-date").datepicker();
 		
 });
@@ -35,39 +34,39 @@ jQuery(function($)
 	</div>
 </div>
 
-<form name="updateDefendant" id="updateDefendant" method="post">
-
+<form name="defendant-primary" id="efendant-primary" method="post">
 <fieldset>
 	<legend>Primary Defendant Information</legend>
-	
 	<table>
 		<tr>
 			<td>Last Name:</td>
-			<td><input type="text" name="last-name" value="Doe" /></td>
+			<td><input type="text" name="last-name" value="" /></td>
 			<td>Date of Birth:</td>
-			<td><input type="text" name="last-name" size="10" value="05/25/1997" /></td>
-			<td>Court Case #:</td>
-			<td><input type="text" name="court-case" size="10" value="1234" /></td>
+			<td><input type="text" name="dob" id="dob" size="10" value="" /></td>
+			<td>Defendant#:</td>
+			<td></td>
 		</tr>
 		<tr>
 			<td>First Name:</td>
-			<td><input type="text" name="first-name" value="John" /> MI: <input type="text" name="middle" size="5" /></td>
+			<td><input type="text" name="first-name" value="" /> MI: <input type="text" name="middle" size="5" /></td>
 			<td>Home Phone:</td>
-			<td><input type="text" name="last-name" value="(605) 555-5555" /></td>
+			<td><input type="text" name="home-phone" value="" /></td>
+			<td>Court Case #:</td>
+			<td><input type="text" name="court-case" size="10" value="" /></td>
+		</tr>
+		<tr>
+			<td>Expunged:</td>
+			<td></td>
+			<td>Closed:</td>
+			<td></td>
 			<td>Agency Case #:</td>
 			<td><input type="text" name="agency-case" size="10" /></td>
 		</tr>
-		<tr>
-			<td colspan="2"></td>
-			<td>Expunged:</td>
-			<td><input type="text" name="expunged" id="expunged" /></td>
-			<td>Closed:</td>
-			<td><input type="text" name="closed" id="closed" /></td>
-		</tr>
 	</table>
-	
 </fieldset>
+</form>
 
+<? if( true ) { ?>
 <div id="tabs">
 	<ul>
 		<li><a href="#tab-personal">Personal</a></li>
@@ -112,9 +111,7 @@ jQuery(function($)
 		<? include("tab_notes.php"); ?>
 	</div>
 </div>
-
-
-</form>
+<? } ?>
 
 <?php 
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");

@@ -5,5 +5,5 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 
 //pulls the data, and gets the table
 $data = new Data();
-echo $data->fetchVolunteerListing( $user_programID, $user_type );
+echo $data->fetchVolunteerListing( $user_programID );
 ?>
