@@ -38,23 +38,6 @@ class Core {
 			$this->dbh = null;
 		}
 	}
-		
-	public function convertDate( $dateToConvert ) {
-		
-		date_default_timezone_set('America/Denver');
-
-		if( $dateToConvert ) {
-			// build date display
-			if( strpos( $dateToConvert, "/") == 0 ) {
-				return date("m/d/Y h:i a", $dateToConvert);
-			}
-			else {
-				// build the unix timestamp
-				$dateObj = DateTime::createFromFormat('m/d/Y h:i a', $dateToConvert);
-				return $dateObj->format('U');
-			}
-		}
-	}
 }
 
 ?>

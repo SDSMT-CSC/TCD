@@ -22,7 +22,7 @@ else
 {
 		// update session timestamp to keep user logged in as long as they are active
 		$_SESSION["timestamp"] = date( 'Y-m-d H:i:s', time() );
-		
+				
 		// get user information
 		$user = new User();
 		$user->getFromID( $_SESSION["userID"] );

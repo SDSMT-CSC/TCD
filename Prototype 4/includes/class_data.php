@@ -231,9 +231,10 @@ class Data{
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
-		$sql = "SELECT courtCaseNumber, lastName, firstName, address, entered
-						FROM defendant d 
-						WHERE deleted = 0 AND d.closeDate is NULL AND programID = :programID";
+		$sql = "SELECT d.defendantID, courtCaseNumber, lastName, firstName, pCity,	pState, UNIX_TIMESTAMP(added) as added
+						FROM defendant d
+						JOIN defendant_personal dp ON dp.defendantID = d.defendantID 
+						WHERE closeDate is NULL AND programID = :programID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();
@@ -244,12 +245,16 @@ class Data{
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
 						
-						$row[] = $aRow["citationID"];
 						$row[] = $aRow["courtCaseNumber"];
 						$row[] = $aRow["lastName"];
 						$row[] = $aRow["firstName"];
-						$row[] = $aRow["address"];
-						$row[] = $aRow["entered"];
+						
+						if( $aRow["pCity"] && $aRow["pState"] )
+							$row[] = $aRow["pCity"] . ", " . $aRow["pState"];
+						else
+							$row[] = NULL;
+						
+						$row[] = date("n/j/y h:i a",$aRow["added"]);
 						$row[] = "<a href=\"/defendant/view.php?id=". $aRow["defendantID"] ."\">Edit</a>";				
 						
 						$output['aaData'][] = $row;

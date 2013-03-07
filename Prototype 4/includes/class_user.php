@@ -221,20 +221,17 @@ class User {
 			try
 			{			
 				if( $stmt->execute()) {
-					
+
 					// if it's a new user, get the last insertId
 					if( $this->userID == 0 )
-					{
 						$this->userID = $core->dbh->lastInsertId(); 
-					}
-					
+
 					return true;
 				}
 				
 			} catch ( PDOException $e ) {
 				echo "Set User Information Failed!";
 			}
-			
 			return false;
   }
 	
@@ -256,14 +253,11 @@ class User {
 			
 			try
 			{			
-				if( $stmt->execute()) {
+				if( $stmt->execute())
 					return true;
-				}
-				
 			} catch ( PDOException $e ) {
 				echo "Set User Information Failed!";
-			}
-			
+			}			
 			return false;
   }
   
@@ -287,14 +281,12 @@ class User {
       if( $stmt->execute()) 
 			{
         $row = $stmt->fetch();
-        if( $stmt->rowCount() > 0 ) {				
+        if( $stmt->rowCount() > 0 )
         	return true;
-				}
       }
     } catch ( PDOException $e ) {
       echo "Search for email failed!";
-    }
-		
+    }		
 		return false;
 	}
 	
@@ -356,9 +348,8 @@ class User {
 
 		try
     {
-      if( $stmt->execute()) {
+      if( $stmt->execute())
 				return true;
-			}
 		} catch ( PDOException $e ) {
       echo "Add phone number failed!";
     }
@@ -382,9 +373,8 @@ class User {
 
 		try
     {			
-      if( $stmt->execute()) {
+      if( $stmt->execute())
 				return true;
-			}
 		} catch ( PDOException $e ) {
       echo "Remove phone number failed!";
     }
@@ -411,9 +401,8 @@ class User {
 
 		try
     {
-      if( $stmt->execute()) {
+      if( $stmt->execute())
 				return true;
-			}
 		} catch ( PDOException $e ) {
       echo "Add history event failed!";
     }

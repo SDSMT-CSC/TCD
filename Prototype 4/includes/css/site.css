@@ -40,6 +40,7 @@ fieldset input, select, textarea { margin: 2px 0; padding: 3px; background-color
 legend { padding: 2px 4px; }
 
 div.message{
+		z-index: 100;
 	  display:inline-block;
 		white-space: nowrap;
     background: transparent url(images/msg_arrow.png) no-repeat scroll left center;

@@ -101,7 +101,7 @@
 									<option>Deadwood Junior High</option>
 									<option selected="selected">Deadwood High School</option>
 								</select>
-								<a id="add-school" style="cursor:pointer;">+</a>
+								<a id="add-school" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
 							</td>
 						</tr>
 						<tr>
