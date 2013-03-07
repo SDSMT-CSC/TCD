@@ -205,7 +205,7 @@ class Volunteer {
 		$core = Core::dbOpen();
 		// might need to add 'OR c.programID = default' clause to add the default position list
 		// talk to Andrew about that Tuesday
-		$sql = "SELECT c.position, c.positionID FROM court_position c WHERE c.programID = :id";
+		$sql = "SELECT c.position, c.positionID FROM court_position c WHERE c.programID = :id OR c.programID = 0";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':id', $programID );
 		Core::dbClose();
