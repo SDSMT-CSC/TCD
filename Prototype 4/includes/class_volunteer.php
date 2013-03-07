@@ -7,6 +7,7 @@ class Volunteer {
 	private $phone;
 	private $email;
 	private $positions;
+	private $active;
 	
 	public function __construct()
 	{
@@ -17,6 +18,7 @@ class Volunteer {
 		$this->phone = NULL;
 		$this->email = NULL;
 		$this->positions = 0;
+		$this->active = 1;
 	}
 	
 	public function addVolunteer()
@@ -61,8 +63,16 @@ class Volunteer {
 			$stmt2->bindParam(':volunteerID', $this->volunteerID);
 			$stmt2->bindParam(':positionID', $value);
 			Core::dbClose();
-		
+			
+			try
+			{
 			$stmt2->execute();
+			}
+			catch ( PDOException $e )
+			{
+				echo "Add Volunteer Positons Failed!";
+				return false;
+			}
 		}
 		//both add volunteer and position were successful
 		return true;
@@ -72,7 +82,7 @@ class Volunteer {
 	{
 		// database connection and sql query to update volunteer
 		$core = Core::dbOpen();
-		$sql = "UPDATE volunteer SET firstName = :firstName, lastName = :lastName, phone = :phone, email = :email
+		$sql = "UPDATE volunteer SET firstName = :firstName, lastName = :lastName, phone = :phone, email = :email, active = :active
 		        WHERE volunteerID = :id";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':firstName', $this->firstName);
@@ -80,19 +90,55 @@ class Volunteer {
 		$stmt->bindParam(':phone', $this->phone);
 		$stmt->bindParam(':email', $this->email);
 		$stmt->bindParam(':id', $this->volunteerID);
+		$stmt->bindParam(':active', $this->active);
 		Core::dbClose();
 		
 		//execute stmt
 		try
 		{
-			if( $stmt->execute() )
-			{
-				return true;
-			}
+			$stmt->execute();
 		}
 		catch (PDOException $e )
 		{
 			echo "Edit Volunteer Failed";
+		}
+		
+		//delete old positions
+		$core = Core::dbOpen();
+		$sql = "DELETE FROM volunteer_position WHERE volunteerID = :id";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':id', $this->volunteerID);
+		Core::dbClose();
+		
+		try
+		{
+			$stmt->execute();
+		}
+		catch ( PDOException $e )
+		{
+			echo "Delete Old Volunteer Positions Failed!";
+		}
+		
+		//add positions
+		foreach ( $this->positions as $key => $value)
+		{
+			$core = Core::dbOpen();
+			$sql = "INSERT INTO volunteer_position (volunteerID, positionID) 
+					VALUES (:volunteerID, :positionID)";
+			$stmt2 = $core->dbh->prepare($sql);
+			$stmt2->bindParam(':volunteerID', $this->volunteerID);
+			$stmt2->bindParam(':positionID', $value);
+			Core::dbClose();
+			
+			try
+			{
+			$stmt2->execute();
+			}
+			catch ( PDOException $e )
+			{
+				echo "Add Volunteer Positons Failed!";
+				return false;
+			}
 		}
 		return false;
 	}
@@ -104,8 +150,7 @@ class Volunteer {
 	{
 		// database connection and sql query
     	$core = Core::dbOpen();
-    	$sql = "SELECT v.*, p.positionID FROM volunteer v WHERE v.volunteerID = :id
-    			JOIN volunteer_position p ON v.volunteerID = p.volunteerID";
+    	$sql = "SELECT v.* FROM volunteer v WHERE v.volunteerID = :id";
     	$stmt = $core->dbh->prepare($sql);
     	$stmt->bindParam(':id', $id);
     	Core::dbClose();
@@ -122,16 +167,35 @@ class Volunteer {
 				$this->lastName = $row["lastName"];
 				$this->phone = $row["phone"];
 				$this->email = $row["email"];
-				$this->positions = $row["positionID"];
+				$this->active = $row["active"];
+			}
+		}
+		catch ( PDOException $e )
+		{
+			echo "Get Volunteer Failed!";
+			return false;
+		}
+		
+		// get position array
+		$core = Core::dbOpen();
+		$sql = "SELECT p.positionID FROM volunteer_position p WHERE p.volunteerID = :id";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':id', $id);
+		Core::dbClose();
+		
+		try
+		{
+			if( $stmt->execute() )
+			{
+				$this->positions = $stmt->fetchAll(PDO::FETCH_COLUMN);
 				
 				return true;
 			}
 		}
 		catch ( PDOException $e )
 		{
-			echo "Get Volunteer Failed!";
+			echo "Get Volunteer Positions Failed!";
 		}
-		
 		return false;
 	}
 	
@@ -171,6 +235,7 @@ class Volunteer {
 	public function getPhone() { return $this->phone; }
 	public function getEmail() { return $this->email; }
 	public function getPositions() { return $this->positions; }
+	public function getActive() { return $this->active; }
 	
 	//setter
 	public function setVolunteerID( $val ) { $this->volunteerID = $val; }
@@ -180,6 +245,7 @@ class Volunteer {
 	public function setPhone( $val ) { $this->phone = $val; }
 	public function setEmail( $val ) { $this->email = $val; }
 	public function setPositions( $val ) { $this->positions = $val; }
+	public function setActive( $val ) { $this->active = $val; }
 	
 	public function display()
 	{

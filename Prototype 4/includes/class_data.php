@@ -227,16 +227,27 @@ class Data{
 	/*************************************************************************************************
 	
 	*************************************************************************************************/
-	public function fetchDefendantListing(  $user_programID ) {
+	public function fetchDefendantListing(  $user_programID, $user_type ) {
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
-		$sql = "SELECT d.defendantID, courtCaseNumber, lastName, firstName, pCity,	pState, UNIX_TIMESTAMP(added) as added
-						FROM defendant d
-						JOIN defendant_personal dp ON dp.defendantID = d.defendantID 
-						WHERE closeDate is NULL AND programID = :programID";
-		$stmt = $core->dbh->prepare($sql);
-		$stmt->bindParam(':programID', $user_programID );
+		// if user_type == 1 or 2 then display every user, otherwise
+		// only get users for that persons program
+		if( $user_type == 1 || $user_type == 2 ) {
+			$sql = "SELECT c.citationID, d.courtCaseNumber, d.lastName, d.firstName, c.address, c.entered
+							FROM defendant d WHERE d.closeDate IS NULL
+							JOIN citation c ON d.defendantID = c.defendantID
+							JOIN program p ON d.programID = p.programID";
+			$stmt = $core->dbh->prepare($sql);
+		}
+		else {
+			$sql = "SELECT c.citationID, d.courtCaseNumber, d.lastName, d.firstName, c.address, c.entered
+							FROM defendant d WHERE d.closeDate IS NULL
+							JOIN citation c ON d.defendantID = c.defendantID
+							JOIN program p ON d.programID = p.programID WHERE programID = :programID";
+			$stmt = $core->dbh->prepare($sql);
+			$stmt->bindParam(':programID', $user_programID );
+		}
 		Core::dbClose();
 		
 		try {
@@ -245,16 +256,12 @@ class Data{
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
 						
+						$row[] = $aRow["citationID"];
 						$row[] = $aRow["courtCaseNumber"];
 						$row[] = $aRow["lastName"];
 						$row[] = $aRow["firstName"];
-						
-						if( $aRow["pCity"] && $aRow["pState"] )
-							$row[] = $aRow["pCity"] . ", " . $aRow["pState"];
-						else
-							$row[] = NULL;
-						
-						$row[] = date("n/j/y h:i a",$aRow["added"]);
+						$row[] = $aRow["address"];
+						$row[] = $aRow["entered"];
 						$row[] = "<a href=\"/defendant/view.php?id=". $aRow["defendantID"] ."\">Edit</a>";				
 						
 						$output['aaData'][] = $row;
@@ -278,7 +285,7 @@ class Data{
 		
 		//not worried about type, just get according to program
 		$sql = "SELECT v.volunteerID, v.firstName, v.lastName, v.phone, v.email
-						FROM volunteer v WHERE v.programID = :programID";
+						FROM volunteer v WHERE v.programID = :programID AND v.active = 1";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();

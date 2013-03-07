@@ -41,6 +41,8 @@ elseif( $action == "Edit Volunteer")
 	$edit_volunteer->setLastName( $_POST["lastName"] );
 	$edit_volunteer->setPhone( $_POST["phone"] );
 	$edit_volunteer->setEmail( $_POST["email"] );
+	$edit_volunteer->setPositions( $_POST["position"] );
+	$edit_volunteer->setActive( $_POST["active"] );
 	
 	if( $edit_volunteer->editVolunteer() )
 	{

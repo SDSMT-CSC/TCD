@@ -15,9 +15,8 @@ if( isset($id) )
 	$phone = $volunteer->getPhone();
 	$email = $volunteer->getEmail();
 	$positions = $volunteer->getPositions();
-	var_dump($positions);
+	$active = $volunteer->getActive();
 	$programPositions = $volunteer->getProgramPositions($user_programID);
-	var_dump($programPositions);
 }
 else
 {
@@ -53,7 +52,7 @@ $(function () {
 
 <div id="control-header">
 	
-	<div class="left"><h1>Add New Volunteer</h1></div>	
+	<div class="left"><h1>Edit Existing Volunteer</h1></div>	
 	<div class="right">
 		<div id="control" class="ui-state-error">
 			<button id="previous-volunteer">Previous</button>
@@ -94,8 +93,8 @@ $(function () {
 						<td>Active?</td>
 						<td>
 							<select name="active">
-								<option>Yes</option>
-								<option>No</option>
+								<option value="1" <? if($active == 1) echo "selected=\"true\"" ?> >Yes</option>
+								<option value="0" <? if($active == 0) echo "selected=\"true\"" ?>>No</option>
 							</select>
 						</td>
 					</tr>
@@ -108,14 +107,14 @@ $(function () {
 				<table>
 					<? // positions array is run through to generate the table, compare to volunteer positions to check
 						foreach( $programPositions as $key => $value)
-						echo "
-					<tr>
+						{
+						echo "<tr>
 						<td>$key</td>
-						<td><input type=\"checkbox\" name=\"position[]\" value=\"$value\" /></td>
-					</tr>";
-						//foreach( $position as $pkey => $pvalue)
-						//	if ($pvalue == $value) echo " checked=\"checked\" ";
-						//echo "/></td></tr>";
+						<td><input type=\"checkbox\" name=\"position[]\" value=\"$value\" ";
+						foreach( $positions as $pkey => $pvalue)
+							if ($pvalue == $value) echo " checked=\"checked\" ";
+						echo "/></td></tr>";
+						}
 					?>
 				</table>
 			</fieldset>
