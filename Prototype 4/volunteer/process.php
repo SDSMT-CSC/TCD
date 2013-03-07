@@ -20,6 +20,7 @@ if( $action == "Add Volunteer")
 	$new_volunteer->setLastName( $_POST["lastName"] );
 	$new_volunteer->setPhone( $_POST["phone"] );
 	$new_volunteer->setEmail( $_POST["email"] );
+	$new_volunteer->setPositions( $_POST["position"] );
 	
 	if( $new_volunteer->addVolunteer() )
 	{
@@ -29,5 +30,31 @@ if( $action == "Add Volunteer")
 	
 	//redirect to edit page
 	header("location:view.php?id=".$new_volunteer->getVolunteerID() );
+}
+
+elseif( $action == "Edit Volunteer")
+{
+	$edit_volunteer = new Volunteer();
+	
+	$edit_volunteer->setVolunteerID( $_POST["volunteerID"]);
+	$edit_volunteer->setFirstName( $_POST["firstName"]);
+	$edit_volunteer->setLastName( $_POST["lastName"] );
+	$edit_volunteer->setPhone( $_POST["phone"] );
+	$edit_volunteer->setEmail( $_POST["email"] );
+	
+	if( $edit_volunteer->editVolunteer() )
+	{
+		//log if successful
+		$user->addEvent("Edited Volunteer: " . $edit_volunteer->getLastName() );
+	}
+	
+	//redirect to edit page
+	header("location:view.php?id=".$edit_volunteer->getVolunteerID() );
+}
+
+else
+{
+	//should not be here, return to main
+	header("location:index.php");
 }
 ?>

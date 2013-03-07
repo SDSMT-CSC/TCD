@@ -1,14 +1,19 @@
 <?php
 $menuarea = "volunteer";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_volunteer.php");
 
 // make sure logged in user has access to edit this user
-//if( $user_type == 1 || $programID != $program->getProgramID() )
-//{
-//	echo "NO ACCESS!";
-//}
+if( $user_programID != $program->getProgramID() )
+{
+	echo "NO ACCESS!";
+}
 
-//set variables to default
+// get the positions that this program uses
+$volunteer = new Volunteer();
+$programPositions = $volunteer->getProgramPositions($user_programID);
+
+// set variables to default
 $action = "Add Volunteer";
 $firstName = "";
 $lastName = "";
@@ -20,7 +25,22 @@ $email = "";
 $(function () {
 	$("#add-volunteer").button().click(function(){ $("#newVolunteer").submit(); });
 	
-	//ADD INFO VALIDATION
+	$("#newVolunteer").validate({
+		errorElement: "div",
+		wrapper: "div",
+		errorPlacement: function(error, element) {
+			error.insertAfter(element);
+			error.addClass('messsage');
+		},
+		rules: {
+			lastName: {
+				required: true
+			},
+			phone: {
+				required: true
+			}
+		}
+	} );
 });
 </script>
 
@@ -66,38 +86,14 @@ $(function () {
 			<fieldset>
 				<legend>Volunteer Positions</legend>
 				<table>
+					<? // positions array is run through to generate the table
+						foreach( $programPositions as $key => $value)
+						echo "
 					<tr>
-						<td>Judge</td>
-						<td><input type="checkbox" name="position[]" value="judge" /></td>
-					</tr>
-					<tr>
-						<td>Prosecuting Attorney</td>
-						<td><input type="checkbox" name="position[]" value="prosecuting_attorney" /></td>
-					</tr>
-					<tr>
-						<td>Defence Attorney</td>
-						<td><input type="checkbox" name="position[]" value="defense_attorney" /></td>
-					</tr>
-					<tr>
-						<td>Clerk</td>
-						<td><input type="checkbox" name="position[]" value="clerk" /></td>
-					</tr>
-					<tr>
-						<td>Bailiff</td>
-						<td><input type="checkbox" name="position[]" value="bailiff" /></td>
-					</tr>
-					<tr>
-						<td>Exit Interviewer</td>
-						<td><input type="checkbox" name="position[]" value="exit_interviewer" /></td>
-					</tr>
-					<tr>
-						<td>Advisor</td>
-						<td><input type="checkbox" name="position[]" value="advisor" /></td>
-					</tr>
-					<tr>
-						<td>Jury</td>
-						<td><input type="checkbox" name="position[]" value="jury" /></td>
-					</tr>
+						<td>$key</td>
+						<td><input type=\"checkbox\" name=\"position[]\" value=\"$value\" /></td>
+					</tr>";
+					?>
 				</table>
 			</fieldset>
 		</td>
