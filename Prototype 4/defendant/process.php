@@ -29,4 +29,9 @@ if( $action == "Add Defendant" || $action == "Edit Defendant" )
 	header("location: view.php?id=".$defendant->getDefendantID() );
 }
 
+if( $action == "Add Location" )
+{
+	//$_REQUEST["city"] . ", " . $_POST["state"] . "  " . $_POST["zip"];
+	echo 2;
+}
 ?>

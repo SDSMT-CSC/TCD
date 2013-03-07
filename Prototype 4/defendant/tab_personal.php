@@ -16,13 +16,49 @@
 						$(this).dialog('close');
 					}
 				}
-			
 			});
 			
+		$("#location-dialog").dialog({
+				resizable: false,
+				autoOpen:false,
+				modal: true,
+				width:400,
+				height:200,
+				buttons: {
+					'Add Location': function() {
+							processLocation();
+						},
+					Cancel: function() {
+						$(this).dialog('close');
+					}
+				}	
+			});
 		
 		$('#add-school').click(function(){
 				$('#school-dialog').dialog('open');
 		});
+		
+		$('.add-location').click(function(){
+				$('#location-dialog').dialog('open');
+		});
+		
+		function processLocation()
+		{
+			// get values from form
+			var city = $("input#city").val();  
+			var state = $("input#state").val();  
+			var zip = $("input#zip").val();
+					
+			$.post( $("#location-form").attr("action"), $("#location-form").serialize(), function(response) {
+				// close dialog window
+        $("#location-dialog").dialog('close');
+				
+				// fill in the dropdown
+				$("#physical-existing").append($('<option selected="selected"></option>').val(response).html(city + ", " + state + " " + zip));
+    	});
+			  
+			return false;
+		}
 	 });
 	 </script>
  
@@ -33,6 +69,26 @@
 		</form>
 	</div>
 
+	<div id="location-dialog" title="Add New Location">
+		<form name="location-form" id="location-form" action="process.php">
+    	<input type="hidden" name="action" value="Add Location" />
+    	<table>
+      	<tr>
+        	<td>City</td>
+          <td><input type="text" name="city" id="city" /></td>
+        </tr>
+        <tr>
+        	<td>State</td>
+          <td><input type="text" name="state" id="state" size="2" /></td>
+        </tr>
+        <tr>
+        	<td>Zip</td>
+          <td><input type="text" name="zip" id="zip" size="7" /></td>
+        </tr>
+      </table>
+		</form>
+	</div>
+  
 	<table>
 		<tr>
 			<td width="600" valign="top">
@@ -41,24 +97,17 @@
 					<table>
 						<tr>
 							<td>Street:</td>
-							<td><input type="text" name="physical-street" size="40" value="142 Main St."/></td>
+							<td><input type="text" name="physical-street" size="40" value=""/></td>
 						</tr>
-						<tr>
-							<td>City:</td>
-							<td>
-								<input type="text" name="physical-city" value="Deadwood" /> State: 
-								<select name="physical-state">
-									<option>ND</option>
-									<option selected="selected">SD</option>
-									<option>WY</option>
+            <tr>
+            	<td>Location:</td>
+              <td>
+								<select name="physical-existing" id="physical-existing">
+                	<option></option>
 								</select>
-							</td>
-						</tr>
-						<tr>
-							<td>Zip:</td>
-							<td><input type="text" name="physical-zip" value="57732" /></td>
-						</tr>
-						
+								<a class="add-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+              </td>
+            </tr>
 					</table>
 				</fieldset>
 				
@@ -67,27 +116,21 @@
 					<table>
 						<tr>
 							<td></td>
-							<td><input type="checkbox" checked />  Same as physical address</td>
+							<td><input type="checkbox" />  Same as physical address</td>
 						</tr>
 						<tr>
 							<td>Street:</td>
-							<td><input type="text" name="mailing-street" size="40" value="142 Main St." /></td>
+							<td><input type="text" name="mailing-street" size="40" value="" /></td>
 						</tr>
-						<tr>
-							<td>City:</td>
-							<td>
-								<input type="text" name="mailing-city" value="Deadwood" /> State: 
-								<select name="mailing-state">
-									<option>ND</option>
-									<option selected="selected">SD</option>
-									<option>WY</option>
+            <tr>
+            	<td>Location:</td>
+              <td>
+								<select name="mailing-existing" id="mailing-existing">
+                	<option></option>
 								</select>
-							</td>
-						</tr>
-						<tr>
-							<td>Zip:</td>
-							<td><input type="text" name="mailing-zip" value="57732" /></td>
-						</tr>						
+								<a class="add-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+              </td>
+            </tr>
 					</table>
 				</fieldset>
 				
@@ -97,16 +140,15 @@
 						<tr>
 							<td>School:</td>
 							<td>
-								<select name="ethnicity" style="width: 300px;">
-									<option>Deadwood Junior High</option>
-									<option selected="selected">Deadwood High School</option>
+								<select name="school" style="width: 300px;">
+                
 								</select>
 								<a id="add-school" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
 							</td>
 						</tr>
 						<tr>
 							<td>Grade:</td>
-							<td><input type="text" name="first-name" size="5" value="11" /></td>
+							<td><input type="text" name="grade" size="5" value="" /></td>
 						</tr>
 					</table>
 				</fieldset>
@@ -117,11 +159,11 @@
 					<table>
 						<tr>
 							<td>Height:</td>
-							<td><input type="text" name="first-name" size="10" value="5'10&quot;" /></td>
+							<td><input type="text" name="height" size="10" value="" /></td>
 						</tr>
 						<tr>
 							<td>Weight:</td>
-							<td><input type="text" name="first-name" size="10" value="125" /></td>
+							<td><input type="text" name="weight" size="10" value="125" /></td>
 						</tr>
 						<tr>
 							<td>Eye Color:</td>
@@ -164,17 +206,11 @@
 					<table>
 						<tr>
 							<td>Number:</td>
-							<td><input type="text" name="first-name" size="10" value="10587452" /></td>
+							<td><input type="text" name="dl-number" size="10" value="" /></td>
 						</tr>
 						<tr>
 							<td>State:</td>
-							<td>
-								<select name="state">
-									<option>ND</option>
-									<option selected="selected">SD</option>
-									<option>WY</option>
-								</select>
-							</td>
+							<td><input type="text" name="dl-state" size="2" value="" /></td>
 						</tr>
 					</table>
 				</fieldset>
