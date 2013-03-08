@@ -121,6 +121,32 @@ class Data{
 		
 		return $data;
 	}
+	
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
+	public function fetchOfficerDropdown( $id, $officerID )
+	{
+		//database connection and SQL query
+		$core = Core::dbOpen();
+		$sql = "SELECT o.programID, o.officerID, o.lastName FROM citation_officer o 
+				WHERE o.programID = :id OR o.programID = 0 ORDER BY lastName";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':id', $id );
+		
+		try {
+			if( $stmt->execute() ) {
+				$data = "";
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					( $officerID == $aRow["officerID"] ) ? $selected = " selected" : $selected = "";
+					$data .= '<option value="'.$aRow["officerID"].'"'.$selected.'>'.$aRow["lastName"].'</option>';
+				}
+			}
+		} catch ( PDOException $e ) {
+			echo "Officer dropdown failed!";
+		}
+		return $data;
+	}
 		
 	/*************************************************************************************************
 	
@@ -320,27 +346,14 @@ class Data{
 	/*************************************************************************************************
 	
 	*************************************************************************************************/
-	public function fetchWorkshopListing(  $user_programID, $user_type ) {
+	public function fetchWorkshopListing(  $user_programID ) {
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
-		// if user_type == 1 or 2 then display every user, otherwise
-		// only get users for that persons program (should probably return invalid)
-		if( $user_type == 1 || $user_type == 2 ) {
-			$sql = "SELECT w.workshopID, w.date, w.title, w.instructor, o.lastName
-							FROM workshop w
-							JOIN citation_officer o ON w.officerID = o.officerID
-							JOIN program p ON v.programID = p.programID";
-			$stmt = $core->dbh->prepare($sql);
-		}
-		else {
-			$sql = "SELECT w.date, w.title, w.instructor, o.lastName
-							FROM workshop w
-							JOIN citation_officer o ON w.officerID = o.officerID
-							JOIN program p ON v.programID = p.programID WHERE programID = :programID";
-			$stmt = $core->dbh->prepare($sql);
-			$stmt->bindParam(':programID', $user_programID );
-		}
+		$sql = "SELECT w.workshopID, w.date, w.title, w.instructor, o.lastName 
+				FROM workshop w JOIN citation_officer o ON w.officerID = o.officerID AND o.programID = :programID";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();
 		
 		try {

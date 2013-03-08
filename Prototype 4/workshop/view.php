@@ -1,6 +1,29 @@
 <?php
 $menuarea = "workshop";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
+
+$id = $_GET["id"];
+if( isset($id) )
+{
+	$action = "Edit Volunteer";
+	
+	$workshop = new Workshop();
+	$data = new Data();
+	$workshop->getWorkshop($id);
+	$date = $workshop->getDate();
+	$time;
+	$title = $workshop->getTitle();
+	$instructor = $workshop->getInstructor();
+	$description = $workshop->getDescription();
+	$officerID = $workshop->getOfficerID();
+}
+else
+{
+	//should not be here
+	header("location:index.php");
+}
 ?>
 
 <script>
@@ -32,23 +55,31 @@ $(function () {
 	<table>
 		<tr>
 			<td>Date:</td>
-			<td><input type="text" name="date" value="12/18/2012"/></td>
+			<td><input type="text" name="date" value="<? echo $date ?>"/></td>
 		</tr>
 		<tr>
 			<td>Time:</td>
-			<td><input type="text" name="date" value="7:30 PM"/></td>
+			<td><input type="text" name="time" value=""/></td>
 		</tr>
 		<tr>
-			<td>Topic:</td>
-			<td><input type="text" name="date" value="Alcohol Recovery"/></td>
+			<td>Title:</td>
+			<td><input type="text" name="title" value="<? echo $title ?>"/></td>
+		</tr>
+		<tr>
+			<td>Description:</td>
+			<td><input type="text" name="description" value="<? echo $description ?>"/></td>
 		</tr>
 		<tr>
 			<td>Instructor:</td>
-			<td><input type="text" name="date" value="Marlene Todd"/></td>
+			<td><input type="text" name="instructor" value="<? echo $instructor ?>"/></td>
 		</tr>
 		<tr>
 			<td>Officer:</td>
-			<td><input type="text" name="date" value="Mark Williams"/></td>
+			<td>
+				<select name="officer"/>
+				<? echo $data->fetchOfficerDropdown( $user_programID, $officerID )?>
+				</select>
+			</td>
 		</tr>
 	</table>
 </fieldset>
