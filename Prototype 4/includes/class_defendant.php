@@ -139,6 +139,18 @@ class Defendant {
 			return false;
   }
 	
+	/*************************************************************************************************
+		function: updatePersonal
+		purpose: updates the defendant's personal information. this is done after initially adding
+			a defendant to the database or when editing one
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+  public function updatePersonal()
+	{
+		
+	}
+	
 	
 	/*
 	private function assignCourt();

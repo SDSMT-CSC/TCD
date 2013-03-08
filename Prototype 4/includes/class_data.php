@@ -6,7 +6,8 @@ class Data{
 	/*************************************************************************************************
 	
 	*************************************************************************************************/
-	public function fetchUserListing(  $user_programID, $user_type ) {
+	public function fetchUserListing(  $user_programID, $user_type ) 
+	{
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
@@ -59,7 +60,8 @@ class Data{
 	/*************************************************************************************************
 	
 	*************************************************************************************************/
-	public function fetchProgramListing() {
+	public function fetchProgramListing() 
+	{
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		$sql = "SELECT p.programID, p.code, p.name, p.pCity, p.pState, p.pZip, p.active 
@@ -89,6 +91,75 @@ class Data{
 		} 
 		catch (PDOException $e) {
       		echo "Program Data Read Failed!";
+    }
+		return '{"aaData":[]}';
+	}
+	
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
+	public function fetchProgramLocations( $user_programID ) 
+	{
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT * FROM program_locations WHERE programID = :programID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $user_programID);
+    Core::dbClose();
+		
+		try {
+			if($stmt->execute() && $stmt->rowCount() > 0) {
+				
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+						$row = array();
+						
+						$row[] = $aRow["city"];
+						$row[] = $aRow["state"];
+						$row[] = $aRow["zip"];
+						
+						$output['aaData'][] = $row;
+				}
+				
+				return json_encode($output);				
+			}
+		} 
+		catch (PDOException $e) {
+      		echo "Program Locations Read Failed!";
+    }
+		return '{"aaData":[]}';
+	}
+	
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
+	public function fetchProgramSchools( $user_programID ) 
+	{
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT * FROM school WHERE programID = :programID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $user_programID);
+    Core::dbClose();
+		
+		try {
+			if($stmt->execute() && $stmt->rowCount() > 0) {
+				
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+						$row = array();
+						
+						$row[] = $aRow["schoolName"];
+						$row[] = $aRow["address"];
+						$row[] = $aRow["city"];
+						$row[] = $aRow["state"];
+						$row[] = $aRow["zip"];
+						
+						$output['aaData'][] = $row;
+				}
+				return json_encode($output);				
+			}
+		} 
+		catch (PDOException $e) {
+      		echo "Program School Read Failed!";
     }
 		return '{"aaData":[]}';
 	}
@@ -208,33 +279,20 @@ class Data{
 	/*************************************************************************************************
 	
 	*************************************************************************************************/
-	public function fetchCourtListing(  $user_programID, $user_type ) {
+	public function fetchCourtListing(  $user_programID ) {
 		//database connection and SQL query
 		$core = Core::dbOpen();
-		
-		// if user_type == 1 or 2 then display every user, otherwise
-		// only get users for that persons program
-		if( $user_type == 1 || $user_type == 2 ) {
-			$sql = "SELECT d.courtCaseNumber, d.firstName, d.lastName, c.date, l.name
-							FROM court c
-							JOIN defendant d ON c.defendantID = d.defendantID
-							JOIN court_location l ON c.locationID = l.locationID
-							JOIN program p ON c.programID = p.programID";
-			$stmt = $core->dbh->prepare($sql);
-		}
-		else {
-			$sql = "SELECT d.courtCaseNumber, d.firstName, d.lastName, c.date, l.name
-							FROM court c
-							JOIN defendant d ON c.defendantID = d.defendantID
-							JOIN court_location l ON c.locationID = l.locationID
-							JOIN program p ON c.programID = p.programID WHERE programID = :programID";
-			$stmt = $core->dbh->prepare($sql);
-			$stmt->bindParam(':programID', $user_programID );
-		}
+		$sql = "SELECT d.courtCaseNumber, d.firstName, d.lastName, c.date, l.name
+						FROM court c
+						JOIN defendant d ON c.defendantID = d.defendantID
+						JOIN court_location l ON c.locationID = l.locationID
+						JOIN program p ON c.programID = p.programID WHERE programID = :programID";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();
 		
 		try {
-			if($stmt->execute()) {
+			if($stmt->execute() && $stmt->rowCount() > 0) {
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
 						
@@ -263,18 +321,15 @@ class Data{
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
-		$sql = "SELECT defendantID, courtCaseNumber, lastName, firstName, pl.city, pl.state, UNIX_TIMESTAMP( added ) AS added
-            FROM defendant d
-            LEFT JOIN program_locations pl ON d.pLocationID = pl.locationID
-            WHERE closeDate IS NULL 
-            AND d.programID =:programID";
+		$sql = "SELECT defendantID, courtCaseNumber, lastName, firstName, pCity, pState, UNIX_TIMESTAMP( added ) AS added
+            FROM defendant
+            WHERE closeDate IS NULL AND programID =:programID";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':programID', $user_programID );
-
 		Core::dbClose();
 		
 		try {
-			if($stmt->execute()) {
+			if($stmt->execute() && $stmt->rowCount() > 0) {
 				
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
@@ -282,12 +337,7 @@ class Data{
 						$row[] = $aRow["courtCaseNumber"];
 						$row[] = $aRow["lastName"];
 						$row[] = $aRow["firstName"];
-						
-            if( $aRow["city"] && $aRow["state"] )
-              $row[] = $aRow["city"] . ", " . $aRow["state"];
-            else
-              $row[] = NULL;
-            
+						$row[] = $aRow["pCity"] . " " . $aRow["pState"];
             $row[] = date("n/j/y h:i a",$aRow["added"]);					
 						$row[] = "<a href=\"/defendant/view.php?id=". $aRow["defendantID"] ."\">Edit</a>";				
 						
@@ -319,7 +369,7 @@ class Data{
 		Core::dbClose();
 		
 		try {
-			if($stmt->execute()) {
+			if($stmt->execute() && $stmt->rowCount() > 0) {
 				
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
@@ -357,7 +407,7 @@ class Data{
 		Core::dbClose();
 		
 		try {
-			if($stmt->execute()) {
+			if($stmt->execute() && $stmt->rowCount() > 0) {
 				
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();

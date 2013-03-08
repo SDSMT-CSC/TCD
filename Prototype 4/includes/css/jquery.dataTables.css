@@ -33,8 +33,11 @@ table.dataTable td.dataTables_empty {
 	text-align: center;
 }
 
-table.dataTable tr.odd { background-color: #eff4f6; }
-table.dataTable tr.even { background-color: white; }
+table.dataTable tr.odd { background-color: #eff4f6; cursor: pointer; }
+table.dataTable tr.even { background-color: white;  cursor: pointer; }
+
+table.dataTable tr.odd:hover { background-color: #fefcc5; }
+table.dataTable tr.even:hover { background-color: #fffee8; }
 
 table.dataTable tr.odd td.sorting_1 { background-color: #c0ddeb; }
 table.dataTable tr.odd td.sorting_2 { background-color: #bbbaab; }

@@ -245,40 +245,6 @@ class Program {
       }
       return false;
   }
-
-  /*************************************************************************************************
-    function: getLocationList
-    purpose: returns a list for use in dropdown locations, each program can build a list of
-    their own locations (city, state zip)
-    input: none
-    output: boolean true/false
-  *************************************************************************************************/
-  public function getLocationList( $locationID )
-  {
-    $data = NULL;
-    
-    // database connection and sql query
-    $core = Core::dbOpen();
-    $sql = "SELECT * FROM program_locations WHERE programID = :programID";
-    $stmt = $core->dbh->prepare($sql);
-    $stmt->bindParam(':programID', $this->programID);
-    Core::dbClose();
-    
-    try {
-      if($stmt->execute()) {
-        while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
-          ( $locationID == $aRow["locationID"] ) ? $selected = " selected" : $selected = "";
-          $data .= '<option value="'.$aRow["locationID"].'"'.$selected.'>'.
-            $aRow["city"].', '.$aRow["state"].' '.$aRow["zip"].'</option>';
-        }
-      }
-    } 
-    catch (PDOException $e) {
-      echo "Program location listing failed!";
-    }
-    
-    return $data;
-  }
   
   /*************************************************************************************************
     function: addLocation
@@ -315,6 +281,38 @@ class Program {
     return $locationID;
   }
   
+	 /*************************************************************************************************
+    function: addLocation
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
+  public function addSchool( $school )
+  {
+    $schoolID = NULL;
+    
+    // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "INSERT INTO program_locations (programID,school) VALUES (:programID, :school)";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $this->programID);
+    $stmt->bindParam(':school', $school);
+    Core::dbClose();
+    
+    try {
+      if($stmt->execute())
+      {
+        $schoolID = $core->dbh->lastInsertId(); 
+      }
+      print_r($stmt->errorinfo());
+    
+    } catch (PDOException $e) {
+      echo "Program school add failed!";
+    }
+    
+    return $schoolID;
+  }
+	
   // public function removeCourt() { }
 	
 	// getters

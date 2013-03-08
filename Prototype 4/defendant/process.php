@@ -29,8 +29,20 @@ if( $action == "Add Defendant" || $action == "Edit Defendant" )
 	header("location: view.php?id=".$defendant->getDefendantID() );
 }
 
-if( $action == "Add Location" )
+
+if( $action == "Update Personal" )
 {
-  echo $program->addLocation( $_POST["city"], $_POST["state"], $_POST["zip"] );
+	echo "<pre>";
+	print_r($_POST);
+	echo "</pre>";
+
+
+}
+
+
+
+if( $action == "Add School" )
+{
+  echo $program->addSchool( $_POST["school"] );
 }
 ?>
