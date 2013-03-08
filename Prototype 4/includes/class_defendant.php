@@ -130,17 +130,7 @@ class Defendant {
 
 					// if it's a new defendant, get the last insertId
 					if( $this->defendantID == 0 )
-					{
 						$this->defendantID = $core->dbh->lastInsertId(); 
-						
-						// create a new record in the defendant_personal table
-						$core = Core::dbOpen();
-						$sql = "INSERT INTO defendant_personal (defendantID) VALUES (:defendantID)";
-						$stmt = $core->dbh->prepare($sql);
-					  $stmt->bindParam(':defendantID', $this->defendantID);
-						Core::dbClose();
-						$stmt->execute();
-					}
 					return true;
 				}
 			} catch ( PDOException $e ) {

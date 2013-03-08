@@ -99,6 +99,8 @@ class Data{
 	*************************************************************************************************/
 	public function fetchProgramDropdown( $id )
 	{
+	  $data = NULL;
+    
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		$sql = "SELECT p.programID, p.code, p.name FROM program p WHERE active = 1 ORDER BY name";
@@ -125,6 +127,8 @@ class Data{
 	*************************************************************************************************/
 	public function fetchUserTypeDropdown( $id, $utype )
 	{
+	  $data = NULL;
+    
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		$sql = "SELECT * FROM user_type WHERE active = 1 AND typeID >= :usertype ORDER BY typeID";
@@ -152,6 +156,8 @@ class Data{
 	*************************************************************************************************/
 	public function fetchTimezoneDropdown( $id )
 	{
+	  $data = NULL;
+    
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		$sql = "SELECT timezoneID, display FROM timezone ORDER BY timezoneID";
@@ -227,27 +233,18 @@ class Data{
 	/*************************************************************************************************
 	
 	*************************************************************************************************/
-	public function fetchDefendantListing(  $user_programID, $user_type ) {
+	public function fetchDefendantListing(  $user_programID ) {
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
-		// if user_type == 1 or 2 then display every user, otherwise
-		// only get users for that persons program
-		if( $user_type == 1 || $user_type == 2 ) {
-			$sql = "SELECT c.citationID, d.courtCaseNumber, d.lastName, d.firstName, c.address, c.entered
-							FROM defendant d WHERE d.closeDate IS NULL
-							JOIN citation c ON d.defendantID = c.defendantID
-							JOIN program p ON d.programID = p.programID";
-			$stmt = $core->dbh->prepare($sql);
-		}
-		else {
-			$sql = "SELECT c.citationID, d.courtCaseNumber, d.lastName, d.firstName, c.address, c.entered
-							FROM defendant d WHERE d.closeDate IS NULL
-							JOIN citation c ON d.defendantID = c.defendantID
-							JOIN program p ON d.programID = p.programID WHERE programID = :programID";
-			$stmt = $core->dbh->prepare($sql);
-			$stmt->bindParam(':programID', $user_programID );
-		}
+		$sql = "SELECT defendantID, courtCaseNumber, lastName, firstName, pl.city, pl.state, UNIX_TIMESTAMP( added ) AS added
+            FROM defendant d
+            LEFT JOIN program_locations pl ON d.pLocationID = pl.locationID
+            WHERE closeDate IS NULL 
+            AND d.programID =:programID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $user_programID );
+
 		Core::dbClose();
 		
 		try {
@@ -256,12 +253,16 @@ class Data{
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
 						
-						$row[] = $aRow["citationID"];
 						$row[] = $aRow["courtCaseNumber"];
 						$row[] = $aRow["lastName"];
 						$row[] = $aRow["firstName"];
-						$row[] = $aRow["address"];
-						$row[] = $aRow["entered"];
+						
+            if( $aRow["city"] && $aRow["state"] )
+              $row[] = $aRow["city"] . ", " . $aRow["state"];
+            else
+              $row[] = NULL;
+            
+            $row[] = date("n/j/y h:i a",$aRow["added"]);					
 						$row[] = "<a href=\"/defendant/view.php?id=". $aRow["defendantID"] ."\">Edit</a>";				
 						
 						$output['aaData'][] = $row;

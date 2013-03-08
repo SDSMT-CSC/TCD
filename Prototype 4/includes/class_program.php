@@ -246,6 +246,75 @@ class Program {
       return false;
   }
 
+  /*************************************************************************************************
+    function: getLocationList
+    purpose: returns a list for use in dropdown locations, each program can build a list of
+    their own locations (city, state zip)
+    input: none
+    output: boolean true/false
+  *************************************************************************************************/
+  public function getLocationList( $locationID )
+  {
+    $data = NULL;
+    
+    // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT * FROM program_locations WHERE programID = :programID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $this->programID);
+    Core::dbClose();
+    
+    try {
+      if($stmt->execute()) {
+        while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+          ( $locationID == $aRow["locationID"] ) ? $selected = " selected" : $selected = "";
+          $data .= '<option value="'.$aRow["locationID"].'"'.$selected.'>'.
+            $aRow["city"].', '.$aRow["state"].' '.$aRow["zip"].'</option>';
+        }
+      }
+    } 
+    catch (PDOException $e) {
+      echo "Program location listing failed!";
+    }
+    
+    return $data;
+  }
+  
+  /*************************************************************************************************
+    function: addLocation
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
+  public function addLocation( $city, $state, $zip )
+  {
+    $locationID = NULL;
+    
+    // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "INSERT INTO program_locations (programID,city,state,zip)
+            VALUES (:programID, :city, :state, :zip )";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $this->programID);
+    $stmt->bindParam(':city', $city);
+    $stmt->bindParam(':state', $state);
+    $stmt->bindParam(':zip', $zip);
+    Core::dbClose();
+    
+    try {
+      if($stmt->execute())
+      {
+        $locationID = $core->dbh->lastInsertId(); 
+      }
+      print_r($stmt->errorinfo());
+    
+    } catch (PDOException $e) {
+      echo "Program location add failed!";
+    }
+    
+    return $locationID;
+  }
+  
   // public function removeCourt() { }
 	
 	// getters

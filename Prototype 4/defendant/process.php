@@ -31,7 +31,6 @@ if( $action == "Add Defendant" || $action == "Edit Defendant" )
 
 if( $action == "Add Location" )
 {
-	//$_REQUEST["city"] . ", " . $_POST["state"] . "  " . $_POST["zip"];
-	echo 2;
+  echo $program->addLocation( $_POST["city"], $_POST["state"], $_POST["zip"] );
 }
 ?>

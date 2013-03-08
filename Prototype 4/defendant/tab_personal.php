@@ -1,6 +1,9 @@
 
 	<script>
-	jQuery(function($) {		
+	jQuery(function($) {
+	  
+	  $("#defendant-personal-submit").button().click(function() {  }); 
+	  
 		$("#school-dialog").dialog({
 				resizable: false,
 				autoOpen:false,
@@ -53,8 +56,9 @@
 				// close dialog window
         $("#location-dialog").dialog('close');
 				
-				// fill in the dropdown
-				$("#physical-existing").append($('<option selected="selected"></option>').val(response).html(city + ", " + state + " " + zip));
+				// fill in the dropdowns
+				$("#physical-locationID").append($('<option selected="selected"></option>').val(response).html(city + ", " + state + " " + zip));
+        $("#mailing-locationID").append($('<option selected="selected"></option>').val(response).html(city + ", " + state + " " + zip));
     	});
 			  
 			return false;
@@ -89,6 +93,7 @@
 		</form>
 	</div>
   
+  <form name="defendant-personal" id="defendant-personal" method="post" action="process.php">
 	<table>
 		<tr>
 			<td width="600" valign="top">
@@ -102,8 +107,8 @@
             <tr>
             	<td>Location:</td>
               <td>
-								<select name="physical-existing" id="physical-existing">
-                	<option></option>
+								<select name="physical-locationID" id="physical-locationID">
+                	<? echo $program->getLocationList( "" ); ?>
 								</select>
 								<a class="add-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
               </td>
@@ -125,8 +130,8 @@
             <tr>
             	<td>Location:</td>
               <td>
-								<select name="mailing-existing" id="mailing-existing">
-                	<option></option>
+								<select name="mailing-locationID" id="mailing-locationID">
+                  <? echo $program->getLocationList( "" ); ?>
 								</select>
 								<a class="add-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
               </td>
@@ -163,15 +168,20 @@
 						</tr>
 						<tr>
 							<td>Weight:</td>
-							<td><input type="text" name="weight" size="10" value="125" /></td>
+							<td><input type="text" name="weight" size="10" value="" /></td>
 						</tr>
 						<tr>
 							<td>Eye Color:</td>
 							<td>
 								<select name="eye" style="width: 100px;">
+                  <option></option>
+                  <option>Amber</option>
+                  <option>Blue</option>
 									<option>Brown</option>
-									<option selected="selected">Blue</option>
-									<option>Green</option>
+                  <option>Gray</option>
+                  <option>Green</option>
+                  <option>Hazel</option>
+                  <option>Violet</option>
 								</select>
 							</td>
 						</tr>
@@ -179,10 +189,15 @@
 							<td>Hair Color:</td>
 							<td>
 								<select name="hair" style="width: 100px;">
+                  <option></option>
+                  <option>Black</option>
 									<option>Brown</option>
-									<option>Black</option>
-									<option selected="selected">Blond</option>
+									<option>Blond</option>
+                  <option>Auburn</option>
+                  <option>Chestnut</option>
 									<option>Red</option>
+                  <option>Gray</option>
+                  <option>White</option>
 								</select>
 							</td>
 						</tr>
@@ -190,13 +205,16 @@
 							<td>Ethnicity:</td>
 							<td>
 								<select name="ethnicity" style="width: 100px;">
+								  <option></option>
 									<option>Asian</option>
 									<option>African-American</option>
-									<option selected="selected">Caucasian</option>
+									<option>Caucasian</option>
 									<option>Hispanic</option>
 									<option>Native American</option>
+                  <option>Pacific Islander</option>
+                  <option>Other</option>
 								</select>
-								</td>
+							</td>
 						</tr>
 					</table>
 				</fieldset>
@@ -217,3 +235,8 @@
 			</td>
 		</tr>
 	</table>
+	
+	<input type="submit" name="defendant-personal-submit" id="defendant-personal-submit" value="Update Personal Information">
+	
+</form>
+

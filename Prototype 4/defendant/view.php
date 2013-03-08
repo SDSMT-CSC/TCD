@@ -149,8 +149,6 @@ $(function () {
       </td>
      </tr>
   </table>
-  
-		
 </fieldset>
 </form>
 
