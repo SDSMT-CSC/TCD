@@ -113,6 +113,7 @@ class Data{
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
 						
+						$row[] = $aRow["locationID"];
 						$row[] = $aRow["city"];
 						$row[] = $aRow["state"];
 						$row[] = $aRow["zip"];
@@ -147,6 +148,7 @@ class Data{
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
 						
+						$row[] = $aRow["schoolID"];
 						$row[] = $aRow["schoolName"];
 						$row[] = $aRow["address"];
 						$row[] = $aRow["city"];
@@ -401,7 +403,7 @@ class Data{
 		$core = Core::dbOpen();
 		
 		$sql = "SELECT w.workshopID, w.date, w.title, w.instructor, o.lastName 
-				FROM workshop w JOIN citation_officer o ON w.officerID = o.officerID AND o.programID = :programID";
+				FROM workshop w JOIN citation_officer o ON w.officerID = o.officerID AND w.programID = :programID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();
@@ -415,7 +417,7 @@ class Data{
 						$row[] = $aRow["date"];
 						$row[] = $aRow["title"];
 						$row[] = $aRow["instructor"];
-						$row[] = $aRow["officer"];
+						$row[] = $aRow["lastName"];
 						$row[] = "<a href=\"/workshop/view.php?id=". $aRow["workshopID"] ."\">Edit</a>";				
 						
 						$output['aaData'][] = $row;

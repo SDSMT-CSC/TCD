@@ -32,10 +32,43 @@ if( $action == "Add Defendant" || $action == "Edit Defendant" )
 
 if( $action == "Update Personal" )
 {
+	$defendant = new Defendant();
+	$defendant->getFromID( $_POST["defendantID"] );
+	
 	echo "<pre>";
 	print_r($_POST);
-	echo "</pre>";
-
+	echo "<pre>";
+	
+/*
+   [defendantID] => 1
+    [action] => Update Personal
+    [physical-address] => 12 South St
+    [physical-locationID] => 1
+    [physical-city] => Deadwood
+    [physical-state] => SD
+    [physical-zip] => 57732
+    [mailing-address] => 12 South St
+    [mailing-locationID] => 1
+    [mailing-city] => Deadwood
+    [mailing-state] => SD
+    [mailing-zip] => 57732
+    [school-name] => Central High School
+    [grade] => 11
+    [school-address] => 1246 Main Blvd.
+    [schoolID] => 0
+    [school-city] => Deadwood
+    [school-state] => SD
+    [school-zip] => 57732
+    [contact] => Bob Jones
+    [contact-phone] => 954-4564
+    [height] => 5'10"
+    [weight] => 125
+    [eye] => Blue
+    [hair] => Brown
+    [ethnicity] => Caucasian
+    [dl-number] => 1002546
+    [dl-state] => SD
+*/
 
 }
 

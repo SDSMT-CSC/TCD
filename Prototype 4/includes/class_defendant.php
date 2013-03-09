@@ -12,14 +12,29 @@ class Defendant {
 	private $agencyNumber;
 	private $expungeDate;
 	private $closeDate;
+	public $pID;
 	public $pAddress;
 	public $pCity;
 	public $pState;
 	public $pZip;
+	public $mID;
 	public $mAddress;
 	public $mCity;
 	public $mState;
 	public $mZip;
+	public $schoolID;
+	public $schoolContactName;
+	public $schoolContactPhone;	
+	public $schoolGrade;
+	public $height;
+	public $weight;
+	public $eyecolor;
+	public $haircolor;
+	public $sex;
+	public $race;
+	public $licenseNum;
+	public $licenseState;
+	public $notes;
 	public $added;
 	
 	public function __construct()
@@ -35,14 +50,29 @@ class Defendant {
 		$this->agencyNumber = NULL;
 		$this->expungeDate = NULL;
 		$this->closeDate = NULL;
+		$this->pID = 0;
 		$this->pAddress = NULL;
 		$this->pCity = NULL;
 		$this->pState = NULL;
 		$this->pZip = NULL;
+		$this->mID = 0;
 		$this->mAddress = NULL;
 		$this->mCity = NULL;
 		$this->mState = NULL;
 		$this->mZip = NULL;
+		$this->schoolID = 0;
+		$this->schoolContactName = NULL;
+		$this->schoolContactPhone = NULL;	
+		$this->schoolGrade = NULL;
+		$this->height = NULL;
+		$this->weight = NULL;
+		$this->eyecolor = NULL;
+		$this->haircolor = NULL;
+		$this->sex = NULL;
+		$this->race = NULL;
+		$this->licenseNum = NULL;
+		$this->licenseState = NULL;
+		$this->notes = NULL;
 		$this->added = NULL;
 	}
 	
@@ -180,6 +210,10 @@ class Defendant {
 	public function getDateOfBirth() { return $this->dateOfBirth; }
 	public function getCourtCaseNumber() { return $this->courtCaseNumber; }
 	public function getAgencyNumber() { return $this->agencyNumber; }
+	public function getPhysicalLocationID() { return $this->pID; }
+	public function getMailingLocationID() { return $this->mID; }
+	public function getSchoolID() { return $this->schoolID; }
+
 	
 	public function getExpungeDate()
 	{
@@ -197,24 +231,6 @@ class Defendant {
 			return $this->closeDate;
 	}
 
-
-	// test
-	public function displayPrimary()
-	{
-		echo "<code>";
-		echo "Defendant ID: " . $this->defendantID . "<br>";
-		echo "First Name: " . $this->firstName . "<br>";
-		echo "Last Name: " . $this->lastName . "<br>";
-		echo "Middle Name: " . $this->middleName . "<br>";
-		echo "Phone: " . $this->phoneNumber . "<br>";
-		echo "DOB: " . $this->dateOfBirth . "<br>";
-		echo "Court Case#: " . $this->courtCaseNumber . "<br>";
-		echo "Agency #: " . $this->agencyNumber . "<br>";
-		echo "Expunge Date: " . $this->expungeDate . "<br>";
-		echo "Close Date: " . $this->closeDate . "<br>";
-		echo "Add Date: " . $this->added;
-		echo "</code>";
-	}
 
 }
 ?>

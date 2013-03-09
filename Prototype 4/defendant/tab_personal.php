@@ -1,7 +1,8 @@
 
 	<script>
-	var address;
 	jQuery(function($) {
+		
+		var address;
 		
 		$("#defendant-personal-submit").button().click(function() { $("#defendant-personal").submit(); });
 	  	  
@@ -29,39 +30,30 @@
 				}	
 			});
 		
+		$("#sameaddress").click(function() {
+				if($(this).is(':checked')) {
+					$("#mailing-locationID").val($("#physical-locationID").val());
+					$("#mailing-address").val($("#physical-address").val());
+					$("#mailing-city").val($("#physical-city").val());
+					$("#mailing-state").val($("#physical-state").val());
+					$("#mailing-zip").val($("#physical-zip").val());
+				}
+		});
+		
 		$('#select-school-location').click(function(){
 				$('#school-dialog').dialog('open');
 				$('.ui-dialog :button').blur();
 		});
 		
-		$('#select-physical-location').click(function(){
-				address = "physical";
+		$('.select-location').click(function(){
+				address = $(this).attr('id');
 				$('#location-dialog').dialog('open');
 				$('.ui-dialog :button').blur();
 		});
-		
-		$('#select-mailing-location').click(function(){
-				address = "mailing";
-				$('#location-dialog').dialog('open');
-				$('.ui-dialog :button').blur();
-		});
-		
-		function processSchool()
-		{
-			// get values from form
-			var schoolname = $("input#schoolname").val();
-					
-			$.post( $("#school-form").attr("action"), $("#school-form").serialize(), function(response) {
 				
-				// fill in the dropdown
-				$("#schoolID").append($('<option selected="selected"></option>').val(response).html(schoolname));
-    	});
-			  
-			return false;
-		}
-		
 		var locTable = $("#location-table").dataTable( { 
 					"aaSorting": [],
+					"aoColumns": [{"bVisible":false},null,null,null],
 					"sPaginationType": "full_numbers",
 					"bProcessing": false,
 					"sAjaxSource": '/data/program_locations.php'
@@ -69,32 +61,50 @@
 		
 		var schoolTable = $("#school-table").dataTable( { 
 					"aaSorting": [],
-					"aoColumns": [null,{"bVisible":false},null,null,null],
+					"aoColumns": [{"bVisible":false},null,{"bVisible":false},null,null,null],
 					"sPaginationType": "full_numbers",
 					"bProcessing": false,
 					"sAjaxSource": '/data/program_schools.php'
 		});
 		
 		$('#location-table tbody tr').live('click', function (event) {        
-    	var aData = locTable.fnGetData(this); // get datarow
-			if (aData != null)  // null if we clicked on title row
+    	var oData = locTable.fnGetData(this); // get datarow
+			if (oData != null)  // null if we clicked on title row
 			{
 				// set input values
-				if(address == "physical")
+				if( address == "physical-location" )
 				{
-					$("#physical-city").val(aData[0]);
-					$("#physical-state").val(aData[1]);
-					$("#physical-zip").val(aData[2]);
+					$("#physical-locationID").val(oData[0]);
+					$("#physical-city").val(oData[1]);
+					$("#physical-state").val(oData[2]);
+					$("#physical-zip").val(oData[3]);
 				}
-				else
+				else if( address == "mailing-location" )
 				{
-					$("#mailing-city").val(aData[0]);
-					$("#mailing-state").val(aData[1]);
-					$("#mailing-zip").val(aData[2]);
+					$("#mailing-locationID").val(oData[0]);
+					$("#mailing-city").val(oData[1]);
+					$("#mailing-state").val(oData[2]);
+					$("#mailing-zip").val(oData[3]);
 				}
 				
 				// close the window
 				$("#location-dialog").dialog('close');
+			}
+		});
+		
+		$('#school-table tbody tr').live('click', function (event) {        
+    	var oData = schoolTable.fnGetData(this); // get datarow
+			if (oData != null)  // null if we clicked on title row
+			{
+					$("#schoolID").val(oData[0]);
+					$("#school-name").val(oData[1]);
+					$("#school-address").val(oData[2]);
+					$("#school-city").val(oData[3]);
+					$("#school-state").val(oData[4]);
+					$("#school-zip").val(oData[5]);
+				
+				// close the window
+				$("#school-dialog").dialog('close');
 			}
 		});
 				
@@ -107,6 +117,7 @@
 		<table id="school-table">
       <thead>
           <tr>
+            <th>ID</th>
             <th>School</th>
             <th>Address</th>
             <th>City</th>
@@ -122,6 +133,7 @@
     <table id="location-table">
       <thead>
           <tr>
+            <th>ID</th>
             <th>City</th>
             <th>State</th>
             <th>Zip</th>
@@ -141,16 +153,17 @@
 					<legend>Physical Address</legend>
 					<table>
 						<tr>
-							<td>Street:</td>
-							<td><input type="text" name="physical-street" size="40" value=""/></td>
+							<td>Address:</td>
+							<td><input type="text" name="physical-address" id="physical-address" size="40" value=""/></td>
 						</tr>
             <tr>
               <td>City:</td>
               <td>
+          			<input type="hidden" name="physical-locationID" id="physical-locationID" value="<? echo $defendant->getPhysicalLocationID(); ?>" />
               	<input type="text" name="physical-city" id="physical-city" />
            			State: <input type="text" name="physical-state" id="physical-state" size="2" />
                 Zip: <input type="text" name="physical-zip" id="physical-zip" size="7" />
-                <a id="select-physical-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+                <a class="select-location" id="physical-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
               </td>
             </tr>
 					</table>
@@ -161,19 +174,20 @@
 					<table>
 						<tr>
 							<td></td>
-							<td><input type="checkbox" />  Same as physical address</td>
+							<td><input type="checkbox" id="sameaddress" />  Same as physical address</td>
 						</tr>
 						<tr>
-							<td>Street:</td>
-							<td><input type="text" name="mailing-street" size="40" value="" /></td>
+							<td>Address:</td>
+							<td><input type="text" name="mailing-address" id="mailing-address" size="40" value="" /></td>
 						</tr>
             <tr>
             	<td>City:</td>
               <td>
+          			<input type="hidden" name="mailing-locationID" id="mailing-locationID" value="<? echo $defendant->getMailingLocationID(); ?>" />
               	<input type="text" name="mailing-city" id="mailing-city" />
            			State: <input type="text" name="mailing-state" id="mailing-state" size="2" />
                 Zip: <input type="text" name="mailing-zip" id="mailing-zip" size="7" />
-                <a id="select-mailing-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+                <a class="select-location" id="mailing-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
               </td>
             </tr>
 					</table>
@@ -185,17 +199,18 @@
 						<tr>
 							<td>School Name:</td>
 							<td>
-              	<input type="text" name="school-name" size="40" value="" />
+              	<input type="text" name="school-name" id="school-name" size="40" value="" />
               	Grade: <input type="text" name="grade" size="5" value="" />
               </td>
 						</tr>
 						<tr>
-							<td>Street:</td>
-							<td><input type="text" name="school-street" size="40" value="" /></td>
+							<td>Address:</td>
+							<td><input type="text" name="school-address" id="school-address" size="40" value="" /></td>
 						</tr>
             <tr>
             	<td>City:</td>
               <td>
+         				<input type="hidden" name="schoolID" id="schoolID" value="<? echo $defendant->getSchoolID(); ?>" />
               	<input type="text" name="school-city" id="school-city" />
            			State: <input type="text" name="school-state" id="school-state" size="2" />
                 Zip: <input type="text" name="school-zip" id="school-zip" size="7" />
@@ -205,8 +220,8 @@
             <tr>
 							<td>School Contact:</td>
 							<td>
-              	<input type="text" name="grade" value="" />
-                Phone: <input type="text" name="grade" value="" />
+              	<input type="text" name="contact" value="" />
+                Phone: <input type="text" name="contact-phone" value="" />
               </td>
 						</tr>
 					</table>
