@@ -19,6 +19,7 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js"></script>
 <script src="/includes/js/jquery.dataTables.min.js" type="text/javascript"></script>
 <script src="/includes/js/jquery.validate.min.js" type="text/javascript"></script>
+<script src="/includes/js/jquery.cookie.js" type="text/javascript"></script>
 
 <script>
 jQuery(function($)

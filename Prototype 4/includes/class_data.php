@@ -323,7 +323,7 @@ class Data{
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
-		$sql = "SELECT defendantID, courtCaseNumber, lastName, firstName, city, state, UNIX_TIMESTAMP( added ) AS added
+		$sql = "SELECT defendantID, courtCaseNumber, lastName, firstName, pLocationID, city, state, UNIX_TIMESTAMP( added ) AS added
             FROM defendant d
 						LEFT JOIN program_locations pl ON pl.locationID = d.pLocationID
             WHERE closeDate IS NULL AND d.programID =:programID";
@@ -340,8 +340,13 @@ class Data{
 						$row[] = $aRow["courtCaseNumber"];
 						$row[] = $aRow["lastName"];
 						$row[] = $aRow["firstName"];
-						$row[] = $aRow["pCity"] . " " . $aRow["pState"];
-            $row[] = date("n/j/y h:i a",$aRow["added"]);					
+						
+						if( $aRow["pLocationID"] > 0 )
+							$row[] = $aRow["city"] . ", " . $aRow["state"];
+            else
+							$row[] = "";
+						
+						$row[] = date("n/j/y h:i a",$aRow["added"]);					
 						$row[] = "<a href=\"/defendant/view.php?id=". $aRow["defendantID"] ."\">Edit</a>";				
 						
 						$output['aaData'][] = $row;
