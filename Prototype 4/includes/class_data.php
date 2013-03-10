@@ -323,9 +323,10 @@ class Data{
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
-		$sql = "SELECT defendantID, courtCaseNumber, lastName, firstName, pCity, pState, UNIX_TIMESTAMP( added ) AS added
-            FROM defendant
-            WHERE closeDate IS NULL AND programID =:programID";
+		$sql = "SELECT defendantID, courtCaseNumber, lastName, firstName, city, state, UNIX_TIMESTAMP( added ) AS added
+            FROM defendant d
+						LEFT JOIN program_locations pl ON pl.locationID = d.pLocationID
+            WHERE closeDate IS NULL AND d.programID =:programID";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();

@@ -1,6 +1,8 @@
 <?
 include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_defendant.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_location.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_school.php");
 
 $action = $_REQUEST["action"];
 
@@ -18,14 +20,12 @@ if( $action == "Add Defendant" || $action == "Edit Defendant" )
 	$defendant->setPhoneNumber($_POST["phoneNumber"]);
 	$defendant->setCourtCaseNumber($_POST["courtcase"]);
 	$defendant->setAgencyNumber($_POST["agencycase"]);
-		
+
+	// update the defendant information and add	log the event
 	if( $defendant->updateDefendant() )
-	{
-		// log the event
-		$user->addEvent($action . ": " . $defendant->getLastName() . ", " . $defendant->getFirstName() . " (" . $defendant->getCourtCaseNumber() . ")" );
-	}
+		$user->addEvent("Defendant: ".$action, $defendant->getDefendantID() );
 	
-	// redirect to the user page	
+	// redirect to the defendant page	
 	header("location: view.php?id=".$defendant->getDefendantID() );
 }
 
@@ -35,47 +35,39 @@ if( $action == "Update Personal" )
 	$defendant = new Defendant();
 	$defendant->getFromID( $_POST["defendantID"] );
 	
-	echo "<pre>";
-	print_r($_POST);
-	echo "<pre>";
+	// add physical address and new physical location if not set
+  $defendant->pAddress = $_POST["physical-address"];
+  $defendant->mAddress = $_POST["mailing-address"];
+		
+	$location = new Location( $user_programID );
+	$defendant->pID = $location->addLocation( $_POST["physical-city"], $_POST["physical-state"], $_POST["physical-zip"] );
+	$defendant->mID = $location->addLocation( $_POST["mailing-city"], $_POST["mailing-state"], $_POST["mailing-zip"] );	
+		
+	// add school or return id of existing school
+	$school = new School( $user_programID );
+	$defendant->schoolID = $school->addSchool( $_POST["school-name"], $_POST["school-address"], $_POST["school-city"], $_POST["school-state"], $_POST["school-zip"] );
 	
-/*
-   [defendantID] => 1
-    [action] => Update Personal
-    [physical-address] => 12 South St
-    [physical-locationID] => 1
-    [physical-city] => Deadwood
-    [physical-state] => SD
-    [physical-zip] => 57732
-    [mailing-address] => 12 South St
-    [mailing-locationID] => 1
-    [mailing-city] => Deadwood
-    [mailing-state] => SD
-    [mailing-zip] => 57732
-    [school-name] => Central High School
-    [grade] => 11
-    [school-address] => 1246 Main Blvd.
-    [schoolID] => 0
-    [school-city] => Deadwood
-    [school-state] => SD
-    [school-zip] => 57732
-    [contact] => Bob Jones
-    [contact-phone] => 954-4564
-    [height] => 5'10"
-    [weight] => 125
-    [eye] => Blue
-    [hair] => Brown
-    [ethnicity] => Caucasian
-    [dl-number] => 1002546
-    [dl-state] => SD
-*/
+	// add the school grade and contact information
+  $defendant->schoolGrade = $_POST["grade"];
+  $defendant->schoolContactName = $_POST["contact"];
+  $defendant->schoolContactPhone = $_POST["contact-phone"];
 
+	// update the rest
+	$defendant->sex = $_POST["sex"];
+	$defendant->height = $_POST["height"];
+	$defendant->weight = $_POST["weight"];
+	$defendant->eyecolor = $_POST["eye"];
+	$defendant->haircolor = $_POST["hair"];
+	$defendant->ethnicity = $_POST["ethnicity"];
+	$defendant->licenseNum = $_POST["dl-number"];
+	$defendant->licenseState = $_POST["dl-state"];
+		
+	// update the personal information and log the event
+	if( $defendant->updatePersonal() )
+		$user->addEvent("Defendant: ".$action, $defendant->getDefendantID() );
+		
+	// redirect to the defendant page	
+	header("location: view.php?id=".$defendant->getDefendantID() );
 }
 
-
-
-if( $action == "Add School" )
-{
-  echo $program->addSchool( $_POST["school"] );
-}
 ?>

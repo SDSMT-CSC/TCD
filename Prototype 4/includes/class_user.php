@@ -388,14 +388,15 @@ class User {
 		       $event = what the user did
 		output: boolean true/false
 	*************************************************************************************************/
-	public function addEvent( $event )
+	public function addEvent( $event, $id = NULL )
 	{
 		// database connection and sql query
     $core = Core::dbOpen();
-    $sql = "INSERT INTO user_log (userID, action, ip_address ) VALUES ( :userID, :event, :ip )";
+    $sql = "INSERT INTO user_log (userID, action, recordID, ip_address ) VALUES ( :userID, :event, :id, :ip )";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':userID', $this->userID);
     $stmt->bindParam(':event', $event);
+    $stmt->bindParam(':id', $id);
     $stmt->bindParam(':ip', $_SERVER['REMOTE_ADDR']);
     Core::dbClose();
 

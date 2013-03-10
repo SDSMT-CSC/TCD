@@ -31,7 +31,7 @@ class Defendant {
 	public $eyecolor;
 	public $haircolor;
 	public $sex;
-	public $race;
+	public $ethnicity;
 	public $licenseNum;
 	public $licenseState;
 	public $notes;
@@ -69,7 +69,7 @@ class Defendant {
 		$this->eyecolor = NULL;
 		$this->haircolor = NULL;
 		$this->sex = NULL;
-		$this->race = NULL;
+		$this->ethnicity = NULL;
 		$this->licenseNum = NULL;
 		$this->licenseState = NULL;
 		$this->notes = NULL;
@@ -96,7 +96,6 @@ class Defendant {
       if( $stmt->execute())
       {
         $row = $stmt->fetch();
-				
         $this->defendantID = $id;
         $this->programID = $row["programID"];
         $this->firstName = $row["firstName"];
@@ -108,14 +107,29 @@ class Defendant {
 				$this->agencyCaseNumber = $row["agencyCaseNumber"];
 				$this->expungeDate = $row["expungeDate"];
 				$this->closedate = $row["closedate"];
+				$this->pID = $row["pLocationID"];
+				$this->pAddress = $row["pAddress"];
+				$this->mID = $row["mLocationID"];
+				$this->mAddress = $row["mAddress"];
+				$this->schoolID = $row["schoolID"];
+				$this->schoolContactName = $row["schoolContactName"];
+				$this->schoolContactPhone = $row["schoolContactPhone"];	
+				$this->schoolGrade = $row["schoolGrade"];
+				$this->height = $row["height"];
+				$this->weight = $row["weight"];
+				$this->eyecolor = $row["eyecolor"];
+				$this->haircolor = $row["haircolor"];
+				$this->sex = $row["sex"];
+				$this->ethnicity = $row["ethnicity"];
+				$this->licenseNum = $row["licenseNum"];
+				$this->licenseState = $row["licenseState"];
+				$this->notes = $row["notes"];
 				$this->added = date("n/j/y h:i a", $row["added"]);
-        
         return true;
       }
     } catch ( PDOException $e ) {
       echo "Set User Information Failed!";
     }
-
     return false;
   }
 	
@@ -178,18 +192,44 @@ class Defendant {
 	*************************************************************************************************/
   public function updatePersonal()
 	{
+		// database connection and sql query
+		$core = Core::dbOpen();
+		$sql = "UPDATE defendant SET pAddress	= :pAddress, pLocationID = :pID, mAddress = :mAddress,	
+					  mLocationID	= :mID, schoolID	= :schoolID, schoolContactName	= :schoolContactName, 
+						schoolContactPhone	= :schoolContactPhone, schoolGrade	= :schoolGrade, height	= :height, 
+						weight	= :weight, eyecolor	= :eyecolor, haircolor	= :haircolor, sex	= :sex, ethnicity	= :ethnicity, 
+						licenseNum	= :licenseNum, licenseState = :licenseState	
+						WHERE defendantID = :defendantID";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':defendantID', $this->defendantID);
+		$stmt->bindParam(':pID', $this->pID);
+		$stmt->bindParam(':pAddress', $this->pAddress);
+		$stmt->bindParam(':mID', $this->mID);
+		$stmt->bindParam(':mAddress', $this->mAddress);
+		$stmt->bindParam(':schoolID', $this->schoolID);
+		$stmt->bindParam(':schoolContactName', $this->schoolContactName);
+		$stmt->bindParam(':schoolContactPhone', $this->schoolContactPhone);
+		$stmt->bindParam(':schoolGrade', $this->schoolGrade);
+		$stmt->bindParam(':height', $this->height);
+		$stmt->bindParam(':weight', $this->weight);
+		$stmt->bindParam(':eyecolor', $this->eyecolor);
+		$stmt->bindParam(':haircolor', $this->haircolor);
+		$stmt->bindParam(':sex', $this->sex);
+		$stmt->bindParam(':ethnicity', $this->ethnicity);
+		$stmt->bindParam(':licenseNum', $this->licenseNum);
+		$stmt->bindParam(':licenseState', $this->licenseState);
+		Core::dbClose();
 		
+		try
+			{
+				if( $stmt->execute())
+					return true;
+		} catch ( PDOException $e ) {
+			echo "Update Defendant Personal Failed!";
+		}
+		return false;
 	}
 	
-	
-	/*
-	private function assignCourt();
-	private function expungeFull();
-	private function expungePartial();
-	private function expungeSeal();
-	private function printDocket();
-	*/
-
 	// setters
 	public function setDefendantID( $str ) { $this->defendantID = $str; }
 	public function setProgramID( $str ) { $this->programID = $str; }
@@ -210,10 +250,6 @@ class Defendant {
 	public function getDateOfBirth() { return $this->dateOfBirth; }
 	public function getCourtCaseNumber() { return $this->courtCaseNumber; }
 	public function getAgencyNumber() { return $this->agencyNumber; }
-	public function getPhysicalLocationID() { return $this->pID; }
-	public function getMailingLocationID() { return $this->mID; }
-	public function getSchoolID() { return $this->schoolID; }
-
 	
 	public function getExpungeDate()
 	{
