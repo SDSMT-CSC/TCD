@@ -1,7 +1,5 @@
 <?php
-class Data{
-	
-	public $data;
+class Data {
 	
 	/*************************************************************************************************
 	
@@ -113,7 +111,6 @@ class Data{
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
 						
-						$row[] = $aRow["locationID"];
 						$row[] = $aRow["city"];
 						$row[] = $aRow["state"];
 						$row[] = $aRow["zip"];
@@ -148,7 +145,6 @@ class Data{
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
 						
-						$row[] = $aRow["schoolID"];
 						$row[] = $aRow["schoolName"];
 						$row[] = $aRow["address"];
 						$row[] = $aRow["city"];
@@ -200,6 +196,8 @@ class Data{
 	*************************************************************************************************/
 	public function fetchOfficerDropdown( $id, $officerID )
 	{
+	  $data = NULL;
+    
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		$sql = "SELECT o.programID, o.officerID, o.lastName FROM citation_officer o 

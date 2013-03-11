@@ -1,56 +1,10 @@
-<script>
-jQuery(function($) {		
-	$("#parent-dialog").dialog({
-			resizable: false,
-			autoOpen:false,
-			modal: true,
-			width:820,
-			buttons: {
-				'Add Parent/Guardian': function() {
-					$(this).dialog('close');
-					$.post("process.php", $("#parent-form").serialize(), function(data) {
-						
-						// refresh parent list
-						// TODO
-						$('#tabs').tabs('load', 1);
-						
-						// clear the form
-						$("#SameAsDefendant").attr("checked",false);
-						$("#relationship")[0].selectedIndex = 0;
-						$("#parent-form").find("input[type=text], textarea").val("");
-					});
-					},
-				Cancel: function() {
-					$(this).dialog('close');
-				}
-			}
-		});
-		
-	$('#add-parent').click(function(){$('#parent-dialog').dialog('open');});
-	
-	$("#SameAsDefendant").click(function() {
-		if($(this).is(':checked')) {
-			$("#guardian-physical-address").val($("#physical-address").val());
-			$("#guardian-physical-city").val($("#physical-city").val());
-			$("#guardian-physical-state").val($("#physical-state").val());
-			$("#guardian-physical-zip").val($("#physical-zip").val());
-			$("#guardian-mailing-address").val($("#mailing-address").val());
-			$("#guardian-mailing-city").val($("#mailing-city").val());
-			$("#guardian-mailing-state").val($("#mailing-state").val());
-			$("#guardian-mailing-zip").val($("#mailing-zip").val());
-		}
-	});
-	
-	$.get('guardian_list.php?id=<? echo $defendant->getDefendantID() ?>' ).done(function(data) {
-  		$("#guardian-list").html(data);
-		});
-});
-</script>
- 
-	<div id="parent-dialog" title="Add New Parent/Guardian">
-		<form name="parent-form" id="parent-form">
-    	<input type="hidden" name="defendantID" value="<? echo $defendant->getDefendantID() ?>" />
-    	<input type="hidden" name="action" value="Add Parent" />
+<?
+$id = $_GET["id"]; 
+
+?>
+	<form name="update-guardian">
+	<fieldset>
+  	<legend>Parent/Guardian</legend>
 			<table>
 				<tr>
 					<td valign="top">
@@ -97,7 +51,6 @@ jQuery(function($) {
 					</td>
 					<td valign="top">
           	<table>
-							<tr><td><input type="checkbox" id="SameAsDefendant" />  Same as defendant addresses</td></tr>
               <tr>
               	<td>             
                   <fieldset>
@@ -149,15 +102,12 @@ jQuery(function($) {
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                   </select>
+                  <input type="submit" name="update-guardian" id="update-guardian" value="Update Guardian" />                  
                 </td>
               </tr>
             </table>            
 					</td>
 				</tr>
 			</table>
-		</form>
-	</div>
-	
-<div id="guardian-list"></div>							
-<input type="button" class="add" id="add-parent" value="Add New Parent/Guardian" />
-		
+     </fieldset>
+     </form>

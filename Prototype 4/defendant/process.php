@@ -1,14 +1,14 @@
 <?
 include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_defendant.php");
-include($_SERVER['DOCUMENT_ROOT']."/includes/class_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_school.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_location.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_guardian.php");
 
 $action = $_REQUEST["action"];
 
 if( $action == "Add Defendant" || $action == "Edit Defendant" )
 {
-	
 	$defendant = new Defendant();
 	
 	if( $_POST["defendantID"] > 0 ) { $defendant->setDefendantID( $_POST["defendantID"] ); }
@@ -29,9 +29,8 @@ if( $action == "Add Defendant" || $action == "Edit Defendant" )
 	header("location: view.php?id=".$defendant->getDefendantID() );
 }
 
-
 if( $action == "Update Personal" )
-{
+{	
 	$defendant = new Defendant();
 	$defendant->getFromID( $_POST["defendantID"] );
 	
@@ -68,6 +67,35 @@ if( $action == "Update Personal" )
 		
 	// redirect to the defendant page	
 	header("location: view.php?id=".$defendant->getDefendantID() );
+}
+
+
+if( $action == "Add Parent" || $action == "Update Parent" )
+{
+
+	$guardian = new Guardian( $_POST["defendantID"] );
+	
+	if( $_POST["guardianID"] > 0 ) { $guardian->setGuardianID( $_POST["guardianID"] ); }
+	$guardian->relation = $_POST["relationship"];
+	$guardian->firstName = $_POST["first-name"];
+	$guardian->lastName = $_POST["last-name"];
+	$guardian->homePhone = $_POST["home-phone"];
+	$guardian->workPhone = $_POST["work-phone"];
+	$guardian->employer = $_POST["employer"];
+	$guardian->email = $_POST["email"];
+	$guardian->livesWith = $_POST["liveswith"];
+
+	$guardian->pAddress = $_POST["guardian-physical-address"];
+	$guardian->mAddress = $_POST["guardian-mailing-address"];
+	
+	$location = new Location( $user_programID );
+	$guardian->pID = $location->addLocation( $_POST["guardian-physical-city"], $_POST["guardian-physical-state"], $_POST["guardian-physical-zip"] );
+	$guardian->mID = $location->addLocation( $_POST["guardian-mailing-city"], $_POST["guardian-mailing-state"], $_POST["guardian-mailing-zip"] );	
+	
+	//if( $guardian->updateGuardian() )
+	//	$user->addEvent("Defendant: ".$action, $guardian->getGuardianID() );
+	
+	echo $guardian->getGuardianID();
 }
 
 ?>

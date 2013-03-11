@@ -19,7 +19,7 @@ if($_POST["submit"] == "Enter")
 		$_SESSION["timestamp"] = date( 'Y-m-d H:i:s', time() );
 
 		$user->addEvent("Login");
-		
+				
 		// if user is an admin, send them to admin landing page
 		// otherwise to main landing page
 		if( $user->getType() == 1 )

@@ -6,6 +6,10 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 <script>
 jQuery(function($)
 {
+	
+	// if tab cookie is set, reset it to 0
+	$.removeCookie('ui-tabs-1');
+	
 	$("#new-defendant").button().click(function() { window.location.href = "view.php"; });
 	
 	$("#data-table").dataTable( { 

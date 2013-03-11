@@ -40,7 +40,7 @@ else {
 <script>
 $(function () {
 
-	$("#tabs").tabs({ cookie: { expires: 60 } });
+	$("#tabs").tabs({ cookie: { expires: 5 } });
   $("#tabs").show(); 
 
 	$("#defendant-list").button().click(function() {	window.location.href = "index.php";	});	

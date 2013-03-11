@@ -1,123 +1,114 @@
-
-	<script>
-	jQuery(function($) {
-		
-		var address;
-		
-		$("#defendant-personal-submit").button().click(function() { $("#defendant-personal").submit(); });
-	  	  
-		$("#school-dialog").dialog({
-				resizable: false,
-				autoOpen:false,
-				modal: true,
-				width:600,
-				buttons: {
-					Cancel: function() {
-						$(this).dialog('close');
-					}
-				}
-			});
+<script>
+jQuery(function($) {
+	
+	var address;
+	
+	$("#defendant-personal-submit").button().click(function() { $("#defendant-personal").submit(); });
 			
-		$("#location-dialog").dialog({
-				resizable: false,
-				autoOpen:false,
-				modal: true,
-				width:500,
-				buttons: {
-					Cancel: function() {
-						$(this).dialog('close');
-					}
-				}	
-			});
-		
-		$("#sameaddress").click(function() {
-				if($(this).is(':checked')) {
-					$("#mailing-locationID").val($("#physical-locationID").val());
-					$("#mailing-address").val($("#physical-address").val());
-					$("#mailing-city").val($("#physical-city").val());
-					$("#mailing-state").val($("#physical-state").val());
-					$("#mailing-zip").val($("#physical-zip").val());
+	$("#school-dialog").dialog({
+			resizable: false,
+			autoOpen:false,
+			modal: true,
+			width:600,
+			buttons: {
+				Cancel: function() {
+					$(this).dialog('close');
 				}
-		});
-		
-		$('#select-school-location').click(function(){
-				$('#school-dialog').dialog('open');
-				$('.ui-dialog :button').blur();
-		});
-		
-		$('.select-location').click(function(){
-				address = $(this).attr('id');
-				$('#location-dialog').dialog('open');
-				$('.ui-dialog :button').blur();
-		});
-				
-		var locTable = $("#location-table").dataTable( { 
-					"aaSorting": [],
-					"aoColumns": [{"bVisible":false},null,null,null],
-					"sPaginationType": "full_numbers",
-					"bProcessing": false,
-					"sAjaxSource": '/data/program_locations.php'
-		});
-		
-		var schoolTable = $("#school-table").dataTable( { 
-					"aaSorting": [],
-					"aoColumns": [{"bVisible":false},null,{"bVisible":false},null,null,null],
-					"sPaginationType": "full_numbers",
-					"bProcessing": false,
-					"sAjaxSource": '/data/program_schools.php'
-		});
-		
-		$('#location-table tbody tr').live('click', function (event) {        
-    	var oData = locTable.fnGetData(this); // get datarow
-			if (oData != null)  // null if we clicked on title row
-			{
-				// set input values
-				if( address == "physical-location" )
-				{
-					$("#physical-locationID").val(oData[0]);
-					$("#physical-city").val(oData[1]);
-					$("#physical-state").val(oData[2]);
-					$("#physical-zip").val(oData[3]);
-				}
-				else if( address == "mailing-location" )
-				{
-					$("#mailing-locationID").val(oData[0]);
-					$("#mailing-city").val(oData[1]);
-					$("#mailing-state").val(oData[2]);
-					$("#mailing-zip").val(oData[3]);
-				}
-				
-				// close the window
-				$("#location-dialog").dialog('close');
 			}
 		});
 		
-		$('#school-table tbody tr').live('click', function (event) {        
-    	var oData = schoolTable.fnGetData(this); // get datarow
-			if (oData != null)  // null if we clicked on title row
-			{
-					$("#schoolID").val(oData[0]);
-					$("#school-name").val(oData[1]);
-					$("#school-address").val(oData[2]);
-					$("#school-city").val(oData[3]);
-					$("#school-state").val(oData[4]);
-					$("#school-zip").val(oData[5]);
-				
-				// close the window
-				$("#school-dialog").dialog('close');
-			}
+	$("#location-dialog").dialog({
+			resizable: false,
+			autoOpen:false,
+			modal: true,
+			width:500,
+			buttons: {
+				Cancel: function() {
+					$(this).dialog('close');
+				}
+			}	
 		});
-				
-		// $("input").prop('disabled', true); THIS IS FOR READ ONLY ACCESS - INPUT DISABLED FOR TYPE 5 users		
+	
+	$("#sameaddress").click(function() {
+			if($(this).is(':checked')) {
+				$("#mailing-address").val($("#physical-address").val());
+				$("#mailing-city").val($("#physical-city").val());
+				$("#mailing-state").val($("#physical-state").val());
+				$("#mailing-zip").val($("#physical-zip").val());
+			}
 	});
-		 
-	</script>
+	
+	$('#select-school-location').click(function(){
+			$('#school-dialog').dialog('open');
+			$('.ui-dialog :button').blur();
+	});
+	
+	$('.select-location').click(function(){
+			address = $(this).attr('id');
+			$('#location-dialog').dialog('open');
+			$('.ui-dialog :button').blur();
+	});
+			
+	var locTable = $("#location-table").dataTable( { 
+				"aaSorting": [],
+				"sPaginationType": "full_numbers",
+				"bProcessing": false,
+				"sAjaxSource": '/data/program_locations.php'
+	});
+	
+	var schoolTable = $("#school-table").dataTable( { 
+				"aaSorting": [],
+				"sPaginationType": "full_numbers",
+				"bProcessing": false,
+				"sAjaxSource": '/data/program_schools.php'
+	});
+	
+	$('#location-table tbody tr').live('click', function (event) {        
+		var oData = locTable.fnGetData(this); // get datarow
+		if (oData != null)  // null if we clicked on title row
+		{
+			// set input values
+			if( address == "physical-location" )
+			{
+				$("#physical-city").val(oData[0]);
+				$("#physical-state").val(oData[1]);
+				$("#physical-zip").val(oData[2]);
+			}
+			else if( address == "mailing-location" )
+			{
+				$("#mailing-city").val(oData[0]);
+				$("#mailing-state").val(oData[1]);
+				$("#mailing-zip").val(oData[2]);
+			}
+			
+			// close the window
+			$("#location-dialog").dialog('close');
+		}
+	});
+	
+	$('#school-table tbody tr').live('click', function (event) {        
+		var oData = schoolTable.fnGetData(this); // get datarow
+		if (oData != null)  // null if we clicked on title row
+		{
+				$("#school-name").val(oData[0]);
+				$("#school-address").val(oData[1]);
+				$("#school-city").val(oData[2]);
+				$("#school-state").val(oData[3]);
+				$("#school-zip").val(oData[4]);
+			
+			// close the window
+			$("#school-dialog").dialog('close');
+		}
+	});
+			
+	// $("input").prop('disabled', true); THIS IS FOR READ ONLY ACCESS - INPUT DISABLED FOR TYPE 5 users		
+});
+</script>
  
 	<div id="school-dialog" title="Add New School">
 		<table id="school-table">
       <thead>
           <tr>
-            <th>ID</th>
             <th>School</th>
             <th>Address</th>
             <th>City</th>
@@ -133,7 +124,6 @@
     <table id="location-table">
       <thead>
           <tr>
-            <th>ID</th>
             <th>City</th>
             <th>State</th>
             <th>Zip</th>
