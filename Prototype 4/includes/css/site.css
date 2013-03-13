@@ -64,6 +64,7 @@ div.error{
 .password { font-size : 12px; }
 .pstrength-minchar { font-size : 10px; }
 .info { padding: 0 5px 10px 5px; color: #333333; }
+.update-guardian { margin-left: 40px; }
 
 .listing { border-collapse: collapse; border: 1px solid #cccccc; margin-bottom: 10px; }
 .listing th { text-align: left; background: #ccc url(/includes/css/images/ui-bg_highlight-soft_75_cccccc_1x100.png) 50% 50% repeat-x; padding: 4px; }

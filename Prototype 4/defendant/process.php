@@ -70,7 +70,7 @@ if( $action == "Update Personal" )
 }
 
 
-if( $action == "Add Parent" || $action == "Update Parent" )
+if( $action == "Add Guardian" || $action == "Update Guardian" )
 {
 
 	$guardian = new Guardian( $_POST["defendantID"] );
@@ -83,7 +83,7 @@ if( $action == "Add Parent" || $action == "Update Parent" )
 	$guardian->workPhone = $_POST["work-phone"];
 	$guardian->employer = $_POST["employer"];
 	$guardian->email = $_POST["email"];
-	$guardian->livesWith = $_POST["liveswith"];
+	$guardian->liveswith = $_POST["liveswith"];
 
 	$guardian->pAddress = $_POST["guardian-physical-address"];
 	$guardian->mAddress = $_POST["guardian-mailing-address"];
@@ -92,10 +92,11 @@ if( $action == "Add Parent" || $action == "Update Parent" )
 	$guardian->pID = $location->addLocation( $_POST["guardian-physical-city"], $_POST["guardian-physical-state"], $_POST["guardian-physical-zip"] );
 	$guardian->mID = $location->addLocation( $_POST["guardian-mailing-city"], $_POST["guardian-mailing-state"], $_POST["guardian-mailing-zip"] );	
 	
-	//if( $guardian->updateGuardian() )
-	//	$user->addEvent("Defendant: ".$action, $guardian->getGuardianID() );
+	if( $guardian->updateGuardian() )
+		$user->addEvent("Defendant: ".$action, $guardian->getGuardianID() );
 	
-	echo $guardian->getGuardianID();
+	// redirect to the defendant page	
+	header("location: view.php?id=".$guardian->getDefendantID() );
 }
 
 ?>

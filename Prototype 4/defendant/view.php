@@ -4,6 +4,7 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_defendant.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_school.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_guardian.php");
 
 $id = $_GET["id"];
 $error = 0;
@@ -37,42 +38,7 @@ else {
 <p>You do not have access to this page.</p>
 <? } else { ?>
 
-<script>
-$(function () {
-
-	$("#tabs").tabs({ cookie: { expires: 5 } });
-  $("#tabs").show(); 
-
-	$("#defendant-list").button().click(function() {	window.location.href = "index.php";	});	
-	$("#add-defendant").button().click(function() { $("#defendant-primary").submit(); });
-	
-	$("#previous-defendant").button();
-	$("#update-defendant").button().click(function() { $("#defendant-primary").submit(); });
-	$("#delete-defendant").button().click(function() {  });
-	$("#next-defendant").button().click(function() {	});
-	
-	$("#dob").datepicker();
-	$("#citation-date").datepicker();
-		
-	$("#defendant-primary").validate({
-		errorElement: "div",
-		wrapper: "div",
-		errorPlacement: function(error, element) {
-			  error.insertAfter(element);
-				error.addClass('message');
-		},
-		rules: {
-			lastname: { required: true },
-			firstname: { required: true },
-			dob: { required: true },
-			courtcase: { required: true }
-		}
-	});	
-		
-});
-
-</script>
-
+<script type="text/javascript" src="jquery.js"></script>
 
 <div id="control-header">	
 	<div class="left"><h1><? echo $action ?></h1></div>	
@@ -82,13 +48,41 @@ $(function () {
 			<? if( $action == "Add Defendant") { ?>
 			<button id="add-defendant">Add Defendant</button>
       <? } else { ?>
-			<button id="previous-defendant">Previous</button>
+			<!-- <button id="previous-defendant">Previous</button> -->
 			<button id="delete-defendant">Delete Defendant</button>
 			<button id="update-defendant">Update Defendant</button>
-			<button id="next-defendant">Next</button>
+			<!-- <button id="next-defendant">Next</button> -->
 			<? } ?>
 		</div>
 	</div>
+</div>
+
+<div id="school-dialog" title="Add New School">
+  <table id="school-table">
+    <thead>
+        <tr>
+          <th>School</th>
+          <th>Address</th>
+          <th>City</th>
+          <th>State</th>
+          <th>Zip</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+  </table> 
+</div>
+
+<div id="location-dialog" title="Select Location">
+  <table id="location-table">
+    <thead>
+        <tr>
+          <th>City</th>
+          <th>State</th>
+          <th>Zip</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+  </table> 
 </div>
 
 <form name="defendant-primary" id="defendant-primary" method="post" action="process.php">

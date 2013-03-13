@@ -230,6 +230,61 @@ class Defendant {
 		return false;
 	}
 	
+	/*************************************************************************************************
+		function: getGuardianList
+		purpose: 
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function getGuardianList()
+	{
+		$output = array();
+		
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT guardianID FROM guardian WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    Core::dbClose();
+		
+		try {
+			if($stmt->execute() && $stmt->rowCount() > 0)
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC))
+						$output[] = $aRow["guardianID"];
+		} 
+		catch (PDOException $e) {
+      		echo "Program School Read Failed!";
+    }
+		return $output;
+	}
+	
+	/*************************************************************************************************
+		function: totalGuardians
+		purpose: 
+		input: none
+  	output: int count of guardians
+	*************************************************************************************************/
+	public function totalGuardians()
+	{
+		$count = 0;
+		
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT COUNT(guardianID) FROM guardian WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    Core::dbClose();
+		
+		try {
+			if( $stmt->execute() )
+				$count = $stmt->rowCount();
+		} 
+		catch (PDOException $e) {
+      		echo "Program School Read Failed!";
+    }
+		return $count;
+	}
+	
 	// setters
 	public function setDefendantID( $str ) { $this->defendantID = $str; }
 	public function setProgramID( $str ) { $this->programID = $str; }
@@ -243,6 +298,7 @@ class Defendant {
 	
 	// getters
 	public function getDefendantID() { return $this->defendantID; }
+	public function getProgramID() { return $this->programID; }
 	public function getFirstName() { return $this->firstName; }
 	public function getLastName() { return $this->lastName; }	
 	public function getMiddleName() { return $this->middleName; }

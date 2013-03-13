@@ -10,11 +10,11 @@ class Guardian {
 	public $workPhone;
 	public $employer;
 	public $email;
-	public $pID;
 	public $pAddress;
-	public $mID;
+	public $pID;
 	public $mAddress;
-	public $livesWith;
+	public $mID;
+	public $liveswith;
 	
 	public function __construct( $defendantID )
 	{		
@@ -27,12 +27,47 @@ class Guardian {
 		$this->workPhone = NULL;
 		$this->employer = NULL;
 		$this->email = NULL;
-		$this->physicalAddress = NULL;
+		$this->pAddress = NULL;
 		$this->pID = NULL;
-		$this->mailingAddress = NULL;
+		$this->mAddress = NULL;
 		$this->mID = NULL;
-		$this->livesWith = NULL;
+		$this->liveswith = NULL;
 	}
+	
+	public function getFromID( $id )
+	{
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT * FROM guardian WHERE guardianID = :guardianID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':guardianID', $id);
+    Core::dbClose();
+    
+    try
+    {
+      if( $stmt->execute())
+      {
+        $row = $stmt->fetch();
+        $this->guardianID = $id;
+        $this->relation = $row["relation"];
+        $this->firstName = $row["firstName"];
+        $this->lastName = $row["lastName"];
+				$this->homePhone = $row["homePhone"];
+				$this->workPhone = $row["workPhone"];
+				$this->employer = $row["employer"];
+				$this->email = $row["email"];
+				$this->pAddress = $row["pAddress"];
+				$this->pID = $row["pLocationID"];
+				$this->mAddress = $row["mAddress"];
+				$this->mID = $row["mLocationID"];
+				$this->liveswith = $row["livesWith"];
+        return true;
+      }
+    } catch ( PDOException $e ) {
+      echo "Set Guardian Information Failed!";
+    }
+    return false;
+	}	
 	
 	public function updateGuardian()
 	{
@@ -67,7 +102,7 @@ class Guardian {
 		$stmt->bindParam(':mAddress', $this->mAddress);
 		$stmt->bindParam(':pID', $this->pID);
 		$stmt->bindParam(':mID', $this->mID);
-		$stmt->bindParam(':livesWith', $this->livesWith);
+		$stmt->bindParam(':livesWith', $this->liveswith);
     Core::dbClose();
 		
 		try {
@@ -95,6 +130,7 @@ class Guardian {
 	
 	// getters
 	public function getGuardianID() { return $this->guardianID; }
+	public function getDefendantID() { return $this->defendantID; }
 	public function getParentID() { return $this->parentID; }
 
 }

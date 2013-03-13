@@ -406,7 +406,7 @@ class Data {
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
-		$sql = "SELECT w.workshopID, w.date, w.title, w.instructor, o.lastName 
+		$sql = "SELECT w.workshopID, UNIX_TIMESTAMP(w.date) AS date, w.title, w.instructor, o.lastName 
 				FROM workshop w JOIN citation_officer o ON w.officerID = o.officerID AND w.programID = :programID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
@@ -418,7 +418,7 @@ class Data {
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
 						
-						$row[] = $aRow["date"];
+						$row[] = date("n/j/y h:i a", $aRow["date"]);
 						$row[] = $aRow["title"];
 						$row[] = $aRow["instructor"];
 						$row[] = $aRow["lastName"];
