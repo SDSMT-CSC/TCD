@@ -435,5 +435,35 @@ class Data {
     }
 		return '{"aaData":[]}';
 	}
+	
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
+	public function fetchWorkshopDefendantsListing( $user_programID ) {
+		$core = Core::dbOpen();
+		$sql = "SELECT d.firstName, d.lastName FROM defendant d WHERE d.programID = :programID";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $user_programID );
+		Core::dbClose();
+		
+		try {
+			if( $stmt->execute() && $stmt->rowCount() > 0) {
+				while( $aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					$row = array();
+					
+					$row[] = $aRow["firstName"];
+					$row[] = $aRow["lastName"];
+					
+					$output['aaData'][] = $row;
+				}
+				return json_encode($output);
+			}
+		}
+		catch (PDOException $e ) {
+			echo "Workshop Defendant Read Failed!";
+		}
+		
+		return '{"aaData":[]}';
+	}
 } // end class
 ?>

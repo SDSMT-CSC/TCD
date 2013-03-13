@@ -11,13 +11,23 @@ if( isset($id) )
 	
 	$workshop = new Workshop();
 	$data = new Data();
+	
 	$workshop->getWorkshop($id);
 	$date = $workshop->getDate();
-	$time;
+	//break down date and time
+	$splitDate = explode(" ", $date);
+	$date = $splitDate[0];
+	$time = $splitDate[1] . " " . $splitDate[2];
 	$title = $workshop->getTitle();
 	$instructor = $workshop->getInstructor();
 	$description = $workshop->getDescription();
 	$officerID = $workshop->getOfficerID();
+	
+	$locationName;
+	$locationAddress;
+	$locationCity;
+	$locationState;
+	$locationZip;
 }
 else
 {
@@ -27,16 +37,62 @@ else
 ?>
 
 <script>
-$(function () {
+$(function () {	
 	$( "#previous-workshop" ).button().click(function() {		});
 	$( "#update-workshop" ).button().click(function() {		});
 	$( "#next-workshop" ).button().click(function() {		});
-});
+
+	$("#participant-dialog").dialog({
+		resizable: false,
+		autoOpen:false,
+		modal: true,
+		width:500,
+		height:400,
+		buttons: {
+			'Add Participant': function() {
+				$(this).dialog('close');
+				//tie selected participant to workshop
+			},
+			Cancel: function() {
+				$(this).dialog('close');
+			}
+		}
+	});
+	
+	var defTable = $("#defendant-table").dataTable( { 
+				"aaSorting": [],
+				"sPaginationType": "full_numbers",
+				"bProcessing": false,
+				"sAjaxSource": '/data/workshop_defendants.php'
+	});
+	
+	$('#defendant-table tbody tr').live('click', function (event) {        
+		var oData = defendant.fnGetData(this); // get datarow
+		if (oData != null)  // null if we clicked on title row
+		{
+			// close the window
+			$("#defendant-dialog").dialog('close');
+		}
+	});
+	
+	$('#add-participant').click(function(){ $('#participant-dialog').dialog('open'); });
+	});
 </script>
 
+<div id="participant-dialog" title="Add Participant">
+	<table id="defendant-table">
+      <thead>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+          </tr>
+      </thead>
+      <tbody></tbody>
+    </table> 
+</div>
+
 <div id="control-header">
-	
-	<div class="left"><h1>Add New Volunteer</h1></div>	
+	<div class="left"><h1>Edit Workshop</h1></div>	
 	<div class="right">
 		<div id="control" class="ui-state-error">
 			<button id="previous-workshop">Previous</button>
@@ -44,11 +100,11 @@ $(function () {
 			<button id="next-workshop">Next</button>
 		</div>
 	</div>
-	
 </div>
 
-<form name="newWorkshop" id="newWorkshop" method="post" action="new.php">
-	
+<form name="editWorkshop" id="editWorkshop" method="post" action="process.php">
+<input type="hidden" name="action" value="<? echo $action ?>" />
+<input type="hidden" name="programID" value="<?echo $workshop->getWorkshopID() ?>" />
 
 <fieldset>
 	<legend>Workshop Information</legend>
@@ -58,8 +114,9 @@ $(function () {
 			<td><input type="text" name="date" value="<? echo $date ?>"/></td>
 		</tr>
 		<tr>
+			<?// switch this to dropdown to prevent incorrect values ?>
 			<td>Time:</td>
-			<td><input type="text" name="time" value=""/></td>
+			<td><input type="text" name="time" value="<? echo $time ?>"/></td>
 		</tr>
 		<tr>
 			<td>Title:</td>
@@ -81,33 +138,49 @@ $(function () {
 				</select>
 			</td>
 		</tr>
+		<tr>
+			<td>Description:</td>
+			<td><input type="text" name="description" value="<? echo $description ?>"/></td>
+		</tr>
 	</table>
 </fieldset>
 
+<fieldset>
+	<legend>Workshop Location</legend>
+	<table>
+		<tr>
+			<td>Name:</td>
+			<td>
+				<input type="text" name="locationName" id="locationName" value="<? echo $locationName ?>"/>
+				Address: <input type="text" name="address" id="address" value="<? echo $locationAddress ?>"/>
+			</td>
+		</tr>
+		<tr>
+			<td>City:</td>
+			<td>
+				<input type="text" name="city" id="city" value="<? echo $locationCity ?>"/>
+				State:   <input type="text" name="state" id="state" value="<? echo $locationState ?>"/>
+				Zip: <input type="text" name="zip" id="zip" value="<? echo $locationZip ?>"/>
+			</td>
+		</tr>
+	</table>
+</fieldset>
 <fieldset>
 	<legend>Workshop Participant</legend>
 	<table class="listing">
 		<thead>
 			<tr>
-				<th width="75%">Participant</th>
-				<th width="20%">Phone</th>
-				<th width="5%"></th>
+				<th width="40%">Participant</th>
+				<th width="40%">Phone</th>
+				<th width="10%"></th>
+				<th width="10%"></th>
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
-				<td>Adams, Sam</td>
-				<td>(605) 555-5555</td>
-				<td><a href="view.php">Remove</a></td>
-			</tr>
-			<tr>
-				<td>Jones, Tom</td>
-				<td>(605) 555-5555</td>
-				<td><a href="view.php">Remove</a></td>
-			</tr>
+			<? echo $workshop->listWorkshopParticipants( $id ); ?>
 		</tbody>
 	</table>
-	<input type="button" class="add" value="Add Participant">
+	<input type="button" class="add" id="add-participant" value="Add Participant" />
 </fieldset>
 
 </form>

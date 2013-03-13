@@ -41,7 +41,7 @@ class Workshop {
 		{
 			if( $stmt->execute() )
 			{
-				$this->programID = $core->dbh->lastInsertId(); 
+				$this->workshopID = $core->dbh->lastInsertId(); 
 				return true;
 			}
 		} 
@@ -71,7 +71,7 @@ class Workshop {
 	{
 		//database connection and sql query
 		$core = Core::dbOpen();
-		$sql = "SELECT w.* from workshop w where w.workshopID = :id";
+		$sql = "SELECT w.*, UNIX_TIMESTAMP(date) AS date FROM workshop w WHERE w.workshopID = :id";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':id', $id);
 		Core::dbClose();
@@ -84,7 +84,7 @@ class Workshop {
 				
 				$this->workshopID = $id;
 				$this->programID = $row["programID"];
-				$this->date = $row["date"];
+				$this->date = date("n/j/y h:i a", $row["date"]);
 				$this->title = $row["title"];
 				$this->description = $row["description"];
 				$this->instructor = $row["instructor"];
@@ -95,6 +95,53 @@ class Workshop {
 		{
 			echo "Get Workshop Failed!";
 		}
+	}
+	
+	public function addWorkshopParticipant( $defendantID )
+	{
+		$core = Core::dbOpen();
+		$sql = "INSERT INTO workshop_roster (defendantID) VALUES :defendantID";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':defendantID', $defendantID);
+		Core::dbClose();
+		
+		try
+		{
+			
+		}
+		catch ( PDOException $e )
+		{
+			echo "Add Workshop Participant Failed!";
+		}
+	}
+	
+	public function listWorkshopParticipants( $id )
+	{
+		$core = Core::dbOpen();
+		$sql = "SELECT d.firstName, d.lastName, d.homePhone, d.defendantID FROM defendant d
+				JOIN workshop_roster w ON d.defendantID = w.defendantID AND w.workshopID = :id";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':id', $id);
+		Core::dbClose();
+		
+		try
+		{
+			if( $stmt->execute() )
+			{
+				$data = "";
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					$data .= '<tr><td>'.$aRow["lastName"].', '.$aRow["firstName"].'</td><td>'.$aRow["homePhone"].
+							 '</td><td><a href="remove.php?id='.$aRow["defendantID"].'">Remove</a></td><td><a href="complete.php?id='.
+							 $aRow["defendantID"].'">Completed</a></td></tr>';
+				}
+			}
+		}
+		catch ( PDOException $e )
+		{
+			echo "Get Workshop Participants Failed!";
+			return false;
+		}
+		return $data;
 	}
 	
 	//getters
