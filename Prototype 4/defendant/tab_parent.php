@@ -243,6 +243,7 @@ foreach( $gList as $gID )
                     <option value="1"<? if( $guardian->liveswith == 1 ) echo " selected"; ?>>Yes</option>
                     <option value="0"<? if( $guardian->liveswith == 0 ) echo " selected"; ?>>No</option>
                   </select>
+                  <button class="delete-guardian" value="<? echo "process.php?action=Delete%20Guardian&id=" . $id . "&gid=" . $gID  ?>">Delete Guardian</button>
                   <input type="submit" name="update-guardian-<? echo $gID ?>" class="update-guardian" value="Update Guardian" />                  
                 </td>
               </tr>

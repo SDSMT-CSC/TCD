@@ -122,7 +122,25 @@ class Guardian {
 		return false;		
 	}
 	
-//	private function removeGuardian();
+	public function removeGuardian()
+	{
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "DELETE FROM guardian WHERE guardianID = :guardianID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':guardianID', $this->guardianID);
+    Core::dbClose();
+    
+    try
+    {
+      if( $stmt->execute())
+				return true;
+		}
+		catch (PDOException $e) {
+    	echo "Guardian remove failed!";
+    }		
+		return false;
+	}
 
 	// setters
 	public function setGuardianID( $str ) { $this->guardianID = $str; }

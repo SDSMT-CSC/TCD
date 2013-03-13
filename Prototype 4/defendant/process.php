@@ -72,7 +72,6 @@ if( $action == "Update Personal" )
 
 if( $action == "Add Guardian" || $action == "Update Guardian" )
 {
-
 	$guardian = new Guardian( $_POST["defendantID"] );
 	
 	if( $_POST["guardianID"] > 0 ) { $guardian->setGuardianID( $_POST["guardianID"] ); }
@@ -99,4 +98,19 @@ if( $action == "Add Guardian" || $action == "Update Guardian" )
 	header("location: view.php?id=".$guardian->getDefendantID() );
 }
 
+if( $action == "Delete Guardian" )
+{
+	$guardian = new Guardian( $_GET["id"] );
+	$guardian->getFromID( $_GET["gid"] );
+	
+	// check access
+	if( $user_type < 5 && $user->getProgramID() == $_GET["id"] )
+	{		
+		if( $guardian->removeGuardian() )
+			$user->addEvent("Defendant: ".$action, $guardian->getGuardianID() );
+		
+		// redirect to the defendant page	
+		header("location: view.php?id=".$_GET["id"] );
+	}
+}
 ?>

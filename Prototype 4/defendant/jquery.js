@@ -11,6 +11,8 @@ jQuery(function($) {
 	$("#update-defendant").button().click(function() { $("#defendant-primary").submit(); });
 	$("#delete-defendant").button().click(function() {  });
 	$("#next-defendant").button().click(function() {	});
+
+	// $("input").prop('disabled', true); THIS IS FOR READ ONLY ACCESS - INPUT DISABLED FOR TYPE 5 users		
 	
 	$("#dob").datepicker();
 	$("#citation-date").datepicker();
@@ -166,19 +168,6 @@ jQuery(function($) {
 			buttons: {
 				'Add Parent/Guardian': function() {
 					$("#guardian-form").submit();
-					
-					/*
-					$.post("process.php", $("#guardian-form").serialize(), function(data) {
-						// refresh parent list
-						$('#tabs').tabs('load', 1);
-						
-						// clear the form
-						$("#SameAsDefendant").attr("checked",false);
-						$("#relationship")[0].selectedIndex = 0;
-						$("#guardian-form").find("input[type=text], textarea").val("");
-					});
-					*/
-					
 					},
 				Cancel: function() {
 					$(this).dialog('close');
@@ -201,7 +190,34 @@ jQuery(function($) {
 		}
 	});
 	
-	$(".update-guardian").button();
-	
-	// $("input").prop('disabled', true); THIS IS FOR READ ONLY ACCESS - INPUT DISABLED FOR TYPE 5 users		
+	$(".update-guardian").button();		
+	$(".delete-guardian").button().click(function() {
+		dTitle = 'Delete Guardian';
+		dMsg = 'Are you sure you want to delete this guardian?';
+		dHref = $(this).val();
+		popupDialog( dTitle, dMsg, dHref );		
+		return false;
+	});
+		
+	function popupDialog( dTitle, dMsg, dHref )
+	{
+		$("#confirm-dialog").find("p:first").html(dMsg);
+		
+		var dlg = $("#confirm-dialog").dialog({
+			autoOpen: false,
+			title: dTitle,
+			modal: true,
+			buttons: {
+					'Delete': function() {
+						window.location.href = dHref;
+					},
+					Cancel: function() {
+						$(this).dialog('close');
+					}
+				}
+		});	
+		
+		dlg.dialog('open');
+	}
+		
 });

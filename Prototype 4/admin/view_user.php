@@ -62,7 +62,7 @@ $(function () {
 	$( "#user-list" ).button().click(function() {	window.location.href = "users.php";	});	
 	$( "#add-user" ).button().click(function() {	$("#user").submit();	});	
 	$( "#update-user" ).button().click(function() {	$("#user").submit();	});
-	$( "#delete-user" ).button().click(function() {	 });
+	$( "#delete-user" ).button().click(function(){$('#confirm-dialog').dialog('open');});
 	
 	$("#user").validate({
 		errorElement: "div",
@@ -105,7 +105,6 @@ $(function () {
 			
 			});
 			
-		$('#delete-user').click(function(){$('#confirm-dialog').dialog('open');});
 	
 	$("#data-table").dataTable( { 
 				"aaSorting": [],

@@ -85,6 +85,10 @@ else {
   </table> 
 </div>
 
+<div id="confirm-dialog" title="Delete">
+<p></p>
+</div>
+
 <form name="defendant-primary" id="defendant-primary" method="post" action="process.php">
 <input type="hidden" name="action" value="<? echo $action ?>" />
 <input type="hidden" name="defendantID" value="<? echo $defendant->getDefendantID() ?>" />
