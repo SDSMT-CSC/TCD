@@ -1,10 +1,12 @@
 <?php 
 $menuarea = "defendant";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_defendant.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_school.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_guardian.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_citation.php");
 
 $id = $_GET["id"];
 $error = 0;

@@ -3,7 +3,11 @@
 <input type="hidden" name="action" value="Update Personal" />
 <table>
   <tr>
-    <td width="600" valign="top">
+    <td width="600" valign="top">    
+			<?
+      $location = new Location( $user_programID );
+      $location->getFromID( $defendant->pID );				
+      ?>         
       <fieldset>
         <legend>Physical Address</legend>
 				<table>
@@ -13,11 +17,7 @@
           </tr>
           <tr>
             <td>City:</td>
-            <td>
-              <?
-              $location = new Location( $user_programID );
-              $location->getFromID( $defendant->pID );				
-              ?>              
+            <td>     
               <input type="text" name="physical-city" id="physical-city" value="<? echo $location->city ?>" />
               State: <input type="text" name="physical-state" id="physical-state" size="2" value="<? echo $location->state ?>" />
               Zip: <input type="text" name="physical-zip" id="physical-zip" size="7" value="<? echo $location->zip ?>" />
@@ -26,7 +26,6 @@
           </tr>
         </table>
       </fieldset>
-				
       <fieldset>
         <legend>Mailing Address</legend>
         <table>
@@ -50,13 +49,14 @@
           </tr>
         </table>
       </fieldset>
-      
+      <? unset($location); ?>
+
+			<?
+      $school = new School( $user_programID );
+      $school->getFromID( $defendant->schoolID );
+      ?>      
       <fieldset>
         <legend>School Information</legend>
-        <?
-        $school = new School( $user_programID );
-        $school->getFromID( $defendant->schoolID );
-        ?>
         <table>
           <tr>
             <td>School Name:</td>
@@ -87,6 +87,7 @@
           </tr>
         </table>
       </fieldset>
+      <? unset($school) ?>
     </td>
     <td valign="top">
       <fieldset>
@@ -172,10 +173,10 @@
           </tr>
         </table>
       </fieldset>
+      <div style="text-align: right; margin-top: 20px;"><button id="defendant-personal-submit">Update Personal Information</button></div>
     </td>
   </tr>
 </table>
 </form>
 
-<button id="defendant-personal-submit">Update Personal Information</button>
 

@@ -4,18 +4,24 @@ jQuery(function($) {
 	$("#tabs").tabs({ cookie: { expires: 5 } });
   $("#tabs").show(); 
 
-	$("#defendant-list").button().click(function() {	window.location.href = "index.php";	});	
-	$("#add-defendant").button().click(function() { $("#defendant-primary").submit(); });
-	
 	$("#previous-defendant").button();
 	$("#update-defendant").button().click(function() { $("#defendant-primary").submit(); });
 	$("#delete-defendant").button().click(function() {  });
 	$("#next-defendant").button().click(function() {	});
 
-	// $("input").prop('disabled', true); THIS IS FOR READ ONLY ACCESS - INPUT DISABLED FOR TYPE 5 users		
+	$("#defendant-list").button().click(function() {	window.location.href = "index.php";	});	
+	$("#add-defendant").button().click(function() { $("#defendant-primary").submit(); });
+	$("#citation-submit").button().click(function() { $("#citation").submit(); });
+		
+	$("#add-officer").click(function(){ $('#officer-dialog').dialog('open'); });
+	$("#add-common-place").click(function(){ $('#common-place-dialog').dialog('open'); });
+	$("#add-offense").click(function(){ $('#offense-dialog').dialog('open'); });
+	$("#add-item").click(function(){ $('#item-dialog').dialog('open'); });
+	$("#add-vehicle").click(function(){ $('#vehicle-dialog').dialog('open'); });
 	
 	$("#dob").datepicker();
-	$("#citation-date").datepicker();
+	$("#citation-date").datepicker({maxDate: new Date});
+	$("#citation-time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: ''});
 		
 	$("#defendant-primary").validate({
 		errorElement: "div",
@@ -56,6 +62,89 @@ jQuery(function($) {
 					$(this).dialog('close');
 				}
 			}	
+		});
+		
+	$("#officer-dialog").dialog({
+			resizable: false,
+			autoOpen:false,
+			modal: true,
+			width:400,
+			buttons: {
+				'Add Officer': function() {
+					$(this).dialog('close');
+						// TO DO: add school
+					},
+				Cancel: function() {
+					$(this).dialog('close');
+				}
+			}
+		});
+		
+		$("#common-place-dialog").dialog({
+			resizable: false,
+			autoOpen:false,
+			modal: true,
+			width:450,
+			buttons: {
+				'Add Location': function() {
+					$(this).dialog('close');
+						// TO DO: add school
+					},
+				Cancel: function() {
+					$(this).dialog('close');
+				}
+			}
+		});
+		
+		$("#offense-dialog").dialog({
+			resizable: false,
+			autoOpen:false,
+			modal: true,
+			width:600,
+			height:200,
+			buttons: {
+				'Add Offense': function() {
+					$(this).dialog('close');
+						// TO DO: add offense
+					},
+				Cancel: function() {
+					$(this).dialog('close');
+				}
+			}
+		});
+		
+		$("#item-dialog").dialog({
+			resizable: false,
+			autoOpen:false,
+			modal: true,
+			width:400,
+			height:200,
+			buttons: {
+				'Add Item': function() {
+					$(this).dialog('close');
+						// TO DO: add stolen item
+					},
+				Cancel: function() {
+					$(this).dialog('close');
+				}
+			}
+		});
+		
+		$("#vehicle-dialog").dialog({
+			resizable: false,
+			autoOpen:false,
+			modal: true,
+			width:400,
+			height:310,
+			buttons: {
+				'Add Vehicle': function() {
+					$(this).dialog('close');
+						// TO DO: add vehicle
+					},
+				Cancel: function() {
+					$(this).dialog('close');
+				}
+			}
 		});
 	
 	$("#sameaddress").click(function() {
@@ -99,7 +188,7 @@ jQuery(function($) {
 		{
 						
 			// set input values
-			if( address == "physical-location" )
+			if( address == "physical-location" ) 
 			{
 				$("#physical-city").val(oData[0]);
 				$("#physical-state").val(oData[1]);
@@ -122,6 +211,12 @@ jQuery(function($) {
 				$("#guardian-mailing-city").val(oData[0]);
 				$("#guardian-mailing-state").val(oData[1]);
 				$("#guardian-mailing-zip").val(oData[2]);
+			}
+			else if( address == "citation-location" )
+			{
+				$("#citation-city").val(oData[0]);
+				$("#citation-state").val(oData[1]);
+				$("#citation-zip").val(oData[2]);
 			}
 			
 			for( i = 1; i <= $("#totalGuardians").val(); i++ )

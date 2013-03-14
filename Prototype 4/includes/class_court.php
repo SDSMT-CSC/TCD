@@ -1,13 +1,41 @@
-<?php
-class Court {
-	private $ID;
-	
-	public function __construct();
-	
-	private function getFromID();
-	private function addCourt();
-	private function updateCourt();
-	private function removeCourt();
-	private function printActivityReport();
-}
+<?php
+
+class Court {
+
+	private $programID;
+	private $courtID;
+	private $date;
+	private $time;
+	private $type;
+	private $location;
+	private $judge;
+	private $defenseAttorney;
+	private $prosecutingAttorney;
+	private $bailiff;
+	private $courtClerk;
+	private $exitInterviewer;
+	private $advisor;
+	private $juryMembers;
+	private $contractSigned;
+	private $parentPresent;
+	
+	public function __construct()
+	{
+		
+	}
+	
+	/*
+	private function setTrialStaff();
+	private function setJuryPool();
+	private function printTrialInformation();
+	private function printJurySummons();
+
+	private function getFromID();
+	private function addCourt();
+	private function updateCourt();
+	private function removeCourt();
+	private function printActivityReport();
+	*/
+}
+
 ?>

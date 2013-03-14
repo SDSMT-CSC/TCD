@@ -13,6 +13,7 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 	@import "/includes/css/site.css";
 	@import "/includes/css/jquery-ui-teencourt.css";
 	@import "/includes/css/jquery.dataTables.css";
+	@import "/includes/css/jquery.ui.timepicker.css";
 </style>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -20,6 +21,7 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 <script src="/includes/js/jquery.dataTables.min.js" type="text/javascript"></script>
 <script src="/includes/js/jquery.validate.min.js" type="text/javascript"></script>
 <script src="/includes/js/jquery.cookie.js" type="text/javascript"></script>
+<script src="/includes/js/jquery.ui.timepicker.js" type="text/javascript"></script>
 
 <script>
 jQuery(function($)

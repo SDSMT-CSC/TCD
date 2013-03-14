@@ -61,9 +61,9 @@
                     <tr>
                       <td>City:</td>
                       <td>
-                        <input type="text" name="guardian-physical-city" id="guardian-physical-city" value="<? echo $glocation->city ?>" />
-                        State: <input type="text" name="guardian-physical-state" id="guardian-physical-state" size="2" value="<? echo $glocation->state ?>" />
-                        Zip: <input type="text" name="guardian-physical-zip" id="guardian-physical-zip" size="7" value="<? echo $glocation->zip ?>" />
+                        <input type="text" name="guardian-physical-city" id="guardian-physical-city" />
+                        State: <input type="text" name="guardian-physical-state" id="guardian-physical-state" size="2" />
+                        Zip: <input type="text" name="guardian-physical-zip" id="guardian-physical-zip" size="7" />
                         <a class="select-location" id="guardian-plocation" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
                       </td>
                     </tr>							
@@ -83,9 +83,9 @@
                     <tr>
                       <td>City:</td>
                       <td>
-                        <input type="text" name="guardian-mailing-city" id="guardian-mailing-city" value="<? echo $glocation->city ?>" />
-                        State: <input type="text" name="guardian-mailing-state" id="guardian-mailing-state" size="2" value="<? echo $glocation->state ?>" />
-                        Zip: <input type="text" name="guardian-mailing-zip" id="guardian-mailing-zip" size="7" value="<? echo $glocation->zip ?>" />
+                        <input type="text" name="guardian-mailing-city" id="guardian-mailing-city" />
+                        State: <input type="text" name="guardian-mailing-state" id="guardian-mailing-state" size="2" />
+                        Zip: <input type="text" name="guardian-mailing-zip" id="guardian-mailing-zip" size="7" />
                         <a class="select-location" id="guardian-mlocation" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
                       </td>
                     </tr>			
@@ -172,13 +172,13 @@ foreach( $gList as $gID )
           <td valign="top">
             <table>
               <tr>
-                <td>             
+                <td>
+                  <?
+									$location = new Location( $defendant->getProgramID() );
+									$location->getFromID( $guardian->pID );
+									?>             
                   <fieldset>
                     <legend>Physical Address</legend>
-                    <?
-										$location = new Location( $defendant->getProgramID() );
-										$location->getFromID( $guardian->pID );
-										?>
                     <table>
                       <tr>
                         <td>Address:</td>
@@ -234,6 +234,7 @@ foreach( $gList as $gID )
                       </tr>
                     </table>
                   </fieldset>
+                  <? unset($location) ?>
                 </td>
               </tr>
               <tr>
