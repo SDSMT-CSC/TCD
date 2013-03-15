@@ -65,30 +65,39 @@ $(function () {
 				"bProcessing": false,
 				"sAjaxSource": '/data/workshop_defendants.php'
 	});
+	defTable.fnSetColumnVis(2, false);
 	
 	$('#defendant-table tbody tr').live('click', function (event) {        
-		var oData = defendant.fnGetData(this); // get datarow
+		var oData = defTable.fnGetData(this); // get datarow
 		if (oData != null)  // null if we clicked on title row
 		{
-			// close the window
-			$("#defendant-dialog").dialog('close');
+			$("#add").val(oData[2]);
+			$("#addParticipant").submit();
 		}
 	});
 	
 	$('#add-participant').click(function(){ $('#participant-dialog').dialog('open'); });
+	$("#date").datepicker( );
+	$("#time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: ''});
 	});
 </script>
 
 <div id="participant-dialog" title="Add Participant">
+	<form name="addParticipant" id="addParticipant" method="post" action="process.php">
+	<input type="hidden" name="workshopID" value="<? echo $workshop->getWorkshopID() ?>" />
+	<input type="hidden" name="action" value="Add Participant" />
+	<input type="hidden" name="add" id="add" value="" />
 	<table id="defendant-table">
       <thead>
           <tr>
             <th>First Name</th>
             <th>Last Name</th>
+            <th>Add</th>
           </tr>
       </thead>
       <tbody></tbody>
-    </table> 
+    </table>
+    </form>
 </div>
 
 <div id="control-header">
@@ -104,19 +113,18 @@ $(function () {
 
 <form name="editWorkshop" id="editWorkshop" method="post" action="process.php">
 <input type="hidden" name="action" value="<? echo $action ?>" />
-<input type="hidden" name="programID" value="<?echo $workshop->getWorkshopID() ?>" />
+<input type="hidden" name="workshopID" value="<?echo $workshop->getWorkshopID() ?>" />
 
 <fieldset>
 	<legend>Workshop Information</legend>
 	<table>
 		<tr>
 			<td>Date:</td>
-			<td><input type="text" name="date" value="<? echo $date ?>"/></td>
+			<td><input type="text" name="date" id="date" value="<? echo $date ?>"/></td>
 		</tr>
 		<tr>
-			<?// switch this to dropdown to prevent incorrect values ?>
 			<td>Time:</td>
-			<td><input type="text" name="time" value="<? echo $time ?>"/></td>
+			<td><input type="text" name="time" id="time" value="<? echo $time ?>"/></td>
 		</tr>
 		<tr>
 			<td>Title:</td>

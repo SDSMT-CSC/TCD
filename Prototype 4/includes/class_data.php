@@ -468,7 +468,7 @@ class Data {
 	*************************************************************************************************/
 	public function fetchWorkshopDefendantsListing( $user_programID ) {
 		$core = Core::dbOpen();
-		$sql = "SELECT d.firstName, d.lastName FROM defendant d WHERE d.programID = :programID";
+		$sql = "SELECT d.firstName, d.lastName, d.defendantID FROM defendant d WHERE d.programID = :programID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();
@@ -480,6 +480,7 @@ class Data {
 					
 					$row[] = $aRow["firstName"];
 					$row[] = $aRow["lastName"];
+					$row[] = $aRow["defendantID"];
 					
 					$output['aaData'][] = $row;
 				}
