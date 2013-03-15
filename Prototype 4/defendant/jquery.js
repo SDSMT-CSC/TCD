@@ -14,7 +14,7 @@ jQuery(function($) {
 	$("#citation-submit").button().click(function() { $("#citation").submit(); });
 		
 	$("#add-officer").click(function(){ $('#officer-dialog').dialog('open'); });
-	$("#add-common-place").click(function(){ $('#common-place-dialog').dialog('open'); });
+	$("#add-common-location").click(function(){ $('#common-location-dialog').dialog('open'); });
 	$("#add-offense").click(function(){ $('#offense-dialog').dialog('open'); });
 	$("#add-item").click(function(){ $('#item-dialog').dialog('open'); });
 	$("#add-vehicle").click(function(){ $('#vehicle-dialog').dialog('open'); });
@@ -35,6 +35,19 @@ jQuery(function($) {
 			firstname: { required: true },
 			dob: { required: true },
 			courtcase: { required: true }
+		}
+	});	
+	
+	$("#citation").validate({
+		errorElement: "div",
+		wrapper: "div",
+		errorPlacement: function(error, element) {
+			  error.insertAfter(element);
+				error.addClass('message');
+		},
+		rules: {
+			'citation-date': { required: true },
+			'citation-time': { required: true }
 		}
 	});	
 		
@@ -80,15 +93,25 @@ jQuery(function($) {
 			}
 		});
 		
-		$("#common-place-dialog").dialog({
+		$("#common-location-dialog").dialog({
 			resizable: false,
 			autoOpen:false,
 			modal: true,
 			width:450,
 			buttons: {
 				'Add Location': function() {
-					$(this).dialog('close');
-						// TO DO: add school
+					$.post('process.php', $("#common-location-form").serialize(), function(data) {
+						if( data > 0 )
+						{
+							// add the newly entered location to the dropdown and make is selected
+							$("#common-location").append($("<option selected></option>").attr("value",data).text($("#common-location-name").val())); 					
+							
+							// close dialog and clear form
+							$("#common-location-dialog").dialog('close');	
+							$("#common-location-name").val('');
+						}
+					});
+					
 					},
 				Cancel: function() {
 					$(this).dialog('close');

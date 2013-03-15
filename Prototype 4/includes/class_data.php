@@ -134,7 +134,7 @@ class Data {
 	{
 		 // database connection and sql query
     $core = Core::dbOpen();
-    $sql = "SELECT * FROM school WHERE programID = :programID";
+    $sql = "SELECT * FROM program_schools WHERE programID = :programID";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':programID', $user_programID);
     Core::dbClose();
@@ -196,12 +196,12 @@ class Data {
 	*************************************************************************************************/
 	public function fetchOfficerDropdown( $id, $officerID )
 	{
-	  $data = NULL;
+	  $data = NULL; 
     
 		//database connection and SQL query
 		$core = Core::dbOpen();
-		$sql = "SELECT o.programID, o.officerID, o.lastName FROM citation_officer o 
-				WHERE o.programID = :id OR o.programID = 0 ORDER BY lastName";
+		$sql = "SELECT o.programID, o.officerID, o.lastName, o.firstName FROM program_officers o 
+				WHERE o.programID = :id ORDER BY lastName";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':id', $id );
 		
@@ -210,11 +210,38 @@ class Data {
 				$data = "";
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 					( $officerID == $aRow["officerID"] ) ? $selected = " selected" : $selected = "";
-					$data .= '<option value="'.$aRow["officerID"].'"'.$selected.'>'.$aRow["lastName"].'</option>';
+					$data .= '<option value="'.$aRow["officerID"].'"'.$selected.'>'.$aRow["lastName"].", ".$aRow["firstName"].'</option>';
 				}
 			}
 		} catch ( PDOException $e ) {
 			echo "Officer dropdown failed!";
+		}
+		return $data;
+	}
+	
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
+	public function fetchCommonLocationDropdown( $programID, $commonLocationID )
+	{
+		$data = NULL; 
+    
+		//database connection and SQL query
+		$core = Core::dbOpen();
+		$sql = "SELECT commonPlaceID, commonPlace FROM program_common_location WHERE programID = :programID ORDER BY commonPlace";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $programID );
+		
+		try {
+			if( $stmt->execute() ) {
+				$data = "";
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					( $commonLocationID == $aRow["commonPlaceID"] ) ? $selected = " selected" : $selected = "";
+					$data .= '<option value="'.$aRow["commonPlaceID"].'"'.$selected.'>'.$aRow["commonPlace"].'</option>';
+				}
+			}
+		} catch ( PDOException $e ) {
+			echo "Common location dropdown failed!";
 		}
 		return $data;
 	}
@@ -407,7 +434,7 @@ class Data {
 		$core = Core::dbOpen();
 		
 		$sql = "SELECT w.workshopID, UNIX_TIMESTAMP(w.date) AS date, w.title, w.instructor, o.lastName 
-				FROM workshop w JOIN citation_officer o ON w.officerID = o.officerID AND w.programID = :programID";
+				FROM workshop w JOIN program_officers o ON w.officerID = o.officerID AND w.programID = :programID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();

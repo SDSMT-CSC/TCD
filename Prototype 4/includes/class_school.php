@@ -30,7 +30,7 @@ class School {
 	public function getFromID( $id )
 	{
 		$core = Core::dbOpen();
-		$sql = "SELECT * FROM school WHERE programID = :programID AND schoolID = :schoolID";
+		$sql = "SELECT * FROM program_schools WHERE programID = :programID AND schoolID = :schoolID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $this->programID);
 		$stmt->bindParam(':schoolID', $id);
@@ -65,7 +65,7 @@ class School {
 	{
 	  // check to see if the school exists
     $core = Core::dbOpen();
-    $sql = "SELECT schoolID FROM school WHERE programID = :programID AND schoolName = :name 
+    $sql = "SELECT schoolID FROM program_schools WHERE programID = :programID AND schoolName = :name 
 						AND address = :address AND city = :city AND state = :state AND zip = :zip";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':programID', $this->programID);
@@ -117,7 +117,7 @@ class School {
 			if( $this->schoolID == 0 )
 			{	
 				$core = Core::dbOpen();
-				$sql = "INSERT INTO school ( programID, schoolName, address, city, state, zip ) 
+				$sql = "INSERT INTO program_schools ( programID, schoolName, address, city, state, zip ) 
 								VALUES ( :programID, :name, :address, :city, :state, :zip )";
 				$stmt = $core->dbh->prepare($sql);
 				$stmt->bindParam(':programID', $this->programID);

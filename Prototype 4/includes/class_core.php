@@ -38,6 +38,14 @@ class Core {
 			$this->dbh = null;
 		}
 	}
+	
+	// convert from the users timezone to central time (where server is located)
+	public function convertToServerDate( $originalTS, $userTimeZone )
+	{
+		$sqlDate = new DateTime( $originalTS, new DateTimeZone($userTimeZone) );
+		$sqlDate->setTimezone(new DateTimeZone('America/Chicago'));
+		return $sqlDate->format('Y-m-d H:i:s');
+	}	
 }
 
 ?>

@@ -4,6 +4,7 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_defendant.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_school.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_guardian.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_citation.php");
 
 $action = $_REQUEST["action"];
 
@@ -113,4 +114,32 @@ if( $action == "Delete Guardian" )
 		header("location: view.php?id=".$_GET["id"] );
 	}
 }
+
+if( $action == "Add Common Location")
+{
+	echo $program->addCommonLocation( $_POST["common-location-name"] );
+}
+
+if( $action == "Update Citation")
+{
+	$citation = new Citation( $_POST["defendantID"] );
+	$citation->citationDate = $_POST["citation-date"] . " " . $_POST["citation-time"];
+	$citation->officerID = $_POST["officerID"];
+	$citation->mirandized = $_POST["miranda"]; // => No 
+	$citation->address = $_POST["citation-address"]; // => 
+	$citation->drugsOrAlcohol = $_POST["drugs-alcohol"]; // => Yes 
+	$citation->commonLocationID = $_POST["common-location"];
+
+	$location = new Location( $user_programID );
+	$citation->locationID = $location->addLocation( $_POST["citation-city"], $_POST["citation-state"], $_POST["citation-zip"] );
+	
+	if( $citation->updateCitation() )
+		$user->addEvent("Defendant: ".$action, $citation->getDefendantID() );
+	
+	// redirect to the defendant page	
+	header("location: view.php?id=".$citation->getDefendantID() );
+}
+
+
+
 ?>

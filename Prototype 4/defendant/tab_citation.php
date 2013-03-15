@@ -1,94 +1,101 @@
+<?
 
-  <div id="officer-dialog" title="Add New Officer">
-    <form>
-      <table>
-        <tr>
-          <td>Officer ID:</td>
-          <td><input type="text" name="officer-id" /></td>
-        </tr>
-        <tr>
-          <td>Last Name:</td>
-          <td><input type="text" name="officer-last-name" /></td>
-        </tr>
-        <tr>
-          <td>First Initial:</td>
-          <td><input type="text" name="officer-first-name" /></td>
-        </tr>
-        <tr>
-          <td>Phone Number:</td>
-          <td><input type="text" name="officer-first-name" /></td>
-        </tr>
-      </table>		
-    </form>
-  </div>
-  
-  <div id="common-place-dialog" title="Add New Common Place">
-    <form>
-      <label>Common Place</label>
-      <input type="text" name="common-place-name" size="40" />
-    </form>
-  </div>
-  
-  <div id="offense-dialog" title="Add Offense">
-    <form>
-        <label>Offence:</label>
-        <select name="offense">
-          <option></option>
-          
-        </select>
-    </form>
-  </div>
-  
-  <div id="item-dialog" title="Add Stolen/Vandalized Item">
-    <form>
-      <table>
-        <tr>
-          <td>Item:</td>
-          <td><input type="text" name="item" size="30"></td>
-        </tr>
-        <tr>
-          <td>Value:</td>
-          <td><input type="text" name="item" size="10"></td>
-        </tr>
-      </table>
-    </form>
-  </div>
-  
-  <div id="vehicle-dialog" title="Add Vehicle">
-    <form>
+
+?>
+
+<div id="officer-dialog" title="Add New Officer">
+  <form>
     <table>
       <tr>
-        <td>Year:</td>
-        <td><input type="text" name="item" ></td>
-      </tr>					
+        <td>Officer ID:</td>
+        <td><input type="text" name="officer-id" /></td>
+      </tr>
       <tr>
-        <td>Make:</td>
-        <td><input type="text" name="item" ></td>
-      </tr>	
+        <td>Last Name:</td>
+        <td><input type="text" name="officer-last-name" /></td>
+      </tr>
       <tr>
-        <td>Model:</td>
-        <td><input type="text" name="item" ></td>
-      </tr>	
+        <td>First Initial:</td>
+        <td><input type="text" name="officer-first-name" /></td>
+      </tr>
       <tr>
-        <td>Color:</td>
-        <td><input type="text" name="item" ></td>
-      </tr>	
+        <td>Phone Number:</td>
+        <td><input type="text" name="officer-first-name" /></td>
+      </tr>
+    </table>		
+  </form>
+</div>
+
+<div id="common-location-dialog" title="Add New Common Location">
+  <form id="common-location-form">
+    <input type="hidden" name="action" value="Add Common Location" />
+    <label>Common Location</label>
+    <input type="text" name="common-location-name" id="common-location-name" style="width: 275px;" />
+  </form>
+</div>
+
+<div id="offense-dialog" title="Add Offense">
+  <form>
+      <label>Offence:</label>
+      <select name="offense">
+        <option></option>
+        
+      </select>
+  </form>
+</div>
+
+<div id="item-dialog" title="Add Stolen/Vandalized Item">
+  <form>
+    <table>
       <tr>
-        <td>License:</td>
-        <td><input type="text" name="item" ></td>
-      </tr>	
+        <td>Item:</td>
+        <td><input type="text" name="item" size="30"></td>
+      </tr>
       <tr>
-        <td>State:</td>
-        <td><input type="text" name="item" ></td>
-      </tr>	
+        <td>Value:</td>
+        <td><input type="text" name="item" size="10"></td>
+      </tr>
     </table>
   </form>
-  </div>
+</div>
+
+<div id="vehicle-dialog" title="Add Vehicle">
+  <form>
+  <table>
+    <tr>
+      <td>Year:</td>
+      <td><input type="text" name="item" ></td>
+    </tr>					
+    <tr>
+      <td>Make:</td>
+      <td><input type="text" name="item" ></td>
+    </tr>	
+    <tr>
+      <td>Model:</td>
+      <td><input type="text" name="item" ></td>
+    </tr>	
+    <tr>
+      <td>Color:</td>
+      <td><input type="text" name="item" ></td>
+    </tr>	
+    <tr>
+      <td>License:</td>
+      <td><input type="text" name="item" ></td>
+    </tr>	
+    <tr>
+      <td>State:</td>
+      <td><input type="text" name="item" ></td>
+    </tr>	
+  </table>
+</form>
+</div>
 
 <?
 $citation = new Citation( $defendant->getProgramID() );
 ?>
 <form name="citation" id="citation" action="process.php" method="post">
+  <input type="hidden" name="action" value="Update Citation" />
+  <input type="hidden" name="defendantID" value="<? echo $defendant->getDefendantID() ?>" />
   <fieldset>
     <legend>Citation Infomation</legend>
     <table>
@@ -97,9 +104,10 @@ $citation = new Citation( $defendant->getProgramID() );
         <td><input type="text" name="citation-date" id="citation-date" value="" /></td>
         <td>Officer:</td>
         <td>
-        <? $data = new Data(); ?>
-          <select name="officer">
-            <? echo $data->fetchOfficerDropdown( $user_programID, $officerID )?>
+        	<? $data = new Data(); ?>
+          <select name="officerID">
+          	<option></option>
+            <? echo $data->fetchOfficerDropdown( $user_programID, $citation->officerID )?>
           </select>
           <a id="add-officer" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
         </td>
@@ -110,8 +118,8 @@ $citation = new Citation( $defendant->getProgramID() );
         <td>Miranda Given?</td>
         <td>
           <select name="miranda">
-            <option>Yes</option>
-            <option selected="selected">No</option>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
           </select>
         </td>
       </tr>
@@ -121,18 +129,20 @@ $citation = new Citation( $defendant->getProgramID() );
         <td>Drugs/Alcohol?</td>
         <td>
           <select name="drugs-alcohol">
-            <option>Yes</option>
-            <option selected="selected">No</option>
+            <option value="1">Yes</option>
+            <option value="0">No</option>
           </select>
         </td>
       </tr>
       <tr>
         <td>Common Place:</td>
         <td>
-          <select style="width: 310px;" name="common-place">
+          <select style="width: 310px;" name="common-location" id="common-location">
             <option></option>
+            <? echo $data->fetchCommonLocationDropdown( $user_programID, $citation->commonLocationID )?>
           </select>
-          <a id="add-common-place" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+          <a id="add-common-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+          <? unset( $data ); ?>
         </td>
       </tr>
       <tr>
@@ -145,7 +155,7 @@ $citation = new Citation( $defendant->getProgramID() );
           <input type="text" name="citation-city" id="citation-city" value="<? echo $location->city ?>" />
           State: <input type="text" name="citation-state" id="citation-state" size="2" value="<? echo $location->state ?>" />
           Zip: <input type="text" name="citation-zip" id="citation-zip" size="7" value="<? echo $location->zip ?>" />
-          <a class="select-location" id="citation-plocation" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+          <a class="select-location" id="citation-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
           <?
           unset($location);
           ?>

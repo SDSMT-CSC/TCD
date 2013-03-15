@@ -154,7 +154,11 @@ else {
 </fieldset>
 </form>
 
-<? if( isset($id) ) { ?>
+<? 
+unset( $action );
+
+if( isset($id) ) { 
+?>
 <div id="tabs">
 	<ul>
 		<li><a href="#tab-personal">Personal</a></li>

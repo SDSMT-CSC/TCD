@@ -164,7 +164,6 @@ class Program {
 		return false;
 	}
 
-
   /*************************************************************************************************
     function: updateProgram
     purpose: updates or adds the program based on current information. If the program ID is 0,
@@ -246,6 +245,36 @@ class Program {
       return false;
   }
   
+	 /*************************************************************************************************
+	 
+	 *************************************************************************************************/
+		public function addCommonLocation( $location )
+		{
+			$commonID = NULL;
+			
+			if( $location )
+			{
+				// also insert the city/state into the program locations table
+				$core = Core::dbOpen();
+				$sql = "INSERT INTO program_common_location (programID, commonPlace) VALUES(:programID, :location)";
+				$stmt = $core->dbh->prepare($sql);
+				$stmt->bindParam(':programID', $this->programID);
+				$stmt->bindParam(':location', $location);
+				Core::dbClose();
+				
+				try
+				{
+					if( $stmt->execute() )
+							$commonID = $core->dbh->lastInsertId(); 
+	
+				} catch ( PDOException $e ) {
+					echo "Add common location Failed!";
+				}         
+			}
+
+			return $commonID;
+		}
+	
   // public function removeCourt() { }
 	
 	// getters
