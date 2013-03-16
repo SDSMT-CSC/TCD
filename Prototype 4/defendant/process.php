@@ -115,11 +115,6 @@ if( $action == "Delete Guardian" )
 	}
 }
 
-if( $action == "Add Common Location")
-{
-	echo $program->addCommonLocation( $_POST["common-location-name"] );
-}
-
 if( $action == "Update Citation")
 {
 	$citation = new Citation( $_POST["defendantID"] );
@@ -139,6 +134,18 @@ if( $action == "Update Citation")
  	// redirect to the defendant page	
 	header("location: view.php?id=".$citation->getDefendantID() );
 }
+
+if( $action == "Add Common Location")
+{
+	echo $program->addCommonLocation( $_POST["common-location-name"] );
+}
+
+if( $action == "Add Officer")
+{
+	 echo $program->addOfficer( $_POST["officer-firstname"], $_POST["officer-lastname"], $_POST["officer-idNumber"], $_POST["officer-phone"] );
+}
+
+
 
 
 

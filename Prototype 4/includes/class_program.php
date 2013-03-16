@@ -254,7 +254,6 @@ class Program {
 			
 			if( $location )
 			{
-				// also insert the city/state into the program locations table
 				$core = Core::dbOpen();
 				$sql = "INSERT INTO program_common_location (programID, commonPlace) VALUES(:programID, :location)";
 				$stmt = $core->dbh->prepare($sql);
@@ -266,13 +265,42 @@ class Program {
 				{
 					if( $stmt->execute() )
 							$commonID = $core->dbh->lastInsertId(); 
-	
 				} catch ( PDOException $e ) {
 					echo "Add common location Failed!";
 				}         
 			}
-
 			return $commonID;
+		}
+			 
+	 /*************************************************************************************************
+	 
+	 *************************************************************************************************/
+		public function addOfficer( $firstname, $lastname, $idNumber, $phone )
+		{
+			$officerID = NULL;
+						
+			if( $firstname && $lastname )
+			{
+				$core = Core::dbOpen();
+				$sql = "INSERT INTO program_officers (programID, firstname, lastname, idNumber, phone) 
+								VALUES(:programID, :firstname, :lastname, :idNumber, :phone)";
+				$stmt = $core->dbh->prepare($sql);
+				$stmt->bindParam(':programID', $this->programID);
+				$stmt->bindParam(':firstname', $firstname);
+				$stmt->bindParam(':lastname', $lastname);
+				$stmt->bindParam(':idNumber', $idNumber);
+				$stmt->bindParam(':phone', $phone);
+				Core::dbClose();
+				
+				try
+				{
+					if( $stmt->execute() )
+							$officerID = $core->dbh->lastInsertId();	
+				} catch ( PDOException $e ) {
+					echo "Add officer Failed!";
+				}         
+			}			
+			return $officerID;
 		}
 	
   // public function removeCourt() { }

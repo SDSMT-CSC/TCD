@@ -200,8 +200,8 @@ class Data {
     
 		//database connection and SQL query
 		$core = Core::dbOpen();
-		$sql = "SELECT o.programID, o.officerID, o.lastName, o.firstName FROM program_officers o 
-				WHERE o.programID = :programID ORDER BY lastName";
+		$sql = "SELECT programID, officerID, lastName, firstName FROM program_officers 
+						WHERE programID = :programID ORDER BY lastName";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $programID );
 		

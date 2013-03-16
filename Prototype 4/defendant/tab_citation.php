@@ -5,23 +5,24 @@ $citation = new Citation( $defendant->getDefendantID() );
 ?>
 
 <div id="officer-dialog" title="Add New Officer">
-  <form>
+  <form id="officer">
+    <input type="hidden" name="action" value="Add Officer" />
     <table>
       <tr>
-        <td>Officer ID:</td>
-        <td><input type="text" name="officer-id" /></td>
+        <td width="100">Identification:</td>
+        <td><input type="text" name="officer-idNumber" id="officer-idNumber" /></td>
       </tr>
       <tr>
         <td>Last Name:</td>
-        <td><input type="text" name="officer-last-name" /></td>
+        <td><input type="text" name="officer-lastname" id="officer-lastname" /></td>
       </tr>
       <tr>
-        <td>First Initial:</td>
-        <td><input type="text" name="officer-first-name" /></td>
+        <td>First Name:</td>
+        <td><input type="text" name="officer-firstname" id="officer-firstname" /></td>
       </tr>
       <tr>
         <td>Phone Number:</td>
-        <td><input type="text" name="officer-first-name" /></td>
+        <td><input type="text" name="officer-phone" id="officer-phone" /></td>
       </tr>
     </table>		
   </form>
@@ -179,18 +180,6 @@ $citation = new Citation( $defendant->getProgramID() );
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>22-10-2</td>
-          <td>Theft</td>
-          <td>Class 2 Misdemeanor</td>
-          <td><a href="view.php">Remove</a></td>
-        </tr>
-        <tr>
-          <td>22-14-20</td>
-          <td>Discharge of firearm at occupied structure or motor vehicle</td>
-          <td>Felony</td>
-          <td><a href="view.php">Remove</a></td>
-        </tr>
       </tbody>
     </table>
     <div>
@@ -209,11 +198,6 @@ $citation = new Citation( $defendant->getProgramID() );
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>Stereo</td>
-          <td>$350</td>
-          <td><a href="view.php">Remove</a></td>
-        </tr>
       </tbody>
     </table>
     <div>
@@ -236,15 +220,6 @@ $citation = new Citation( $defendant->getProgramID() );
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>2005</td>
-          <td>Chevy</td>
-          <td>F-150</td>
-          <td>Red</td>
-          <td></td>
-          <td></td>
-          <td><a href="view.php">Remove</a></td>
-        </tr>
       </tbody>
     </table>
     <div>

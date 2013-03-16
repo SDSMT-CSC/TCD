@@ -1,6 +1,9 @@
 
 jQuery(function($) {	
 
+	/**************************************************************************************************
+		BUTTON AND MAIN TAB SETUP
+	**************************************************************************************************/
 	$("#tabs").tabs({ cookie: { expires: 5 } });
   $("#tabs").show(); 
 
@@ -12,7 +15,8 @@ jQuery(function($) {
 	$("#defendant-list").button().click(function() {	window.location.href = "index.php";	});	
 	$("#add-defendant").button().click(function() { $("#defendant-primary").submit(); });
 	$("#citation-submit").button().click(function() { $("#citation").submit(); });
-		
+	
+	$('#add-parent').click(function(){$('#parent-dialog').dialog('open');});
 	$("#add-officer").click(function(){ $('#officer-dialog').dialog('open'); });
 	$("#add-common-location").click(function(){ $('#common-location-dialog').dialog('open'); });
 	$("#add-offense").click(function(){ $('#offense-dialog').dialog('open'); });
@@ -22,7 +26,21 @@ jQuery(function($) {
 	$("#dob").datepicker();
 	$("#citation-date").datepicker({maxDate: new Date});
 	$("#citation-time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: ''});
-		
+	
+	$("#defendant-personal-submit").button().click(function() { $("#defendant-personal").submit(); });
+
+	$(".update-guardian").button();		
+	$(".delete-guardian").button().click(function() {
+		dTitle = 'Delete Guardian';
+		dMsg = 'Are you sure you want to delete this guardian?';
+		dHref = $(this).val();
+		popupDialog( dTitle, dMsg, dHref );		
+		return false;
+	});
+
+	/**************************************************************************************************
+		FORM VALIDATION
+	**************************************************************************************************/
 	$("#defendant-primary").validate({
 		errorElement: "div",
 		wrapper: "div",
@@ -50,16 +68,59 @@ jQuery(function($) {
 			'citation-time': { required: true }
 		}
 	});	
+	
+	$("#officer").validate({
+		errorElement: "div",
+		wrapper: "div",
+		errorPlacement: function(error, element) {
+			  error.insertAfter(element);
+				error.addClass('message');
+		},
+		rules: {
+			'officer-lastname': { required: true },
+			'officer-firstname': { required: true }
+		},
+		submitHandler: function(form) {
+			$.post('process.php', $(form).serialize(), function(data) {
+				if( data > 0 )
+					{
+						// add the newly entered location to the dropdown and make is selected
+						var name = $("#officer-lastname").val()+", "+$("#officer-firstname").val();
+						$("#officerID").append($("<option selected></option>").attr("value",data).text(name)); 					
+						
+						// close dialog and clear form
+						$("#officer-dialog").dialog('close');	
+						$("#officer")[0].reset();
+					}
+			});
+		}
+	});	
 		
-	$("#defendant-personal-submit").button().click(function() { $("#defendant-personal").submit(); });
-			
+	/**************************************************************************************************
+		DIALOG FUNCTIONALITY
+	**************************************************************************************************/
+	$("#parent-dialog").dialog({
+			resizable: false,
+			autoOpen:false,
+			modal: true,
+			width:820,
+			buttons: {
+				'Add Parent/Guardian': function() {
+					$("#guardian-form").submit();
+					},
+				'Cancel': function() {
+					$(this).dialog('close');
+				}
+			}
+		});
+		
 	$("#school-dialog").dialog({
 			resizable: false,
 			autoOpen:false,
 			modal: true,
 			width:600,
 			buttons: {
-				Cancel: function() {
+				'Cancel': function() {
 					$(this).dialog('close');
 				}
 			}
@@ -71,7 +132,7 @@ jQuery(function($) {
 			modal: true,
 			width:500,
 			buttons: {
-				Cancel: function() {
+				'Cancel': function() {
 					$(this).dialog('close');
 				}
 			}	
@@ -81,14 +142,12 @@ jQuery(function($) {
 			resizable: false,
 			autoOpen:false,
 			modal: true,
-			width:400,
+			width:475,
 			buttons: {
-				'Add Officer': function() {
-					$(this).dialog('close');
-						// TO DO: add school
-					},
-				Cancel: function() {
-					$(this).dialog('close');
+				'Add Officer': function() { $("#officer").submit()	},
+				'Cancel': function() { 
+					$(this).dialog('close'); 
+					$("#officer")[0].reset(); 
 				}
 			}
 		});
@@ -108,13 +167,13 @@ jQuery(function($) {
 							
 							// close dialog and clear form
 							$("#common-location-dialog").dialog('close');	
-							$("#common-location-name").val('');
+							$("#common-location-name")[0].reset();
 						}
-					});
-					
-					},
-				Cancel: function() {
+					});					
+				},
+				'Cancel': function() { 
 					$(this).dialog('close');
+					$("#common-location-name")[0].reset();				
 				}
 			}
 		});
@@ -124,15 +183,12 @@ jQuery(function($) {
 			autoOpen:false,
 			modal: true,
 			width:600,
-			height:200,
 			buttons: {
 				'Add Offense': function() {
 					$(this).dialog('close');
 						// TO DO: add offense
 					},
-				Cancel: function() {
-					$(this).dialog('close');
-				}
+				'Cancel': function() { $(this).dialog('close'); }
 			}
 		});
 		
@@ -141,15 +197,12 @@ jQuery(function($) {
 			autoOpen:false,
 			modal: true,
 			width:400,
-			height:200,
 			buttons: {
 				'Add Item': function() {
 					$(this).dialog('close');
 						// TO DO: add stolen item
 					},
-				Cancel: function() {
-					$(this).dialog('close');
-				}
+				'Cancel': function() { $(this).dialog('close'); }
 			}
 		});
 		
@@ -158,18 +211,38 @@ jQuery(function($) {
 			autoOpen:false,
 			modal: true,
 			width:400,
-			height:310,
 			buttons: {
 				'Add Vehicle': function() {
 					$(this).dialog('close');
 						// TO DO: add vehicle
 					},
-				Cancel: function() {
-					$(this).dialog('close');
-				}
+				'Cancel': function() { $(this).dialog('close'); }
 			}
 		});
 	
+	// generic dialog for delete confirmation
+	function popupDialog( dTitle, dMsg, dHref )
+	{
+		$("#confirm-dialog").find("p:first").html(dMsg);
+		
+		var dlg = $("#confirm-dialog").dialog({
+			autoOpen: false,
+			title: dTitle,
+			modal: true,
+			buttons: {
+					'Delete': function() {
+						window.location.href = dHref;
+					},
+					'Cancel': function() { $(this).dialog('close'); }
+				}
+		});	
+		
+		dlg.dialog('open');
+	}
+	
+	/**************************************************************************************************
+		CLICK FUNCTIONS
+	**************************************************************************************************/
 	$("#sameaddress").click(function() {
 			if($(this).is(':checked')) {
 				$("#mailing-address").val($("#physical-address").val());
@@ -189,7 +262,23 @@ jQuery(function($) {
 			$('#location-dialog').dialog('open');
 			$('.ui-dialog :button').blur();
 	});
-			
+	
+	$("#SameAsDefendant").click(function() {
+		if($(this).is(':checked')) {
+			$("#guardian-physical-address").val($("#physical-address").val());
+			$("#guardian-physical-city").val($("#physical-city").val());
+			$("#guardian-physical-state").val($("#physical-state").val());
+			$("#guardian-physical-zip").val($("#physical-zip").val());
+			$("#guardian-mailing-address").val($("#mailing-address").val());
+			$("#guardian-mailing-city").val($("#mailing-city").val());
+			$("#guardian-mailing-state").val($("#mailing-state").val());
+			$("#guardian-mailing-zip").val($("#mailing-zip").val());
+		}
+	});
+	
+	/**************************************************************************************************
+		DATA TABLE SETUP
+	**************************************************************************************************/
 	var locTable = $("#location-table").dataTable( { 
 				"aaSorting": [],
 				"sPaginationType": "full_numbers",
@@ -204,12 +293,16 @@ jQuery(function($) {
 				"sAjaxSource": '/data/program_schools.php'
 	});
 	
-	var address;
+	/**************************************************************************************************
+		DATA TABLE CLICK FUNCTIONALITY
+	**************************************************************************************************/
+	var address;	// used for tracking locations
+	
+	// Location dialog table
 	$('#location-table tbody tr').live('click', function (event) {        
 		var oData = locTable.fnGetData(this); // get datarow
 		if (oData != null)  // null if we clicked on title row
 		{
-						
 			// set input values
 			if( address == "physical-location" ) 
 			{
@@ -263,6 +356,7 @@ jQuery(function($) {
 		}
 	});
 	
+	// School dialog table
 	$('#school-table tbody tr').live('click', function (event) {        
 		var oData = schoolTable.fnGetData(this); // get datarow
 		if (oData != null)  // null if we clicked on title row
@@ -277,65 +371,5 @@ jQuery(function($) {
 			$("#school-dialog").dialog('close');
 		}
 	});
-	
-	$("#parent-dialog").dialog({
-			resizable: false,
-			autoOpen:false,
-			modal: true,
-			width:820,
-			buttons: {
-				'Add Parent/Guardian': function() {
-					$("#guardian-form").submit();
-					},
-				Cancel: function() {
-					$(this).dialog('close');
-				}
-			}
-		});
-		
-	$('#add-parent').click(function(){$('#parent-dialog').dialog('open');});
-	
-	$("#SameAsDefendant").click(function() {
-		if($(this).is(':checked')) {
-			$("#guardian-physical-address").val($("#physical-address").val());
-			$("#guardian-physical-city").val($("#physical-city").val());
-			$("#guardian-physical-state").val($("#physical-state").val());
-			$("#guardian-physical-zip").val($("#physical-zip").val());
-			$("#guardian-mailing-address").val($("#mailing-address").val());
-			$("#guardian-mailing-city").val($("#mailing-city").val());
-			$("#guardian-mailing-state").val($("#mailing-state").val());
-			$("#guardian-mailing-zip").val($("#mailing-zip").val());
-		}
-	});
-	
-	$(".update-guardian").button();		
-	$(".delete-guardian").button().click(function() {
-		dTitle = 'Delete Guardian';
-		dMsg = 'Are you sure you want to delete this guardian?';
-		dHref = $(this).val();
-		popupDialog( dTitle, dMsg, dHref );		
-		return false;
-	});
-		
-	function popupDialog( dTitle, dMsg, dHref )
-	{
-		$("#confirm-dialog").find("p:first").html(dMsg);
-		
-		var dlg = $("#confirm-dialog").dialog({
-			autoOpen: false,
-			title: dTitle,
-			modal: true,
-			buttons: {
-					'Delete': function() {
-						window.location.href = dHref;
-					},
-					Cancel: function() {
-						$(this).dialog('close');
-					}
-				}
-		});	
-		
-		dlg.dialog('open');
-	}
-		
+			
 });
