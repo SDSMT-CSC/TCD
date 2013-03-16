@@ -194,16 +194,16 @@ class Data {
 	/*************************************************************************************************
 	
 	*************************************************************************************************/
-	public function fetchOfficerDropdown( $id, $officerID )
+	public function fetchOfficerDropdown( $programID, $officerID )
 	{
 	  $data = NULL; 
     
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		$sql = "SELECT o.programID, o.officerID, o.lastName, o.firstName FROM program_officers o 
-				WHERE o.programID = :id ORDER BY lastName";
+				WHERE o.programID = :programID ORDER BY lastName";
 		$stmt = $core->dbh->prepare($sql);
-		$stmt->bindParam(':id', $id );
+		$stmt->bindParam(':programID', $programID );
 		
 		try {
 			if( $stmt->execute() ) {

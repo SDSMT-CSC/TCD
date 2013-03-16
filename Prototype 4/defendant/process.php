@@ -125,9 +125,9 @@ if( $action == "Update Citation")
 	$citation = new Citation( $_POST["defendantID"] );
 	$citation->citationDate = $_POST["citation-date"] . " " . $_POST["citation-time"];
 	$citation->officerID = $_POST["officerID"];
-	$citation->mirandized = $_POST["miranda"]; // => No 
-	$citation->address = $_POST["citation-address"]; // => 
-	$citation->drugsOrAlcohol = $_POST["drugs-alcohol"]; // => Yes 
+	$citation->mirandized = $_POST["miranda"];
+	$citation->address = $_POST["citation-address"];
+	$citation->drugsOrAlcohol = $_POST["drugs-alcohol"];
 	$citation->commonLocationID = $_POST["common-location"];
 
 	$location = new Location( $user_programID );
@@ -136,7 +136,7 @@ if( $action == "Update Citation")
 	if( $citation->updateCitation() )
 		$user->addEvent("Defendant: ".$action, $citation->getDefendantID() );
 	
-	// redirect to the defendant page	
+ 	// redirect to the defendant page	
 	header("location: view.php?id=".$citation->getDefendantID() );
 }
 

@@ -253,7 +253,7 @@ class Defendant {
 						$output[] = $aRow["guardianID"];
 		} 
 		catch (PDOException $e) {
-      		echo "Program School Read Failed!";
+      		echo "Program guardian Read Failed!";
     }
 		return $output;
 	}

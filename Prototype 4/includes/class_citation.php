@@ -13,23 +13,47 @@ class Citation {
 	public $drugsOrAlcohol;
 		
 	public function __construct( $defendantID )
-	{
-		$this->citationID = 0;
-		$this->defendantID = $defendantID;
-		$this->officerID = NULL;
-		$this->citationDate = NULL;
-		$this->address = NULL;
-		$this->locationID = NULL;
-		$this->commonLocationID = NULL;
-		$this->mirandized = 0;
-		$this->drugsOrAlcohol = 0;
-	}
-	
-	public function getFromID( $defendantID )
-	{
+	{		
+		// database connection and sql query
+		$core = Core::dbOpen();
+		$sql = "SELECT *, UNIX_TIMESTAMP(date) as citationDate FROM citation WHERE defendantID = :defendantID";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':defendantID', $defendantID );
+		Core::dbClose();
 		
+		try
+		{
+			if( $stmt->execute() && $stmt->rowCount() > 0 )
+			{
+				$row = $stmt->fetch();
+				$this->citationID = $row["citationID"];
+				$this->defendantID = $defendantID;
+				$this->officerID = $row["officerID"];
+				$this->citationDate = $row["citationDate"];
+				$this->address = $row["address"];
+				$this->locationID = $row["locationID"];
+				$this->commonLocationID = $row["commonPlaceID"];
+				$this->mirandized = $row["mirandized"];
+				$this->drugsOrAlcohol = $row["drugsOrAlcohol"];			
+			}
+			else
+			{
+				$this->citationID = 0;
+				$this->defendantID = $defendantID;
+				$this->officerID = NULL;
+				$this->citationDate = NULL;
+				$this->address = NULL;
+				$this->locationID = NULL;
+				$this->commonLocationID = NULL;
+				$this->mirandized = 0;
+				$this->drugsOrAlcohol = 0;				
+			}			
+		} catch ( PDOException $e ) {
+			echo "Set Citation Information Failed!";
+		}
+		return false;
 	}
-	
+		
 	public function updateCitation()
 	{
 			// database connection and sql query
@@ -46,11 +70,11 @@ class Citation {
 								locationID = :locationID, mirandized = :mirandized, drugsOrAlcohol = :drugsOrAlcohol, commonPlaceID = :commonPlaceID
 								WHERE citationID = :citationID";
 			}
-			
+						
 			$stmt = $core->dbh->prepare($sql);
 			if( $this->citationID > 0 ) { $stmt->bindParam(':citationID', $this->citationID); }
 			$stmt->bindParam(':defendantID', $this->defendantID);
-			$stmt->bindParam(':officerID', $this->officerID);
+			$stmt->bindParam(':officerID', $this->officerID );
 			$stmt->bindParam(':date', $core->convertToServerDate( $this->citationDate, $_SESSION["timezone"] ) );
 			$stmt->bindParam(':address', $this->address);
 			$stmt->bindParam(':locationID', $this->locationID);
@@ -67,10 +91,13 @@ class Citation {
 						$this->citationID = $core->dbh->lastInsertId(); 
 					return true;
 				}
+				
+				print_r( $stmt->errorInfo() );
+					
 			} catch ( PDOException $e ) {
 				echo "Set Citation Information Failed!";
 			}
-			return false;
+		return false;
 	}
 	
 	public function removeCitation()

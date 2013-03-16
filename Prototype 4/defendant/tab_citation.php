@@ -1,5 +1,6 @@
 <?
 
+$citation = new Citation( $defendant->getDefendantID() );
 
 ?>
 
@@ -101,11 +102,11 @@ $citation = new Citation( $defendant->getProgramID() );
     <table>
       <tr>
         <td>Date:</td>
-        <td><input type="text" name="citation-date" id="citation-date" value="" /></td>
+        <td><input type="text" name="citation-date" id="citation-date" value="<? echo date("m/d/Y", $citation->citationDate); ?>" /></td>
         <td>Officer:</td>
         <td>
         	<? $data = new Data(); ?>
-          <select name="officerID">
+          <select name="officerID" id="officerID">
           	<option></option>
             <? echo $data->fetchOfficerDropdown( $user_programID, $citation->officerID )?>
           </select>
@@ -114,23 +115,23 @@ $citation = new Citation( $defendant->getProgramID() );
       </tr>
       <tr>
         <td>Time:</td>
-        <td><input type="text" name="citation-time" id="citation-time" value="" /></td>
+        <td><input type="text" name="citation-time" id="citation-time" value="<? echo date("h:i A", $citation->citationDate); ?>" /></td>
         <td>Miranda Given?</td>
         <td>
           <select name="miranda">
-            <option value="1">Yes</option>
-            <option value="0">No</option>
+            <option value="1"<? if( $citation->mirandized == 1 ) echo " selected"; ?>>Yes</option>
+            <option value="0"<? if( $citation->mirandized == 0 ) echo " selected"; ?>>No</option>
           </select>
         </td>
       </tr>
       <tr>
         <td>Address:</td>
-        <td><input type="text" name="citation-address" style="width: 300px;" value=""/></td>
+        <td><input type="text" name="citation-address" style="width: 300px;" value="<? echo $defendant->address ?>"/></td>
         <td>Drugs/Alcohol?</td>
         <td>
           <select name="drugs-alcohol">
-            <option value="1">Yes</option>
-            <option value="0">No</option>
+            <option value="1"<? if( $citation->drugsOrAlcohol == 1 ) echo " selected"; ?>>Yes</option>
+            <option value="0"<? if( $citation->drugsOrAlcohol == 0 ) echo " selected"; ?>>No</option>
           </select>
         </td>
       </tr>
@@ -150,7 +151,7 @@ $citation = new Citation( $defendant->getProgramID() );
         <td>
           <? 
           $location = new Location( $defendant->getProgramID() );
-          $location->getFromID( $citation->pID );
+          $location->getFromID( $citation->locationID );
           ?>
           <input type="text" name="citation-city" id="citation-city" value="<? echo $location->city ?>" />
           State: <input type="text" name="citation-state" id="citation-state" size="2" value="<? echo $location->state ?>" />
@@ -166,87 +167,88 @@ $citation = new Citation( $defendant->getProgramID() );
   </fieldset>
 </form>
 
-  <fieldset>
-      <legend>Offense</legend>					
-      <table class="listing">
-        <thead>
-          <tr>
-            <th width="10%">Statue</th>
-            <th width="65%">Title</th>
-            <th width="20%">Type</th>
-            <th width="5%"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>22-10-2</td>
-            <td>Theft</td>
-            <td>Class 2 Misdemeanor</td>
-            <td><a href="view.php">Remove</a></td>
-          </tr>
-          <tr>
-            <td>22-14-20</td>
-            <td>Discharge of firearm at occupied structure or motor vehicle</td>
-            <td>Felony</td>
-            <td><a href="view.php">Remove</a></td>
-          </tr>
-        </tbody>
-      </table>
-      <div>
-        <input type="button" class="add" id="add-offense" value="Add Offense" />
-      </div>
-  </fieldset>
-  
-  <fieldset>
-      <legend>Stolen/Vandalized Items</legend>
-      <table class="listing">
-        <thead>
-          <tr>
-            <th width="75%">Item</th>
-            <th width="20%">Value</th>
-            <th width="5%"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Stereo</td>
-            <td>$350</td>
-            <td><a href="view.php">Remove</a></td>
-          </tr>
-        </tbody>
-      </table>
-      <div>
-        <input type="button" class="add" id="add-item" value="Add Item" />
-      </div>
-  </fieldset>
+<fieldset>
+    <legend>Offense</legend>					
+    <table class="listing">
+      <thead>
+        <tr>
+          <th width="10%">Statue</th>
+          <th width="65%">Title</th>
+          <th width="20%">Type</th>
+          <th width="5%"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>22-10-2</td>
+          <td>Theft</td>
+          <td>Class 2 Misdemeanor</td>
+          <td><a href="view.php">Remove</a></td>
+        </tr>
+        <tr>
+          <td>22-14-20</td>
+          <td>Discharge of firearm at occupied structure or motor vehicle</td>
+          <td>Felony</td>
+          <td><a href="view.php">Remove</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <div>
+      <input type="button" class="add" id="add-offense" value="Add Offense" />
+    </div>
+</fieldset>
 
-  <fieldset>
-      <legend>Vehicles Involved</legend>
-      <table class="listing">
-        <thead>
-          <tr>
-            <th width="10%">Year</th>
-            <th width="20%">Make</th>
-            <th width="20%">Model</th>
-            <th width="20%">Color</th>
-            <th width="15%">License</th>
-            <th width="10%">State</th>
-            <th width="5%"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>2005</td>
-            <td>Chevy</td>
-            <td>F-150</td>
-            <td>Red</td>
-            <td></td>
-            <td></td>
-            <td><a href="view.php">Remove</a></td>
-          </tr>
-        </tbody>
-      </table>
-      <div>
-        <input type="button" class="add" id="add-vehicle" value="Add Vehicle" />
-      </div>
-  </fieldset>
+<fieldset>
+    <legend>Stolen/Vandalized Items</legend>
+    <table class="listing">
+      <thead>
+        <tr>
+          <th width="75%">Item</th>
+          <th width="20%">Value</th>
+          <th width="5%"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Stereo</td>
+          <td>$350</td>
+          <td><a href="view.php">Remove</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <div>
+      <input type="button" class="add" id="add-item" value="Add Item" />
+    </div>
+</fieldset>
+
+<fieldset>
+    <legend>Vehicles Involved</legend>
+    <table class="listing">
+      <thead>
+        <tr>
+          <th width="10%">Year</th>
+          <th width="20%">Make</th>
+          <th width="20%">Model</th>
+          <th width="20%">Color</th>
+          <th width="15%">License</th>
+          <th width="10%">State</th>
+          <th width="5%"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2005</td>
+          <td>Chevy</td>
+          <td>F-150</td>
+          <td>Red</td>
+          <td></td>
+          <td></td>
+          <td><a href="view.php">Remove</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <div>
+      <input type="button" class="add" id="add-vehicle" value="Add Vehicle" />
+    </div>
+</fieldset>
+<? unset( $citation ); ?>
