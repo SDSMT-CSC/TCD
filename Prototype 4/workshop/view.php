@@ -7,7 +7,7 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 $id = $_GET["id"];
 if( isset($id) )
 {
-	$action = "Edit Volunteer";
+	$action = "Edit Workshop";
 	
 	$workshop = new Workshop();
 	$data = new Data();
@@ -38,8 +38,8 @@ else
 
 <script>
 $(function () {	
-	$( "#previous-workshop" ).button().click(function() {		});
-	$( "#update-workshop" ).button().click(function() {		});
+	$( "#previous-workshop" ).button().click(function() {  });
+	$( "#update-workshop" ).button().click(function() {	$("#editWorkshop").submit(); });
 	$( "#next-workshop" ).button().click(function() {		});
 
 	$("#participant-dialog").dialog({
@@ -49,10 +49,23 @@ $(function () {
 		width:500,
 		height:400,
 		buttons: {
-			'Add Participant': function() {
+			Cancel: function() {
 				$(this).dialog('close');
-				//tie selected participant to workshop
-			},
+			}
+		}
+	});
+	
+	$("#location-dialog").dialog({
+		resizable: false,
+		autoOpen:false,
+		modal: true,
+		width:450,
+		height:250,
+		buttons: {
+			'Add Location': function() {
+				$(this).dialog('close');
+					// TO DO: add location
+				},
 			Cancel: function() {
 				$(this).dialog('close');
 			}
@@ -100,6 +113,36 @@ $(function () {
     </form>
 </div>
 
+<div id="location-dialog" title="Add New Location">
+	<form>
+		<table>
+			<tr>
+				<td>Location Name</td>
+				<td><input type="text" name="location-name" size="30" /></td>
+			</tr>
+			<tr>
+				<td>Address:</td>
+				<td><input type="text" name="location-address" size="30" /></td>
+			</tr>
+			<tr>
+				<td>City:</td>
+				<td>
+					<input type="text" name="location-city" /> State: 
+					<select name="location-state">
+						<option>ND</option>
+						<option>SD</option>
+						<option>WY</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td>Zip:</td>
+				<td><input type="text" name="location-zip" /></td>
+			</tr>
+		</table>		
+	</form>
+</div>
+
 <div id="control-header">
 	<div class="left"><h1>Edit Workshop</h1></div>	
 	<div class="right">
@@ -129,10 +172,6 @@ $(function () {
 		<tr>
 			<td>Title:</td>
 			<td><input type="text" name="title" value="<? echo $title ?>"/></td>
-		</tr>
-		<tr>
-			<td>Description:</td>
-			<td><input type="text" name="description" value="<? echo $description ?>"/></td>
 		</tr>
 		<tr>
 			<td>Instructor:</td>
@@ -173,13 +212,15 @@ $(function () {
 		</tr>
 	</table>
 </fieldset>
+
 <fieldset>
 	<legend>Workshop Participant</legend>
 	<table class="listing">
 		<thead>
 			<tr>
-				<th width="40%">Participant</th>
-				<th width="40%">Phone</th>
+				<th width="30%">Participant</th>
+				<th width="30%">Phone</th>
+				<th width="20%">Completion</th>
 				<th width="10%"></th>
 				<th width="10%"></th>
 			</tr>

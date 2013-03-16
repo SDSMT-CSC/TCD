@@ -47,14 +47,41 @@ class Workshop {
 		} 
 		catch ( PDOException $e )
 		{
-			echo "Add Workshop failed!";
+			echo "Add Workshop Failed!";
 		}
 		return false;
 	}
 	
 	public function editWorkshop()
 	{
+		//open connection and build sql string
+		$core = Core::dbOpen();
+		$sql = "UPDATE workshop SET date = :date, title = :title, description = :description, instructor = :instructor, officerID = :officerID
+		        WHERE workshopID = :id";
+		$stmt = $core->dbh->prepare($sql);
 		
+		//bind values
+		$stmt->bindParam(':date', $core->convertToServerDate( $this->date, $_SESSION["timezone"] ));
+		$stmt->bindParam(':title', $this->title);
+		$stmt->bindParam(':description', $this->description);
+		$stmt->bindParam(':instructor', $this->instructor);
+		$stmt->bindParam(':officerID', $this->officerID);
+		$stmt->bindParam(':id', $this->workshopID);
+		
+		Core::dbClose();
+		
+		try
+		{
+			if( $stmt->execute() )
+			{
+				return true;
+			}
+		} 
+		catch ( PDOException $e )
+		{
+			echo "Edit Workshop Failed!";
+		}
+		return false;
 	}
 	
 	private function deleteWorkshop()
@@ -84,7 +111,7 @@ class Workshop {
 				
 				$this->workshopID = $id;
 				$this->programID = $row["programID"];
-				$this->date = date("n/j/Y h:i A", $row["date"]);
+				$this->date = date("m/d/Y h:i A", $row["date"]);
 				$this->title = $row["title"];
 				$this->description = $row["description"];
 				$this->instructor = $row["instructor"];
@@ -122,7 +149,7 @@ class Workshop {
 	public function removeWorkshopParticipant( $workshopID, $defendantID )
 	{
 		$core = Core::dbOpen();
-		$sql = "DELETE FROM workshop_roster w WHERE w.workshopID = :workshopID AND w.defendantID = :defendantID";
+		$sql = "DELETE FROM workshop_roster WHERE workshopID = :workshopID AND defendantID = :defendantID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':workshopID', $workshopID);
 		$stmt->bindParam(':defendantID', $defendantID);
@@ -141,12 +168,33 @@ class Workshop {
 		}
 	}
 	
-	public function completeWo
+	public function completedWorkshopParticipant( $workshopID, $defendantID )
+	{
+		$core = Core::dbOpen();
+		$sql = "UPDATE workshop_roster SET completed = :completed WHERE workshopID = :workshopID AND defendantID = :defendantID";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam('completed', $core->convertToServerDate( date("d-m-Y g:i A"), $_SESSION["timezone"] ));
+		$stmt->bindParam(':workshopID', $workshopID);
+		$stmt->bindParam(':defendantID', $defendantID);
+		Core::dbClose();
+		
+		try
+		{
+			if( $stmt->execute() )
+			{
+				return true;
+			}
+		}
+		catch ( PDOException $e )
+		{
+			echo "Workshop Participant Completed Failed!";
+		}
+	}
 	
 	public function listWorkshopParticipants( $id )
 	{
 		$core = Core::dbOpen();
-		$sql = "SELECT d.firstName, d.lastName, d.homePhone, d.defendantID FROM defendant d
+		$sql = "SELECT d.firstName, d.lastName, d.homePhone, d.defendantID, UNIX_TIMESTAMP(w.completed) AS completed FROM defendant d
 				JOIN workshop_roster w ON d.defendantID = w.defendantID AND w.workshopID = :id";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':id', $id);
@@ -158,9 +206,15 @@ class Workshop {
 			{
 				$data = "";
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
-					$data .= '<tr><td>'.$aRow["lastName"].', '.$aRow["firstName"].'</td><td>'.$aRow["homePhone"].
-							 '</td><td><a href="process.php?remove='.$aRow["defendantID"].'&workshop='.$id.
-							 '">Remove</a></td><td><a href="process.php?completed='.$aRow["defendantID"].'&workshop='.$id.'">Completed</a></td></tr>';
+					if(is_null($aRow["completed"]))
+						$completed = "Not completed";
+					else
+						$completed = date( "m-d-Y g:i A", $aRow["completed"]);
+					$data .= '<tr><td>'.$aRow["lastName"].', '.$aRow["firstName"].
+							 '</td><td>'.$aRow["homePhone"].
+							 '</td><td>'.$completed.
+							 '</td><td><a href="process.php?remove='.$aRow["defendantID"].'&workshopID='.$id.'">Remove</a></td>
+							 <td><a href="process.php?completed='.$aRow["defendantID"].'&workshopID='.$id.'">Completed</a></td></tr>';
 				}
 			}
 		}

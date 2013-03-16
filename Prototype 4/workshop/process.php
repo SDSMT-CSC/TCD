@@ -19,18 +19,8 @@ $add = $_POST["add"];
 if( $action == "Add Workshop" ) {
 	$workshop = new Workshop();
 	
-	//break date and time into a form that can be stored
 	//need to ask Andrew on how the validation works, this will break if given in any other format
-	$date = $_POST["date"];
-	$expDate = explode("/", $date);
-	$newDate = $expDate[2] . "/" . $expDate[0] . "/" . $expDate[1];
-	$time = $_POST["time"];
-	$expTime = explode(":", $time);
-	$exp2Time = explode(" ", $expTime[1]);
-	if( $exp2Time[1] == "pm" )
-		$expTime[0] = (int) $expTime[0] + 12;
-	$newTime = $expTime[0] . ":" . $exp2Time[0] . ":00";
-	$storeDate = $newDate . " " . $newTime;
+	$storeDate = $_POST["date"] . " " . $_POST["time"];
 	
 	$workshop->setProgramID( $_POST["programID"] );
 	$workshop->setDate( $storeDate );
@@ -47,26 +37,59 @@ if( $action == "Add Workshop" ) {
 	
 	//redirect to edit page
 	header("location:view.php?id=" . $workshop->getWorkshopID());
+} elseif( $action == "Edit Workshop" ) {
+	$workshop = new Workshop();
+	
+	//need to ask Andrew on how the validation works, this will break if given in any other format
+	$storeDate = $_POST["date"] . " " . $_POST["time"];
+	
+	$workshop->setWorkshopID( $_POST["workshopID"] );
+	$workshop->setDate( $storeDate );
+	$workshop->setTitle( $_POST["title"] );
+	$workshop->setDescription( $_POST["description"] );
+	$workshop->setInstructor( $_POST["instructor"] );
+	$workshop->setOfficerID( $_POST["officer"] );
+	
+	if( $workshop->editWorkshop() )
+	{
+		//log if successful
+		$user->addEvent( "Edited Workshop: " . $workshop->getTitle() );
+	}
+	
+	//redirect to edit page
+	header("location:view.php?id=" . $workshop->getWorkshopID());
 } elseif ( $action == "Add Participant" ) {
 	$workshop = new Workshop();
-	$workshop->setWorkshopID( $workshopIDP );
+	$workshop->getWorkshop( $workshopIDP );
 	
 	if( $workshop->addWorkshopParticipant( $workshopIDP, $add ))
 	{
 		//log if successful
-		$user->addEvent( "Added Workshop Participant: " . $workshop->getWorkshopID() , $workshop->getWorkshopID() );
+		$user->addEvent( "Added Workshop Participant: " . $workshop->getTitle() , $workshop->getTitle() );
 	}
 	
 	//redirect to edit page
 	header("location:view.php?id=" . $workshop->getWorkshopID());
 } elseif ( isset($remove) ) {
 	$workshop = new Workshop();
-	$workshop->setWorkshopID( $workshopIDP );
+	$workshop->getWorkshop( $workshopIDG );
 	
-	if( $workshop->removeWorkshopParticipant( $workshopIDG, $remove ))
+	if( $workshop->removeWorkshopParticipant( $workshopIDG , $remove ))
 	{
 		//log if successful
-		$user->addEvent( "Removed Workshop Participant: " . $workshop->getWorkshopID() , $workshop->getWorkshopID() );
+		$user->addEvent( "Removed Workshop Participant: " . $workshop->getTitle() , $workshop->getTitle() );
+	}
+	
+	//redirect to edit page
+	header("location:view.php?id=" . $workshop->getWorkshopID());
+} elseif ( isset($completed) ) {
+	$workshop = new Workshop();
+	$workshop->getWorkshop( $workshopIDG );
+	
+	if( $workshop->completedWorkshopParticipant( $workshopIDG, $completed ))
+	{
+		//log if successful
+		$user->addEvent( "Workshop Participant Completed: " . $workshop->getTitle() , $workshop->getTitle() );
 	}
 	
 	//redirect to edit page
