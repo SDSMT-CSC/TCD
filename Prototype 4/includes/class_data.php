@@ -179,6 +179,7 @@ class Data {
 				
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
+						$row[] = $aRow["statuteID"];
 						$row[] = $aRow["statute"];
 						$row[] = "<b>".$aRow["title"]."</b><br />".$aRow["description"];;
 						$output['aaData'][] = $row;
@@ -373,6 +374,35 @@ class Data {
 		catch (PDOException $e) {
       		echo "Trial Data Read Failed!";
     }	
+		return '{"aaData":[]}';
+	}
+
+	public function fetchCourtLocation ( $user_programID ) {
+		//database connection and SQL query
+		$core = Core::dbOpen();
+		$sql = "SELECT * FROM court_location WHERE programID = :programID";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $user_programID );
+		
+		try{
+			if($stmt->execute() && $stmt->rowCount() > 0) {
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					$row = array();
+					
+					$row[] = $aRow["name"];
+					$row[] = $aRow["address"];
+					$row[] = $aRow["city"];
+					$row[] = $aRow["state"];
+					$row[] = $aRow["zip"];
+					$row[] = $aRow["locationID"];
+					
+					$output['aaData'][] = $row;
+				}
+				return json_encode($output);
+			}
+		} catch ( PDOException $e ) {
+			echo "Court Location Read Failed!";
+		}
 		return '{"aaData":[]}';
 	}
 

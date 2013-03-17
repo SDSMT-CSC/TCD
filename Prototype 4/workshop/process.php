@@ -1,6 +1,7 @@
 <?
 include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_courtLocation.php");
 
 // make sure only certain levels of user get access to this area
 if( $user_type == 1 || $user_type == 5)
@@ -28,6 +29,7 @@ if( $action == "Add Workshop" ) {
 	$workshop->setDescription( $_POST["description"] );
 	$workshop->setInstructor( $_POST["instructor"] );
 	$workshop->setOfficerID( $_POST["officer"] );
+	$workshop->setLocationID( $_POST["locationID"] );
 	
 	if( $workshop->addWorkshop() )
 	{
@@ -58,7 +60,9 @@ if( $action == "Add Workshop" ) {
 	
 	//redirect to edit page
 	header("location:view.php?id=" . $workshop->getWorkshopID());
-} elseif ( $action == "Add Participant" ) {
+} 
+elseif ( $action == "Add Participant" )
+{
 	$workshop = new Workshop();
 	$workshop->getWorkshop( $workshopIDP );
 	
@@ -70,7 +74,29 @@ if( $action == "Add Workshop" ) {
 	
 	//redirect to edit page
 	header("location:view.php?id=" . $workshop->getWorkshopID());
-} elseif ( isset($remove) ) {
+} 
+elseif ( $action == "Add Location")
+{
+	$location = new courtLocation();
+	$location->setProgramID( $_POST["programID"] );
+	$location->setName( $_POST["location-name"] );
+	$location->setAddress( $_POST["location-address"] );
+	$location->setCity( $_POST["location-city"] );
+	$location->setState( $_POST["location-state"] );
+	$location->setZip( $_POST["location-zip"] );
+	
+	if( $location->addCourtLocation() )
+	{
+		//log if successful
+		$user->addEvent( "Added Court Location: " . $location->getName() , $location->getName());
+	}
+	
+	//redirect based on return variable
+	$return = $_POST["return"];
+	header("location:" . $return );
+}
+elseif ( isset($remove) )
+{
 	$workshop = new Workshop();
 	$workshop->getWorkshop( $workshopIDG );
 	
@@ -82,7 +108,9 @@ if( $action == "Add Workshop" ) {
 	
 	//redirect to edit page
 	header("location:view.php?id=" . $workshop->getWorkshopID());
-} elseif ( isset($completed) ) {
+}
+elseif( isset($completed) )
+{
 	$workshop = new Workshop();
 	$workshop->getWorkshop( $workshopIDG );
 	

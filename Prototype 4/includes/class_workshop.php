@@ -7,6 +7,7 @@ class Workshop {
 	private $description;
 	private $instructor;
 	private $officerID;
+	private $locationID;
 	
 	public function __construct()
 	{
@@ -16,15 +17,16 @@ class Workshop {
 		$this->title = NULL;
 		$this->description = NULL;
 		$this->instructor = NULL;
-		$this->officerID = NULL;
+		$this->officerID = 0;
+		$this->locationID = 0;
 	}
 	
 	public function addWorkshop()
 	{
 		//open connection and build sql string
 		$core = Core::dbOpen();
-		$sql = "INSERT INTO workshop (programID,date,title,description,instructor,officerID)
-		        VALUES (:programID, :date, :title, :description, :instructor, :officerID)";
+		$sql = "INSERT INTO workshop (programID,date,title,description,instructor,officerID,locationID)
+		        VALUES (:programID, :date, :title, :description, :instructor, :officerID, :locationID)";
 		$stmt = $core->dbh->prepare($sql);
 		
 		//bind values
@@ -34,6 +36,7 @@ class Workshop {
 		$stmt->bindParam(':description', $this->description);
 		$stmt->bindParam(':instructor', $this->instructor);
 		$stmt->bindParam(':officerID', $this->officerID);
+		$stmt->bindParam(':locationID', $this->locationID);
 		
 		Core::dbClose();
 		
@@ -234,6 +237,7 @@ class Workshop {
 	public function getDescription() { return $this->description; }
 	public function getInstructor() { return $this->instructor; }
 	public function getOfficerID() { return $this->officerID; }
+	public function getLocationID() { return $this->locationID; }
 	
 	//setters
 	public function setWorkshopID( $val ) { $this->workshopID = $val; }
@@ -243,6 +247,7 @@ class Workshop {
 	public function setDescription( $val ) { $this->description = $val; }
 	public function setInstructor( $val ) { $this->instructor = $val; }
 	public function setOfficerID( $val ) { $this->officerID = $val; }
+	public function setLocationID( $val ) { $this->locationID = $val; }
 	
 	public function display()
 	{
