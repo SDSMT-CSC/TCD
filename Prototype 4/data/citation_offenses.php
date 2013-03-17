@@ -1,0 +1,9 @@
+<?php
+header("Content-Type: application/json");
+include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_citation.php");
+
+// pulls the data, and gets the table
+//$citation = new Citation(  );
+//echo $data->fetchProgramOffense( $user_programID );
+?>

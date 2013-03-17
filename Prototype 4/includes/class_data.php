@@ -163,6 +163,36 @@ class Data {
 	}
 	
 	/*************************************************************************************************
+	
+	*************************************************************************************************/
+	public function fetchProgramOffense( $user_programID ) 
+	{
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT * FROM program_statutes WHERE programID = :programID ORDER BY  statute";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $user_programID);
+    Core::dbClose();
+		
+		try {
+			if($stmt->execute() && $stmt->rowCount() > 0) {
+				
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+						$row = array();
+						$row[] = $aRow["statute"];
+						$row[] = "<b>".$aRow["title"]."</b><br />".$aRow["description"];;
+						$output['aaData'][] = $row;
+				}
+				return json_encode($output);				
+			}
+		} 
+		catch (PDOException $e) {
+      		echo "Program Offense Read Failed!";
+    }
+		return '{"aaData":[]}';
+	}
+	
+	/*************************************************************************************************
 		function: fetchProgramDropdown
 		generates a dropdown list of programs that are active
 	*************************************************************************************************/
@@ -174,6 +204,7 @@ class Data {
 		$core = Core::dbOpen();
 		$sql = "SELECT p.programID, p.code, p.name FROM program p WHERE active = 1 ORDER BY name";
 		$stmt = $core->dbh->prepare($sql);
+    Core::dbClose();
 		
 		try {
 			if($stmt->execute()) {	
@@ -204,6 +235,7 @@ class Data {
 						WHERE programID = :programID ORDER BY lastName";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $programID );
+    Core::dbClose();
 		
 		try {
 			if( $stmt->execute() ) {
@@ -231,6 +263,7 @@ class Data {
 		$sql = "SELECT commonPlaceID, commonPlace FROM program_common_location WHERE programID = :programID ORDER BY commonPlace";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $programID );
+    Core::dbClose();
 		
 		try {
 			if( $stmt->execute() ) {
@@ -258,6 +291,7 @@ class Data {
 		$sql = "SELECT * FROM user_type WHERE active = 1 AND typeID >= :usertype ORDER BY typeID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':usertype', $utype );
+    Core::dbClose();
 		
 		try {
 			if($stmt->execute()) {	
@@ -286,6 +320,7 @@ class Data {
 		$core = Core::dbOpen();
 		$sql = "SELECT timezoneID, display FROM timezone ORDER BY timezoneID";
 		$stmt = $core->dbh->prepare($sql);
+    Core::dbClose();
 		
 		try {
 			if($stmt->execute()) {	

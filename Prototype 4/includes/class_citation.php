@@ -100,7 +100,41 @@ class Citation {
 		return false;
 	}
 	
-	public function removeCitation()
+	public function getOffenseList()
+	{
+		$output = array();
+		
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT c.statuteID, statute, title, description
+						FROM citation_offense c, program_statutes ps
+						WHERE defendantID = :defendantID AND ps.statuteID = c.statuteID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    Core::dbClose();
+		
+		try {
+			if($stmt->execute() && $stmt->rowCount() > 0)
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC))
+				{
+						$output[] = $aRow["statuteID"];
+						$output[] = $aRow["statute"];
+						$output[] = $aRow["title"];
+						$output[] = $aRow["description"];
+				}
+		} 
+		catch (PDOException $e) {
+      		echo "Citation list fetch Failed!";
+    }
+		return $output;
+	}
+	
+	public function addOffense()
+	{
+		
+	}
+	
+	public function removeOffense()
 	{
 		
 	}

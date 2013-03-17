@@ -72,6 +72,8 @@ div.error{
 .listing tbody td a:hover { color: #72AECB; }
 .listing tfoot td { background: none; text-align: left; }
 
+.belowListing { margin-top:10px; }
+
 .ui-dialog input { margin: 2px 0; padding: 3px; background-color: #faf9f5; font-size: 1.0em; border: solid 1px #bbbaab; }
 .ui-accordion input, select, textarea { margin: 2px 0; padding: 3px; background-color: #faf9f5; font-size: 1.0em; border: solid 1px #bbbaab; }
 

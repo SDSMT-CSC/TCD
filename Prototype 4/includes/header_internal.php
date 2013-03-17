@@ -51,6 +51,14 @@ jQuery(function($)
 	
 });
 
+// function to reset the datatables
+function resetDataTable( dTable ) {
+	dTable.fnFilter('');
+	var tLength = $("#"+dTable.attr("id")+"_length option:eq(0)");
+	tLength.prop('selected', true);
+	dTable.fnSettings()._iDisplayLength = tLength.val();
+	dTable.fnDraw();
+}
 </script>
 
 </head>

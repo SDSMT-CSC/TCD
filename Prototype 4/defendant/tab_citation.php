@@ -36,13 +36,34 @@ $citation = new Citation( $defendant->getDefendantID() );
   </form>
 </div>
 
-<div id="offense-dialog" title="Add Offense">
-  <form>
-      <label>Offence:</label>
-      <select name="offense">
-        <option></option>
-        
-      </select>
+<div id="offense-existing-dialog" title="Add Existing Offense">
+  <table id="offense-table">
+    <thead>
+        <tr>
+          <th>Statute</th>
+          <th>Description</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+  </table> 
+</div>
+
+<div id="offense-new-dialog" title="Add New Offense">
+  <form id="offense">
+     <table>
+      <tr>
+        <td>Code:</td>
+        <td><input type="text" name="item" size="30"></td>
+      </tr>
+      <tr>
+        <td>Title:</td>
+        <td><input type="text" name="item" size="10"></td>
+      </tr>
+      <tr>
+        <td>Description:</td>
+        <td><textarea name="description" id="description"></textarea></td>
+      </tr>
+    </table>
   </form>
 </div>
 
@@ -170,26 +191,25 @@ $citation = new Citation( $defendant->getProgramID() );
 
 <fieldset>
     <legend>Offense</legend>					
-    <table class="listing">
+    <table class="listing" id="offense-listing">
       <thead>
         <tr>
           <th width="10%">Statue</th>
-          <th width="65%">Title</th>
-          <th width="20%">Type</th>
+          <th width="65%">Description</th>
           <th width="5%"></th>
         </tr>
       </thead>
-      <tbody>
-      </tbody>
+      <tbody></tbody>
     </table>
-    <div>
-      <input type="button" class="add" id="add-offense" value="Add Offense" />
+    <div class="belowListing">
+    <button id="add-existing-offense">Add Existing Offense</button>
+    <button id="add-new-offense">Add New Offense</button>
     </div>
 </fieldset>
 
 <fieldset>
     <legend>Stolen/Vandalized Items</legend>
-    <table class="listing">
+    <table class="listing" id="stolen-listing">
       <thead>
         <tr>
           <th width="75%">Item</th>
@@ -197,17 +217,14 @@ $citation = new Citation( $defendant->getProgramID() );
           <th width="5%"></th>
         </tr>
       </thead>
-      <tbody>
-      </tbody>
+      <tbody></tbody>
     </table>
-    <div>
-      <input type="button" class="add" id="add-item" value="Add Item" />
-    </div>
+    <button id="add-item">Add Item</button>
 </fieldset>
 
 <fieldset>
     <legend>Vehicles Involved</legend>
-    <table class="listing">
+    <table class="listing" id="vehicle-listing">
       <thead>
         <tr>
           <th width="10%">Year</th>
@@ -223,7 +240,7 @@ $citation = new Citation( $defendant->getProgramID() );
       </tbody>
     </table>
     <div>
-      <input type="button" class="add" id="add-vehicle" value="Add Vehicle" />
+      <button id="add-vehicle">Add Vehicle</button>
     </div>
 </fieldset>
 <? unset( $citation ); ?>

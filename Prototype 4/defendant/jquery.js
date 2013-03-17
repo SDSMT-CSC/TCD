@@ -19,9 +19,10 @@ jQuery(function($) {
 	$('#add-parent').click(function(){$('#parent-dialog').dialog('open');});
 	$("#add-officer").click(function(){ $('#officer-dialog').dialog('open'); });
 	$("#add-common-location").click(function(){ $('#common-location-dialog').dialog('open'); });
-	$("#add-offense").click(function(){ $('#offense-dialog').dialog('open'); });
-	$("#add-item").click(function(){ $('#item-dialog').dialog('open'); });
-	$("#add-vehicle").click(function(){ $('#vehicle-dialog').dialog('open'); });
+	$("#add-existing-offense").button().click(function(){ $('#offense-existing-dialog').dialog('open'); });
+	$("#add-new-offense").button().click(function(){ $('#offense-new-dialog').dialog('open'); });
+	$("#add-item").button().click(function(){ $('#item-dialog').dialog('open'); });
+	$("#add-vehicle").button().click(function(){ $('#vehicle-dialog').dialog('open'); });
 	
 	$("#dob").datepicker();
 	$("#citation-date").datepicker({maxDate: new Date});
@@ -138,16 +139,29 @@ jQuery(function($) {
 			}	
 		});
 		
-	$("#officer-dialog").dialog({
+	$("#offense-existing-dialog").dialog({
 			resizable: false,
 			autoOpen:false,
 			modal: true,
-			width:475,
+			width:600,
 			buttons: {
-				'Add Officer': function() { $("#officer").submit()	},
+				'Cancel': function() { 					
+					resetDataTable( offenseTable );
+					$(this).dialog('close');
+				}
+			}
+		});
+		
+	$("#offense-new-dialog").dialog({
+			resizable: false,
+			autoOpen:false,
+			modal: true,
+			width:500,
+			buttons: {
+				'Add Offense': function() { $("#offense").submit()	},
 				'Cancel': function() { 
 					$(this).dialog('close'); 
-					$("#officer")[0].reset(); 
+					$("#offense-new-dialog")[0].reset(); 
 				}
 			}
 		});
@@ -177,21 +191,7 @@ jQuery(function($) {
 				}
 			}
 		});
-		
-		$("#offense-dialog").dialog({
-			resizable: false,
-			autoOpen:false,
-			modal: true,
-			width:600,
-			buttons: {
-				'Add Offense': function() {
-					$(this).dialog('close');
-						// TO DO: add offense
-					},
-				'Cancel': function() { $(this).dialog('close'); }
-			}
-		});
-		
+				
 		$("#item-dialog").dialog({
 			resizable: false,
 			autoOpen:false,
@@ -293,6 +293,35 @@ jQuery(function($) {
 				"sAjaxSource": '/data/program_schools.php'
 	});
 	
+	var offenseTable = $("#offense-table").dataTable( { 
+				"aoColumns" : [ { sWidth: '20%' }, { sWidth: '80%', sClass: "alignLeft" } ],
+				"iDisplayLength": 5,
+				"aLengthMenu": [[5, 10], [5, 10]],
+				"aaSorting": [],
+				"sPaginationType": "full_numbers",
+				"bProcessing": false,
+				"sAjaxSource": '/data/program_statutes.php'
+	});
+				
+	var offenseList = $("#offense-listing").dataTable( { 
+        "display": 'envelope',
+				"aaSorting": [],
+				"aoColumns" : [ 
+					{ sWidth: '20%' }, 
+					{ sWidth: '75%', sClass: "alignLeft" }, 
+					{ sWidth: '5%', "sDefaultContent": '<a class="editor_remove">Delete</a>' } 
+				],
+				"sPaginationType": "full_numbers",
+				"bLengthChange": false,
+				"bFilter": false,
+				"bPaginate": false,
+				"bInfo": false,
+				"bDeferRender": false,
+				"bProcessing": false
+				//,
+				//"sAjaxSource": '/data/citation_offenses.php'
+	});
+	
 	/**************************************************************************************************
 		DATA TABLE CLICK FUNCTIONALITY
 	**************************************************************************************************/
@@ -372,4 +401,27 @@ jQuery(function($) {
 		}
 	});
 			
+	// Offense dialog table
+	$('#offense-table tbody tr').live('click', function (event) {
+		var oData = offenseTable.fnGetData(this); // get datarow
+	
+		if (oData != null)  // null if we clicked on title row
+		{
+				offenseList.fnAddData( [ oData[0], oData[1], oData[2] ] );
+			
+			// close the window
+			$("#offense-existing-dialog").dialog('close');
+		}
+	});
+	
+	// Delete a record
+    offenseList.on('click', 'a.editor_remove', function (e) {
+        e.preventDefault();
+ 
+     		 var row = $(this).closest("tr").get(0);
+				offenseList.fnDeleteRow(offenseList.fnGetPosition(row));
+				   
+    });
+	
+	
 });
