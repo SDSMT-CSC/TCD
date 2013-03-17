@@ -165,7 +165,7 @@ class Data {
 	/*************************************************************************************************
 	
 	*************************************************************************************************/
-	public function fetchProgramOffense( $user_programID ) 
+	public function fetchProgramStatutes( $user_programID ) 
 	{
 		 // database connection and sql query
     $core = Core::dbOpen();
@@ -188,7 +188,7 @@ class Data {
 			}
 		} 
 		catch (PDOException $e) {
-      		echo "Program Offense Read Failed!";
+      		echo "Program Statutes Read Failed!";
     }
 		return '{"aaData":[]}';
 	}

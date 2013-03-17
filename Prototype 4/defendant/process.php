@@ -145,8 +145,29 @@ if( $action == "Add Officer")
 	 echo $program->addOfficer( $_POST["officer-firstname"], $_POST["officer-lastname"], $_POST["officer-idNumber"], $_POST["officer-phone"] );
 }
 
+if( $action == "Add Offense")
+{	
+	$citation = new Citation( $_POST["defendantID"] );
+	
+	$citationID = $citation->addOffense( $_POST["statuteID"] );
+	
+	if( $citationID )
+		$user->addEvent("Defendant: ".$action, $citation->getDefendantID() );
+	
+	echo $citationID;
+}
 
-
+if( $action == "Delete Offense")
+{
+	
+	$citation = new Citation( $_GET["defendantID"] );
+		
+	if( $citation->removeOffense( $_GET["offenseID"] ) )
+		$user->addEvent("Defendant: ".$action, $citation->getDefendantID() );
+	
+ 	// redirect to the defendant page	
+	header("location: view.php?id=".$citation->getDefendantID() );
+}
 
 
 ?>

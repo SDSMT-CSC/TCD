@@ -31,13 +31,6 @@ jQuery(function($) {
 	$("#defendant-personal-submit").button().click(function() { $("#defendant-personal").submit(); });
 
 	$(".update-guardian").button();		
-	$(".delete-guardian").button().click(function() {
-		dTitle = 'Delete Guardian';
-		dMsg = 'Are you sure you want to delete this guardian?';
-		dHref = $(this).val();
-		popupDialog( dTitle, dMsg, dHref );		
-		return false;
-	});
 
 	/**************************************************************************************************
 		FORM VALIDATION
@@ -138,7 +131,21 @@ jQuery(function($) {
 				}
 			}	
 		});
-		
+
+	$("#officer-dialog").dialog({
+		 resizable: false,
+		 autoOpen:false,
+		 modal: true,
+      width:600,
+      buttons: {
+				 'Add Officer': function() { $("#officer").submit()  },
+				 'Cancel': function() { 
+         		$(this).dialog('close'); 
+         		$("#officer")[0].reset(); 
+        }
+      }
+    });
+
 	$("#offense-existing-dialog").dialog({
 			resizable: false,
 			autoOpen:false,
@@ -146,7 +153,7 @@ jQuery(function($) {
 			width:600,
 			buttons: {
 				'Cancel': function() { 					
-					resetDataTable( offenseTable );
+					resetDataTable( statuteTable );
 					$(this).dialog('close');
 				}
 			}
@@ -225,19 +232,20 @@ jQuery(function($) {
 	{
 		$("#confirm-dialog").find("p:first").html(dMsg);
 		
+		// setup the dialog box
 		var dlg = $("#confirm-dialog").dialog({
 			autoOpen: false,
 			title: dTitle,
 			modal: true,
 			buttons: {
-					'Delete': function() {
-						window.location.href = dHref;
-					},
+					'Delete': function() { window.location.href = dHref; },
 					'Cancel': function() { $(this).dialog('close'); }
 				}
 		});	
 		
+		// open it
 		dlg.dialog('open');
+		$('.ui-dialog :button').blur();
 	}
 	
 	/**************************************************************************************************
@@ -293,23 +301,26 @@ jQuery(function($) {
 				"sAjaxSource": '/data/program_schools.php'
 	});
 	
-	var offenseTable = $("#offense-table").dataTable( { 
-				"aoColumns" : [ { sWidth: '20%' }, { sWidth: '80%', sClass: "alignLeft" } ],
+	var statuteTable = $("#statute-table").dataTable( { 
+				"aaSorting": [],
+				"aoColumns" : [ 
+					{ "bVisible": false, "bSearchable": false },  // statuteID
+					{ sWidth: '20%' }, 										        // statute
+					{ sWidth: '80%', sClass: "alignLeft" } ],     // description
+				"sPaginationType": "full_numbers",
 				"iDisplayLength": 5,
 				"aLengthMenu": [[5, 10], [5, 10]],
-				"aaSorting": [],
-				"sPaginationType": "full_numbers",
 				"bProcessing": false,
 				"sAjaxSource": '/data/program_statutes.php'
 	});
 				
 	var offenseList = $("#offense-listing").dataTable( { 
-        "display": 'envelope',
 				"aaSorting": [],
 				"aoColumns" : [ 
-					{ sWidth: '20%' }, 
-					{ sWidth: '75%', sClass: "alignLeft" }, 
-					{ sWidth: '5%', "sDefaultContent": '<a class="editor_remove">Delete</a>' } 
+					{ "bVisible": false, "bSearchable": false },	// statuteID
+					{ sWidth: '15%' },                            // statute
+					{ sWidth: '80%', sClass: "alignLeft" },       // description
+					{ sWidth: '5%', "bSearchable": false }        // remove link
 				],
 				"sPaginationType": "full_numbers",
 				"bLengthChange": false,
@@ -317,9 +328,8 @@ jQuery(function($) {
 				"bPaginate": false,
 				"bInfo": false,
 				"bDeferRender": false,
-				"bProcessing": false
-				//,
-				//"sAjaxSource": '/data/citation_offenses.php'
+				"bProcessing": false,
+				"sAjaxSource": '/data/citation_offenses.php?id='+$("#citation input[name='defendantID']").val()
 	});
 	
 	/**************************************************************************************************
@@ -402,26 +412,48 @@ jQuery(function($) {
 	});
 			
 	// Offense dialog table
-	$('#offense-table tbody tr').live('click', function (event) {
-		var oData = offenseTable.fnGetData(this); // get datarow
+	$('#statute-table tbody tr').live('click', function (event) {
+		var oData = statuteTable.fnGetData(this); // get datarow
 	
 		if (oData != null)  // null if we clicked on title row
 		{
-				offenseList.fnAddData( [ oData[0], oData[1], oData[2] ] );
+			// add record to database
+			var defID = $("#citation input[name='defendantID']").val();
+			$.post('process.php',{ action: 'Add Offense', statuteID: oData[0], defendantID: defID }, function(data) {
+					// add to list if entered
+					if( data > 0 ) {
+						
+						// build the delete string...again
+						var delStr = '<a class="editor_remove" name="process.php?action=Delete Offense&defendantID='+defID+
+					          			'&offenseID='+data+'">Delete</a>'
+						
+						offenseList.fnAddData( [ oData[0], oData[1], oData[2], delStr ] );
+					}
+			});
 			
 			// close the window
 			$("#offense-existing-dialog").dialog('close');
 		}
 	});
 	
-	// Delete a record
-    offenseList.on('click', 'a.editor_remove', function (e) {
-        e.preventDefault();
- 
-     		 var row = $(this).closest("tr").get(0);
-				offenseList.fnDeleteRow(offenseList.fnGetPosition(row));
-				   
-    });
+	/**************************************************************************************************
+		DELETE FUNCTIONALITY
+	**************************************************************************************************/
+	// Delete a offense
+	$('a.editor_remove').live('click', function (event) {
+			dTitle = 'Delete Offense';
+			dMsg = 'Are you sure you want to delete this offense?';
+			dHref = $(this).attr("name");
+			popupDialog( dTitle, dMsg, dHref );
+   });
 	
+	// Delete a guardian
+	$(".delete-guardian").button().click(function() {
+		dTitle = 'Delete Guardian';
+		dMsg = 'Are you sure you want to delete this guardian?';
+		dHref = $(this).val();
+		popupDialog( dTitle, dMsg, dHref );
+		return false
+	});
 	
 });

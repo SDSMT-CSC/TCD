@@ -12,6 +12,12 @@ class Citation {
 	public $mirandized;
 	public $drugsOrAlcohol;
 		
+	/*************************************************************************************************
+    function: __construct
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
 	public function __construct( $defendantID )
 	{		
 		// database connection and sql query
@@ -54,6 +60,12 @@ class Citation {
 		return false;
 	}
 		
+	/*************************************************************************************************
+    function: updateCitation
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
 	public function updateCitation()
 	{
 			// database connection and sql query
@@ -100,13 +112,19 @@ class Citation {
 		return false;
 	}
 	
+	/*************************************************************************************************
+    function: getStatuteList
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
 	public function getOffenseList()
 	{
 		$output = array();
 		
 		 // database connection and sql query
     $core = Core::dbOpen();
-    $sql = "SELECT c.statuteID, statute, title, description
+    $sql = "SELECT offenseID, statute, title, description
 						FROM citation_offense c, program_statutes ps
 						WHERE defendantID = :defendantID AND ps.statuteID = c.statuteID";
     $stmt = $core->dbh->prepare($sql);
@@ -114,46 +132,122 @@ class Citation {
     Core::dbClose();
 		
 		try {
-			if($stmt->execute() && $stmt->rowCount() > 0)
-				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC))
-				{
-						$output[] = $aRow["statuteID"];
-						$output[] = $aRow["statute"];
-						$output[] = $aRow["title"];
-						$output[] = $aRow["description"];
+			if($stmt->execute() && $stmt->rowCount() > 0) {
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					$row = array();
+					$row[] = $aRow["offenseID"];
+					$row[] = $aRow["statute"];
+					$row[] = '<strong>'.$aRow["title"].'</strong><br />'.$aRow["description"];
+					$row[] = '<a class="editor_remove" name="process.php?action=Delete Offense&defendantID='.
+					          $this->defendantID.'&offenseID='.$aRow["offenseID"].'">Delete</a>';
+					$output['aaData'][] = $row;
 				}
+				return json_encode($output);	
+			}
 		} 
 		catch (PDOException $e) {
-      		echo "Citation list fetch Failed!";
+      		echo "Offense list fetch Failed!";
     }
-		return $output;
+		return '{"aaData":[]}';
 	}
 	
-	public function addOffense()
+	/*************************************************************************************************
+    function: addOffense
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
+	public function addOffense( $statuteID )
+	{	
+		 $offenseID == NULL;
+	
+		if( $statuteID )
+		{		
+			$core = Core::dbOpen();
+			$sql = "INSERT INTO citation_offense (defendantID,statuteID) VALUES (:defendantID,:statuteID)";
+			$stmt = $core->dbh->prepare($sql);
+			$stmt->bindParam(':defendantID', $this->defendantID);
+			$stmt->bindParam(':statuteID', $statuteID);
+			Core::dbClose();
+			
+			try {
+				if($stmt->execute())
+					$offenseID = $core->dbh->lastInsertId();
+			} catch (PDOException $e) {
+				echo "Offense add failed!";
+			}
+		}
+		else {
+			$statuteID = $this->statuteID;
+		}
+    return $offenseID;
+	}
+	
+	/*************************************************************************************************
+    function: removeOffense
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
+	public function removeOffense( $offenseID )
 	{
-		
+		if( $offenseID )
+		{		
+			$core = Core::dbOpen();
+			$sql = "DELETE FROM citation_offense WHERE offenseID = :offenseID";
+			$stmt = $core->dbh->prepare($sql);
+			$stmt->bindParam(':offenseID', $offenseID);
+			Core::dbClose();
+			
+			try {
+				if($stmt->execute())
+    			return true;
+			} catch (PDOException $e) {
+				echo "Offense add failed!";
+			}
+		}
+    return false;
 	}
 	
-	public function removeOffense()
-	{
-		
-	}
-	
+	/*************************************************************************************************
+    function: addStolenItem
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
 	public function addStolenItem()
 	{
 		
 	}
 	
+	/*************************************************************************************************
+    function: removeStolenItem
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
 	public function removeStolenItem()
 	{
 		
 	}
 
+	/*************************************************************************************************
+    function: addVehicle
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
 	public function addVehicle()
 	{
 		
 	}
 	
+	/*************************************************************************************************
+    function: removeVehicle
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
 	public function removeVehicle()
 	{
 		

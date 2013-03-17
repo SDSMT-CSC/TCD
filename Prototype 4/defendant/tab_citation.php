@@ -37,11 +37,12 @@ $citation = new Citation( $defendant->getDefendantID() );
 </div>
 
 <div id="offense-existing-dialog" title="Add Existing Offense">
-  <table id="offense-table">
+  <table id="statute-table">
     <thead>
         <tr>
+        	<th>StatuteID</th>
           <th>Statute</th>
-          <th>Description</th>
+          <th align="left">Description</th>
         </tr>
     </thead>
     <tbody></tbody>
@@ -194,9 +195,10 @@ $citation = new Citation( $defendant->getProgramID() );
     <table class="listing" id="offense-listing">
       <thead>
         <tr>
-          <th width="10%">Statue</th>
-          <th width="65%">Description</th>
-          <th width="5%"></th>
+        	<th></th>
+          <th style="text-align: center;">Statue</th>
+          <th>Description</th>
+          <th></th>
         </tr>
       </thead>
       <tbody></tbody>
