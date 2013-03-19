@@ -246,6 +246,34 @@ class Program {
 	/*************************************************************************************************
 	
 	*************************************************************************************************/
+	public function fetchUserDropdown( $userID  )
+	{
+		$data = NULL;
+					
+		//database connection and SQL query
+		$core = Core::dbOpen();
+		$sql = "SELECT userID, firstName, lastName FROM user WHERE programID = :programID ORDER BY lastName";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $this->programID );
+    Core::dbClose();
+		
+		try {
+			if( $stmt->execute() ) {
+				$data = "";
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					( $userID == $aRow["userID"] ) ? $selected = " selected" : $selected = "";
+					$data .= '<option value="'.$aRow["userID"].'"'.$selected.'>'.$aRow["lastName"].", ".$aRow["firstName"].'</option>';
+				}
+			}			
+		} catch ( PDOException $e ) {
+			echo "User dropdown failed!";
+		}
+		return $data;
+	}
+	
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
 	public function fetchOfficerDropdown( $officerID )
 	{
 	  $data = NULL; 

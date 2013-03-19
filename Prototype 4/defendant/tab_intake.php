@@ -1,29 +1,36 @@
+<?
+
+	$intake_date = date("m/j/Y");
+	$intake_time = date("g:i A");
 	
+?>
+<form id="intake" method="post" action="process.php">
+	<input type="hidden" name="action" value="Update Intake" />
+	<input type="hidden" name="defendantID" value="<? $defendant->getDefendantID(); ?>" />
 	<fieldset>
 		<legend>Intake Information</legend>
-		<table style="width: 500px;">
+		<table>
 			<tr>
-				<td>Intake Date: </td>
-				<td><input type="text" name="intake-date" id="intake-date" value="11/20/2012" /></td>
+				<td width="250">Intake Date: </td>
+				<td><input type="text" name="intake-date" id="intake-date" value="<? echo $intake_date ?>" /></td>
 			</tr>
 			<tr>
 				<td>Intake Time: </td>
-				<td><input type="text" name="intake-time" id="intake-time" value="5:32 PM" /></td>
+				<td><input type="text" name="intake-time" id="intake-time" value="<? echo $intake_time ?>" /></td>
 			</tr>
 			<tr>
 				<td>Intake Reschedule Date: </td>
-				<td><input type="text" name="reschedule-date" id="reschedule-date" /></td>
+				<td><input type="text" name="reschedule-date" id="reschedule-date" value="" /></td>
 			</tr>
 			<tr>
 				<td>Intake Reschedule Time: </td>
-				<td><input type="text" name="reschedule-time" id="reschedule-time" /></td>
+				<td><input type="text" name="reschedule-time" id="reschedule-time" value="" /></td>
 			</tr>
 			<tr>
 				<td>Intake Inteviewer</td>
 				<td>
 					<select name="intake-inteviewer" id="intake-inteviewer">
-						<option>Reilly, Bobby</option>
-						<option>Thompson, Andrew</option>
+						<? echo $program->fetchUserDropdown( $user->getUserID() ); ?>
 					</select>
 				</td>
 			</tr>
@@ -32,12 +39,13 @@
 			</tr>
 			<tr>
 				<td>Referred to Juevenile - Not Qualified: </td>
-				<td><input type="text" name="referred-date" id="referred-date" /></td>
+				<td><input type="checkbox" name="referred-date" id="referred-date" /></td>
 			</tr>
 			<tr>
 				<td>Dismissed - No Complaint: </td>
-				<td><input type="text" name="dismissed-date" id="dismissed-date" /></td>
+				<td><input type="checkbox" name="dismissed-date" id="dismissed-date" /></td>
 			</tr>
+      <tr><td colspan="2" align="right"><button id="intake-submit">Update Intake Information</button></td></tr>
 		</table>
-		
 	</fieldset>
+</form>

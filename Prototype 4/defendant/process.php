@@ -246,5 +246,12 @@ if( $action == "Delete Vehicle" )
 	header("location: view.php?id=".$citation->getDefendantID() );
 }
 
+/*********************************************************************************************
+	TAB4: INTAKE INFORMATION
+*********************************************************************************************/
+if( $action == "Update Intake" )
+{
+	print_r( $_POST );
+}
 
 ?>

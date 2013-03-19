@@ -33,8 +33,11 @@ jQuery(function($) {
 	$("#citation-time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: ''});
 	
 	// TAB4: Intake
+	$("#intake-submit").button().click(function() { $("#intake").submit(); });
 	$("#intake-date").datepicker();
+	$("#intake-time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: 'now'});
 	$("#reschedule-date").datepicker();
+	$("#reschedule-time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: 'now'});
 	$("#referred-date").datepicker();
 	$("#dismissed-date").datepicker();
 
@@ -118,19 +121,7 @@ jQuery(function($) {
 		},
 		rules: { 'item-name': { required: true } }
 	});
-	
-	/* TODO
-	$("#vehicle").validate({
-		errorElement: "div",
-		wrapper: "div",
-		errorPlacement: function(error, element) {
-			  error.insertAfter(element);
-				error.addClass('message');
-		},
-		rules: { 'item-name': { required: true } }
-	});
-	*/
-		
+			
 	/**************************************************************************************************
 		DIALOG FUNCTIONALITY
 	**************************************************************************************************/
