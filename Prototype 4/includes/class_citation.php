@@ -215,9 +215,62 @@ class Citation {
     input:
     output: 
   ************************************************************************************************/
-	public function addStolenItem()
+	public function getStolenItems()
 	{
+		$output = array();
 		
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT itemID, name, value FROM citation_stolen_items WHERE citationID = :citationID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':citationID', $this->citationID);
+    Core::dbClose();
+		
+		try {
+			if($stmt->execute() && $stmt->rowCount() > 0) {
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					$row = array();
+					$row["itemID"] = $aRow["itemID"];
+					$row["name"] = $aRow["name"];
+					
+					if( $aRow["value"] == 0 )
+						$row["value"] = '';
+					else
+						$row["value"] = '$' . $aRow["value"];
+					
+					$output[] = $row;
+				}
+			}
+		} catch (PDOException $e) {
+      		echo "Stolen item list fetch Failed!";
+    }
+		
+		return $output;
+	}
+	
+	/*************************************************************************************************
+    function: addStolenItem
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
+	public function addStolenItem( $name, $value )
+	{
+		$core = Core::dbOpen();
+		$sql = "INSERT INTO citation_stolen_items (citationID,name,value) VALUES (:citationID,:name,:value)";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':citationID', $this->citationID);
+		$stmt->bindParam(':name', $name);
+		$stmt->bindParam(':value', $value);
+		Core::dbClose();
+		
+		try {
+			if($stmt->execute())
+				return true;
+		} catch (PDOException $e) {
+			echo "Stolen item add failed!";
+		}
+		return false;
 	}
 	
 	/*************************************************************************************************
@@ -226,9 +279,22 @@ class Citation {
     input:
     output: 
   ************************************************************************************************/
-	public function removeStolenItem()
+	public function removeStolenItem( $itemID )
 	{
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "DELETE FROM citation_stolen_items WHERE itemID = :itemID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':itemID', $itemID);
+    Core::dbClose();
 		
+		try {
+			if($stmt->execute())
+				return true;
+		} catch (PDOException $e) {
+      		echo "Delete stolen item Failed!";
+    }
+		return false;
 	}
 
 	/*************************************************************************************************

@@ -50,10 +50,8 @@ else {
 			<? if( $action == "Add Defendant") { ?>
 			<button id="add-defendant">Add Defendant</button>
       <? } else { ?>
-			<!-- <button id="previous-defendant">Previous</button> -->
 			<button id="delete-defendant">Delete Defendant</button>
 			<button id="update-defendant">Update Defendant</button>
-			<!-- <button id="next-defendant">Next</button> -->
 			<? } ?>
 		</div>
 	</div>
@@ -85,10 +83,6 @@ else {
     </thead>
     <tbody></tbody>
   </table> 
-</div>
-
-<div id="confirm-dialog" title="Delete">
-<p></p>
 </div>
 
 <form name="defendant-primary" id="defendant-primary" method="post" action="process.php">

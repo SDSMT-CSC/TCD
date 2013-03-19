@@ -48,7 +48,6 @@ jQuery(function($)
 	$(".listing").each(function() {
 			$(this).children('tbody').children(':even').css("background-color", "#EFF4F6");
     });
-	
 });
 
 // function to reset the datatables
@@ -59,14 +58,39 @@ function resetDataTable( dTable ) {
 	dTable.fnSettings()._iDisplayLength = tLength.val();
 	dTable.fnDraw();
 }
+
+// generic dialog for delete confirmation
+function popupDialog( dTitle, dMsg, dHref )
+{
+	$("#confirm-dialog").find("p:first").html(dMsg);
+	
+	// setup the dialog box
+	var dlg = $("#confirm-dialog").dialog({
+		autoOpen: false,
+		title: dTitle,
+		modal: true,
+		buttons: {
+				'Delete': function() { window.location.href = dHref; },
+				'Cancel': function() { $(this).dialog('close'); }
+			}
+	});	
+	
+	// open it
+	dlg.dialog('open');
+	$('.ui-dialog :button').blur();
+}
 </script>
 
 </head>
 
 <body>
 
-<!-- BEGIN CONTAINER -->
+<!-- confirmation dialog -->
+<div id="confirm-dialog" title="Delete">
+<p></p>
+</div>
 
+<!-- BEGIN CONTAINER -->
 <div id="container">
 
 	<!-- BEGIN HEADER -->

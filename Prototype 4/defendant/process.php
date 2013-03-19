@@ -185,15 +185,36 @@ if( $action == "Delete Offense")
 // Add new statute
 if( $action == "Add Statute" )
 {
-	$offenseID = NULL;
+	$citation = new Citation( $_POST["defendantID"] );
 	
 	// add statute to program_statutes
 	$statuteID = $program->addStatute( $user_programID,	$_POST["statute-code"],	$_POST["statute-title"], $_POST["statute-description"] );
 	
-	// add this new statute to the defendant
+	if( $citation->addOffense( $statuteID ) )
+		$user->addEvent("Defendant: ".$action, $statuteID );
+	
+ 	// redirect to the defendant page	
+	header("location: view.php?id=".$citation->getDefendantID() );
+}
+
+// Add stolen items
+if( $action == "Add Stolen Item" )
+{
 	$citation = new Citation( $_POST["defendantID"] );
 	
-	if( $citation->addOffense( $statuteID ) )
+	if( $citation->addStolenItem( $_POST["item-name"], $_POST["item-name"] ) )
+		$user->addEvent("Defendant: ".$action." (".$_POST["item-name"].")", $citation->getDefendantID() );
+	
+ 	// redirect to the defendant page	
+	header("location: view.php?id=".$citation->getDefendantID() );
+}
+
+// delete stolen item
+if( $action == "Delete Stolen Item" )
+{
+	$citation = new Citation( $_GET["defendantID"] );
+	
+	if( $citation->removeStolenItem( $_GET["itemID"] ) )
 		$user->addEvent("Defendant: ".$action, $citation->getDefendantID() );
 	
  	// redirect to the defendant page	

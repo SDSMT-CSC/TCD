@@ -331,7 +331,7 @@ class Program {
 		return $statuteID;
 	}
 	
-  // public function removeCourt() { }
+  // public function removeProgram() { }  --- set deleted flag
 	
 	// getters
 	public function getProgramID() { return $this->programID; }
@@ -349,27 +349,6 @@ class Program {
 	public function setProgramID( $str ) { $this->programID = $str; }
 	public function setName( $str ) { $this->name = $str; }
   public function setCode( $str ) { $this->code = $str; }
-	
-	// testing only
-	public function display()
-  {
-    echo "<code>"; 
-    echo "ProgramID: " . $this->programID . "<br>";
-    echo "Name: " . $this->name . "<br>";
-    echo "Code: " . $this->code . "<br>";
-    echo "Physical Address: " . $this->phys_address . "<br>";
-    echo "Physical City: " . $this->phys_city . "<br>";
-    echo "Physical State: " . $this->phys_state . "<br>"; 
-    echo "Physical Zip: " . $this->phys_zip . "<br>";
-    echo "Mailing Address: " . $this->mail_address . "<br>";
-    echo "Mailing City:" . $this->mail_city . "<br>";
-    echo "Mailing State:" . $this->mail_state . "<br>"; 
-    echo "Mailing Zip:" . $this->mail_zip . "<br>";
-    echo "Phone: " . $this->phone . "<br>";
-    echo "TimezoneID: " . $this->timezoneID . "<br>";
-    echo "Expunge: " . $this->expunge;
-    echo "</code>";
-  }	
-}
 
+} // end class
 ?>

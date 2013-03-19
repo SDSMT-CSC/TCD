@@ -1,13 +1,3 @@
-	<script>
-	jQuery(function($) {
-		
-		$("#intake-date").datepicker();
-		$("#reschedule-date").datepicker();
-		$("#referred-date").datepicker();
-		$("#dismissed-date").datepicker();
-		
- 	});
-	</script>
 	
 	<fieldset>
 		<legend>Intake Information</legend>

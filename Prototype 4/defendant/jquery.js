@@ -7,30 +7,36 @@ jQuery(function($) {
 	$("#tabs").tabs({ cookie: { expires: 5 } });
   $("#tabs").show(); 
 
-	$("#previous-defendant").button();
+	// Top menu
 	$("#update-defendant").button().click(function() { $("#defendant-primary").submit(); });
 	$("#delete-defendant").button().click(function() {  });
-	$("#next-defendant").button().click(function() {	});
-
 	$("#defendant-list").button().click(function() {	window.location.href = "index.php";	});	
 	$("#add-defendant").button().click(function() { $("#defendant-primary").submit(); });
-	$("#citation-submit").button().click(function() { $("#citation").submit(); });
-	
+
+	// TAB1: personal
+	$("#dob").datepicker();
+	$("#defendant-personal-submit").button().click(function() { $("#defendant-personal").submit(); });
+
+	// TAB2: Guardian items
 	$('#add-parent').click(function(){$('#parent-dialog').dialog('open');});
+	$(".update-guardian").button();
+	
+	// TAB3: Citation items
+	$("#citation-submit").button().click(function() { $("#citation").submit(); });
 	$("#add-officer").click(function(){ $('#officer-dialog').dialog('open'); });
 	$("#add-common-location").click(function(){ $('#common-location-dialog').dialog('open'); });
 	$("#add-existing-offense").button().click(function(){ $('#offense-existing-dialog').dialog('open'); });
 	$("#add-new-statute").button().click(function(){ $('#offense-new-statute').dialog('open'); });
 	$("#add-item").button().click(function(){ $('#item-dialog').dialog('open'); });
 	$("#add-vehicle").button().click(function(){ $('#vehicle-dialog').dialog('open'); });
-	
-	$("#dob").datepicker();
 	$("#citation-date").datepicker({maxDate: new Date});
 	$("#citation-time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: ''});
 	
-	$("#defendant-personal-submit").button().click(function() { $("#defendant-personal").submit(); });
-
-	$(".update-guardian").button();		
+	// TAB4: Intake
+	$("#intake-date").datepicker();
+	$("#reschedule-date").datepicker();
+	$("#referred-date").datepicker();
+	$("#dismissed-date").datepicker();
 
 	/**************************************************************************************************
 		FORM VALIDATION
@@ -47,6 +53,33 @@ jQuery(function($) {
 			firstname: { required: true },
 			dob: { required: true },
 			courtcase: { required: true }
+		}
+	});	
+	
+	$("#officer").validate({
+		errorElement: "div",
+		wrapper: "div",
+		errorPlacement: function(error, element) {
+			  error.insertAfter(element);
+				error.addClass('message');
+		},
+		rules: {
+			'officer-lastname': { required: true },
+			'officer-firstname': { required: true }
+		},
+		submitHandler: function(form) {
+			$.post('process.php', $(form).serialize(), function(data) {
+				if( data > 0 )
+					{
+						// add the newly entered location to the dropdown and make is selected
+						var name = $("#officer-lastname").val()+", "+$("#officer-firstname").val();
+						$("#officerID").append($("<option selected></option>").attr("value",data).text(name)); 					
+						
+						// close dialog and clear form
+						$("#officer-dialog").dialog('close');	
+						$("#officer")[0].reset();
+					}
+			});
 		}
 	});	
 	
@@ -76,32 +109,14 @@ jQuery(function($) {
 		}
 	});	
 	
-	
-	$("#officer").validate({
+	$("#item").validate({
 		errorElement: "div",
 		wrapper: "div",
 		errorPlacement: function(error, element) {
 			  error.insertAfter(element);
 				error.addClass('message');
 		},
-		rules: {
-			'officer-lastname': { required: true },
-			'officer-firstname': { required: true }
-		},
-		submitHandler: function(form) {
-			$.post('process.php', $(form).serialize(), function(data) {
-				if( data > 0 )
-					{
-						// add the newly entered location to the dropdown and make is selected
-						var name = $("#officer-lastname").val()+", "+$("#officer-firstname").val();
-						$("#officerID").append($("<option selected></option>").attr("value",data).text(name)); 					
-						
-						// close dialog and clear form
-						$("#officer-dialog").dialog('close');	
-						$("#officer")[0].reset();
-					}
-			});
-		}
+		rules: { 'item-name': { required: true } }
 	});	
 		
 	/**************************************************************************************************
@@ -219,13 +234,13 @@ jQuery(function($) {
 			resizable: false,
 			autoOpen:false,
 			modal: true,
-			width:400,
+			width:475,
 			buttons: {
-				'Add Item': function() {
+				'Add Item': function() { $("#item").submit();	},
+				'Cancel': function() { 
 					$(this).dialog('close');
-						// TO DO: add stolen item
-					},
-				'Cancel': function() { $(this).dialog('close'); }
+					$(".message").css("display","none");
+				}
 			}
 		});
 		
@@ -242,27 +257,6 @@ jQuery(function($) {
 				'Cancel': function() { $(this).dialog('close'); }
 			}
 		});
-	
-	// generic dialog for delete confirmation
-	function popupDialog( dTitle, dMsg, dHref )
-	{
-		$("#confirm-dialog").find("p:first").html(dMsg);
-		
-		// setup the dialog box
-		var dlg = $("#confirm-dialog").dialog({
-			autoOpen: false,
-			title: dTitle,
-			modal: true,
-			buttons: {
-					'Delete': function() { window.location.href = dHref; },
-					'Cancel': function() { $(this).dialog('close'); }
-				}
-		});	
-		
-		// open it
-		dlg.dialog('open');
-		$('.ui-dialog :button').blur();
-	}
 	
 	/**************************************************************************************************
 		CLICK FUNCTIONS
@@ -440,8 +434,7 @@ jQuery(function($) {
 					if( data > 0 ) {
 						
 						// build the delete string...again
-						var delStr = '<a class="editor_remove" name="process.php?action=Delete Offense&defendantID='+defID+
-					          			'&offenseID='+data+'">Delete</a>'
+						var delStr = '<a class="editor_remove" name="process.php?action=Delete Offense&defendantID='+defID+'&offenseID='+data+'">Delete</a>'
 						
 						offenseList.fnAddData( [ oData[0], oData[1], oData[2], delStr ] );
 					}
@@ -468,6 +461,15 @@ jQuery(function($) {
 		dTitle = 'Delete Guardian';
 		dMsg = 'Are you sure you want to delete this guardian?';
 		dHref = $(this).val();
+		popupDialog( dTitle, dMsg, dHref );
+		return false
+	});
+	
+	// Delete an item
+	$("a.delete-item").click(function() {
+		dTitle = 'Delete Stolen Item';
+		dMsg = 'Are you sure you want to delete this item?';
+		dHref = $(this).attr("href");
 		popupDialog( dTitle, dMsg, dHref );
 		return false
 	});

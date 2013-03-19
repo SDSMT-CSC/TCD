@@ -1,7 +1,5 @@
 <?
-
 $citation = new Citation( $defendant->getDefendantID() );
-
 ?>
 
 <div id="officer-dialog" title="Add New Officer">
@@ -52,7 +50,7 @@ $citation = new Citation( $defendant->getDefendantID() );
 <div id="offense-new-statute" title="Add New Statute">
   <form id="statute" action="process.php" method="post">
     <input type="hidden" name="action" value="Add Statute" />
-  <input type="hidden" name="defendantID" value="<? echo $defendant->getDefendantID() ?>" />
+  	<input type="hidden" name="defendantID" value="<? echo $defendant->getDefendantID() ?>" />
      <table>
       <tr>
         <td width="100">Code:</td>
@@ -71,15 +69,17 @@ $citation = new Citation( $defendant->getDefendantID() );
 </div>
 
 <div id="item-dialog" title="Add Stolen/Vandalized Item">
-  <form>
+  <form id="item" action="process.php" method="post">
+    <input type="hidden" name="action" value="Add Stolen Item" />
+  	<input type="hidden" name="defendantID" value="<? echo $defendant->getDefendantID() ?>" />
     <table>
       <tr>
-        <td>Item:</td>
-        <td><input type="text" name="item" size="30"></td>
+        <td width="30">Item:</td>
+        <td><input type="text" name="item-name" size="30"></td>
       </tr>
       <tr>
         <td>Value:</td>
-        <td><input type="text" name="item" size="10"></td>
+        <td><input type="text" name="item-value" size="10"></td>
       </tr>
     </table>
   </form>
@@ -221,7 +221,23 @@ $citation = new Citation( $defendant->getProgramID() );
           <th width="5%"></th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody>
+      <?
+			$items = $citation->getStolenItems();
+			if( count($items) == 0 ) {
+				echo '<tr><td align="center" colspan="3">No items to display</td></tr>';
+			} else {
+				foreach( $items as $row )  { 
+					echo '<tr>';
+					echo '<td>'.$row["name"].'</td>';
+					echo '<td>'.$row["value"].'</td>';
+					echo '<td><a class="delete-item" href="process.php?action=Delete Stolen Item&defendantID='.$defendant->getDefendantID().
+							 '&itemID='.$row["itemID"].'">Delete</a></td>';
+					echo '</tr>';
+				}
+			}
+			?>
+      </tbody>
     </table>
     <button id="add-item">Add Item</button>
 </fieldset>
