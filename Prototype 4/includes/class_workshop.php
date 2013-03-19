@@ -7,7 +7,7 @@ class Workshop {
 	private $description;
 	private $instructor;
 	private $officerID;
-	private $locationID;
+	private $courtLocationID;
 	
 	public function __construct()
 	{
@@ -18,15 +18,15 @@ class Workshop {
 		$this->description = NULL;
 		$this->instructor = NULL;
 		$this->officerID = 0;
-		$this->locationID = 0;
+		$this->courtLocationID = 0;
 	}
 	
 	public function addWorkshop()
 	{
 		//open connection and build sql string
 		$core = Core::dbOpen();
-		$sql = "INSERT INTO workshop (programID,date,title,description,instructor,officerID,locationID)
-		        VALUES (:programID, :date, :title, :description, :instructor, :officerID, :locationID)";
+		$sql = "INSERT INTO workshop (programID,date,title,description,instructor,officerID,courtLocationID)
+		        VALUES (:programID, :date, :title, :description, :instructor, :officerID, :courtLocationID)";
 		$stmt = $core->dbh->prepare($sql);
 		
 		//bind values
@@ -36,7 +36,7 @@ class Workshop {
 		$stmt->bindParam(':description', $this->description);
 		$stmt->bindParam(':instructor', $this->instructor);
 		$stmt->bindParam(':officerID', $this->officerID);
-		$stmt->bindParam(':locationID', $this->locationID);
+		$stmt->bindParam(':courtLocationID', $this->courtLocationID);
 		
 		Core::dbClose();
 		
@@ -59,8 +59,8 @@ class Workshop {
 	{
 		//open connection and build sql string
 		$core = Core::dbOpen();
-		$sql = "UPDATE workshop SET date = :date, title = :title, description = :description, instructor = :instructor, officerID = :officerID
-		        WHERE workshopID = :id";
+		$sql = "UPDATE workshop SET date = :date, title = :title, description = :description, instructor = :instructor, 
+		        officerID = :officerID, courtLocationID = :courtLocationID WHERE workshopID = :id";
 		$stmt = $core->dbh->prepare($sql);
 		
 		//bind values
@@ -70,6 +70,7 @@ class Workshop {
 		$stmt->bindParam(':instructor', $this->instructor);
 		$stmt->bindParam(':officerID', $this->officerID);
 		$stmt->bindParam(':id', $this->workshopID);
+		$stmt->bindParam(':courtLocationID', $this->courtLocationID);
 		
 		Core::dbClose();
 		
@@ -119,6 +120,7 @@ class Workshop {
 				$this->description = $row["description"];
 				$this->instructor = $row["instructor"];
 				$this->officerID = $row["officerID"];
+				$this->courtLocationID = $row["courtLocationID"];
 			}
 		}
 		catch ( PDOException $e )
@@ -237,7 +239,7 @@ class Workshop {
 	public function getDescription() { return $this->description; }
 	public function getInstructor() { return $this->instructor; }
 	public function getOfficerID() { return $this->officerID; }
-	public function getLocationID() { return $this->locationID; }
+	public function getcourtLocationID() { return $this->courtLocationID; }
 	
 	//setters
 	public function setWorkshopID( $val ) { $this->workshopID = $val; }
@@ -247,7 +249,7 @@ class Workshop {
 	public function setDescription( $val ) { $this->description = $val; }
 	public function setInstructor( $val ) { $this->instructor = $val; }
 	public function setOfficerID( $val ) { $this->officerID = $val; }
-	public function setLocationID( $val ) { $this->locationID = $val; }
+	public function setcourtLocationID( $val ) { $this->courtLocationID = $val; }
 	
 	public function display()
 	{

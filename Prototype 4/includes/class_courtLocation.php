@@ -1,6 +1,7 @@
 <?php
 
 class courtLocation {
+	private $courtLocationID;
 	private $locationID;
 	private $programID;
 	private $name;
@@ -11,6 +12,7 @@ class courtLocation {
 	
 	public function __construct()
 	{
+		$this->courtLocationID = 0;
 		$this->locationID = 0;
 		$this->programID = 0;
 		$this->name = NULL;
@@ -23,71 +25,75 @@ class courtLocation {
 	public function addCourtLocation()
 	{
 		$core = Core::dbOpen();
-		$sql = "INSERT INTO court_location (programID,name,address,city,state,zip)
-		        VALUES (:programID, :name, :address, :city, :state, :zip)";
+		$sql = "INSERT INTO court_location (programID,name,address,locationID)
+		        VALUES (:programID, :name, :address, :locationID)";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $this->programID);
 		$stmt->bindParam(':name', $this->name);
 		$stmt->bindParam(':address', $this->address);
-		$stmt->bindParam(':city', $this->city);
-		$stmt->bindParam(':state', $this->state);
-		$stmt->bindParam(':zip', $this->zip);
+		$stmt->bindParam(':locationID', $this->locationID);
 		
 		Core::dbClose();
 		
 		try {
 			if ( $stmt->execute() ) {
-				$this->locationID = $core->dbh->lastInsertId();
+				$this->courtLocationID = $core->dbh->lastInsertId();
 				return true;
 			}
 		} catch ( PDOException $e ) {
 			echo "Add Court Location Failed";
 		}
+		
 		return false;
 	}
 	
 	public function editCourtLocation()
 	{
 		$core = Core::dbOpen();
-		$sql = "UPDATE court_location SET name = :name, address = :address, city = :city,
-		        state = :state, zip = :zip WHERE locationID = :locationID";
+		$sql = "UPDATE court_location SET name = :name, address = :address, locationID = :locationID WHERE courtLocationID = :courtLocationID";
 		$stmt = $core->dbh->prepare($sql);
-		$stmt->bindParam(':name', $this->name);
-		$stmt->bindParam(':address', $this->address);
-		$stmt->bindParam(':city', $this->city);
-		$stmt->bindParam(':state', $this->state);
-		$stmt->bindParam(':zip', $this->zip);
-		$stmt->bindParam(':locationID', $this->locationID);
+		$stmt->bindParam(':name', $this->name );
+		$stmt->bindParam(':address', $this->address );
+		$stmt->bindParam(':locationID', $this->locationID );
+		$stmt->bindParam(':courtLocationID', $this->courtLocationID );
 		
-		Core::dbClose();
-		
-		try {
-			if ( $stmt->execute() ) {
+		try{
+			if( $stmt->execute() )
 				return true;
-			}
 		} catch ( PDOException $e ) {
-			echo "Edit Court Location Failed";
+			echo "Edit Court Location Failed!";
 		}
 		return false;
 	}
 	
 	public function deleteCourtLocation()
 	{
+		
+	}
+	
+	public function getCourtLocation( $courtLocID )
+	{
 		$core = Core::dbOpen();
-		$sql = "DELETE FROM court_location WHERE locationID = :locationID";
+		$sql = "SELECT cl.name, cl.address, l.city, l.state, l.zip, l.locationID FROM court_location cl
+		        JOIN program_locations l ON cl.courtLocationID = :courtLocID AND cl.locationID = l.locationID";
 		$stmt = $core->dbh->prepare($sql);
-		$stmt->bindParam(':locationID', $this->locationID);
+		$stmt->bindParam(':courtLocID', $courtLocID );
 		
-		Core::dbClose();
-		
-		try {
-			if ( $stmt->execute() ) {
-				return true;
+		try{
+			if($stmt->execute()) {
+					$row = $stmt->fetch();
+					
+					$this->courtLocationID = $courtLocID;
+					$this->name = $row["name"];
+					$this->address = $row["address"];
+					$this->city = $row["city"];
+					$this->state = $row["state"];
+					$this->zip = $row["zip"];
+					$this->locationID = $row["locationID"];
 			}
 		} catch ( PDOException $e ) {
-			echo "Delete Court Location Failed";
+			echo "Get Court Location Failed!";
 		}
-		return false;
 	}
 	
 	//getters

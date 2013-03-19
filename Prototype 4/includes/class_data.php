@@ -377,10 +377,15 @@ class Data {
 		return '{"aaData":[]}';
 	}
 
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
+
 	public function fetchCourtLocation ( $user_programID ) {
 		//database connection and SQL query
 		$core = Core::dbOpen();
-		$sql = "SELECT * FROM court_location WHERE programID = :programID";
+		$sql = "SELECT cl.name, cl.address, l.city, l.state, l.zip, cl.courtLocationID FROM court_location cl
+		        JOIN program_locations l ON cl.programID = :programID AND cl.locationID = l.locationID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		
@@ -394,7 +399,7 @@ class Data {
 					$row[] = $aRow["city"];
 					$row[] = $aRow["state"];
 					$row[] = $aRow["zip"];
-					$row[] = $aRow["locationID"];
+					$row[] = $aRow["courtLocationID"];
 					
 					$output['aaData'][] = $row;
 				}

@@ -29,7 +29,7 @@ if( $action == "Add Workshop" ) {
 	$workshop->setDescription( $_POST["description"] );
 	$workshop->setInstructor( $_POST["instructor"] );
 	$workshop->setOfficerID( $_POST["officer"] );
-	$workshop->setLocationID( $_POST["locationID"] );
+	$workshop->setcourtLocationID( $_POST["courtLocationID"] );
 	
 	if( $workshop->addWorkshop() )
 	{
@@ -51,6 +51,7 @@ if( $action == "Add Workshop" ) {
 	$workshop->setDescription( $_POST["description"] );
 	$workshop->setInstructor( $_POST["instructor"] );
 	$workshop->setOfficerID( $_POST["officer"] );
+	$workshop->setcourtLocationID( $_POST["courtLocationID"] );
 	
 	if( $workshop->editWorkshop() )
 	{

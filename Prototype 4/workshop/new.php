@@ -17,30 +17,30 @@ $action = "Add Workshop";
 
 <script>
 $(function () {
-	$("#location-dialog").dialog({
+	$("#courtLocation-dialog").dialog({
 		resizable: false,
 		autoOpen:false,
 		modal: true,
-		width:450,
+		width:550,
 		height:250,
 		buttons: {
-			'Add Location': function() {
-				$(this).dialog('close');
-					$("#location-form").submit();
-				},
 			Cancel: function() {
 				$(this).dialog('close');
 			}
 		}
 	});
 	
-	$("#list-location").dialog({
+	$("#programLocation-dialog").dialog({
 		resizable: false,
 		autoOpen:false,
 		modal: true,
-		width:450,
-		height:250,
+		width:550,
+		height:450,
 		buttons: {
+			'Add Location': function() {
+				$(this).dialog('close');
+					$("#courtLocation-form").submit();
+				},
 			Cancel: function() {
 				$(this).dialog('close');
 			}
@@ -53,30 +53,46 @@ $(function () {
 				"bProcessing": false,
 				"sAjaxSource": '/data/courtLocation.php'
 	});
-	//courtLocationTable.fnSetColumnVis(5, false);
+	
+	var locTable = $("#programLocation-table").dataTable( { 
+				"aaSorting": [],
+				"sPaginationType": "full_numbers",
+				"bProcessing": false,
+				"sAjaxSource": '/data/program_locations.php'
+	});
 	
 	$('#courtLocation-table tbody tr').live('click', function (event) {        
 		var oData = courtLocationTable.fnGetData(this); // get datarow
 		if (oData != null)  // null if we clicked on title row
 		{
-			$("#name").val(oData[0]);
-			$("#address").val(oData[1]);
-			$("#city").val(oData[2]);
-			$("#state").val(oData[3]);
-			$("#zip").val(oData[4]);
-			$("#locationID").val(oData[5]);
-			$("#list-location").dialog('close');
+			$("#workshop-name").val(oData[0]);
+			$("#workshop-address").val(oData[1]);
+			$("#workshop-city").val(oData[2]);
+			$("#workshop-state").val(oData[3]);
+			$("#workshop-zip").val(oData[4]);
+			$("#courtLocationID").val(oData[5]);
+			$("#courtLocation-dialog").dialog('close');
 		}
 	});
 	
-	$('#court-location').click(function(){ $('#list-location').dialog('open'); });
-	$('#add-location').click(function(){ $('#location-dialog').dialog('open'); });
+	$('#programLocation-table tbody tr').live('click', function (event) {
+		var oData = locTable.fnGetData(this);
+		if (oData != null)
+		{
+			$("#location-city").val(oData[0]);
+			$("#location-state").val(oData[1]);
+			$("#location-zip").val(oData[2]);
+		}
+	});
+	
+	$('#court-location').click(function(){ $('#courtLocation-dialog').dialog('open'); });
+	$('#program-location').click(function(){ $('#programLocation-dialog').dialog('open'); });
 	$( "#add-workshop" ).button().click(function(){ $("#newWorkshop").submit(); });
 	$("#date").datepicker();
 });
 </script>
 
-<div id="list-location" title="Select Location">
+<div id="courtLocation-dialog" title="Select Location">
 	<table id="courtLocation-table">
 		<thead>
 			<tr>
@@ -91,32 +107,42 @@ $(function () {
 	</table>
 </div>
 
-<div id="location-dialog" title="Add New Location">
-	<form id="location-form" action="process.php" method="post">
+<div id="programLocation-dialog" title="Add New Court Location">
+	<form id="courtLocation-form" action="process.php" method="post">
 		<input type="hidden" name="action" value="Add Location" />
-		<input type="hidden" name="programID" value=<? echo $user->getProgramID(); ?>
+		<input type="hidden" name="programID" value=<? echo $user->getProgramID(); ?> />
 		<table>
 			<tr>
 				<td>Name</td>
-				<td><input type="text" name="location-name" size="30" /></td>
+				<td><input type="text" name="location-name" id="location-name" size="30" /></td>
 			</tr>
 			<tr>
 				<td>Address:</td>
-				<td><input type="text" name="location-address" size="30" /></td>
+				<td><input type="text" name="location-address" id="location-address" size="30" /></td>
 			</tr>
 			<tr>
 				<td>City:</td>
-				<td><input type="text" name="location-city" /></td>
+				<td><input type="text" name="location-city" id="location-city" /></td>
 			</tr>
 			<tr>
 				<td>State:</td>
-				<td><input type="text" name="location-state=" /></td>
+				<td><input type="text" name="location-state" id="location-state" /></td>
 			</tr>
 			<tr>
 				<td>Zip:</td>
-				<td><input type="text" name="location-zip" /></td>
+				<td><input type="text" name="location-zip" id="location-zip" /></td>
 			</tr>
-		</table>		
+		</table>
+		<table id="programLocation-table">
+	    <thead>
+	        <tr>
+	          <th>City</th>
+	          <th>State</th>
+	          <th>Zip</th>
+	        </tr>
+	    </thead>
+	    <tbody></tbody>
+	  </table> 	
 	</form>
 </div>
 
@@ -135,7 +161,7 @@ $(function () {
 <input type="hidden" name="action" value="<? echo $action ?>" />
 <input type="hidden" name="programID" value="<?echo $user->getProgramID(); ?>" />
 <input type="hidden" name="return" value="new.php" />
-<input type="hidden" name="locationID" value="" />
+<input type="hidden" name="courtLocationID" id="courtLocationID" value="" />
 	
 <fieldset>
 	<legend>Workshop Information</legend>
@@ -176,22 +202,22 @@ $(function () {
 	<table>
 		<tr>
 			<td>Name:</td>
-			<td><input type="text" name="locationName" id="name" value="<? echo $locationName ?>"/></td>
+			<td><input type="text" name="locationName" id="workshop-name" value="<? echo $locationName ?>"/></td>
 			<td>Address:</td>
-			<td><input type="text" name="address" id="address" value="<? echo $locationAddress ?>"/></td>
+			<td><input type="text" name="address" id="workshop-address" value="<? echo $locationAddress ?>"/></td>
 		</tr>
 		<tr>
 			<td>City:</td>
-			<td><input type="text" name="city" id="city" value="<? echo $locationCity ?>"/></td>
+			<td><input type="text" name="city" id="workshop-city" value="<? echo $locationCity ?>"/></td>
 			<td>State:</td>
-			<td><input type="text" name="state" id="state" value="<? echo $locationState ?>"/></td>
+			<td><input type="text" name="state" id="workshop-state" value="<? echo $locationState ?>"/></td>
 			<td>Zip:</td>
-			<td><input type="text" name="zip" id="zip" value="<? echo $locationZip ?>"/></td>
+			<td><input type="text" name="zip" id="workshop-zip" value="<? echo $locationZip ?>"/></td>
 		</tr>
 	</table>
 	<input type="button" class="add" id="court-location" value="List Locations" />
-	<input type="button" class="add" id="add-location" value="Add Location" />
-	</fieldset>
+	<input type="button" class="add" id="program-location" value="Add Location" />
+</fieldset>
 </form>
 
 <?php
