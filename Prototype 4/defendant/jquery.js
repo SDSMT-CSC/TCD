@@ -20,7 +20,7 @@ jQuery(function($) {
 	$("#add-officer").click(function(){ $('#officer-dialog').dialog('open'); });
 	$("#add-common-location").click(function(){ $('#common-location-dialog').dialog('open'); });
 	$("#add-existing-offense").button().click(function(){ $('#offense-existing-dialog').dialog('open'); });
-	$("#add-new-offense").button().click(function(){ $('#offense-new-dialog').dialog('open'); });
+	$("#add-new-statute").button().click(function(){ $('#offense-new-statute').dialog('open'); });
 	$("#add-item").button().click(function(){ $('#item-dialog').dialog('open'); });
 	$("#add-vehicle").button().click(function(){ $('#vehicle-dialog').dialog('open'); });
 	
@@ -62,6 +62,20 @@ jQuery(function($) {
 			'citation-time': { required: true }
 		}
 	});	
+	
+	$("#statute").validate({
+		errorElement: "div",
+		wrapper: "div",
+		errorPlacement: function(error, element) {
+			  error.insertAfter(element);
+				error.addClass('message');
+		},
+		rules: {
+			'statute-code': { required: true },
+			'statute-title': { required: true }
+		}
+	});	
+	
 	
 	$("#officer").validate({
 		errorElement: "div",
@@ -136,12 +150,13 @@ jQuery(function($) {
 		 resizable: false,
 		 autoOpen:false,
 		 modal: true,
-      width:600,
+      width:475,
       buttons: {
 				 'Add Officer': function() { $("#officer").submit()  },
 				 'Cancel': function() { 
          		$(this).dialog('close'); 
          		$("#officer")[0].reset(); 
+						$(".message").css("display","none");
         }
       }
     });
@@ -159,16 +174,17 @@ jQuery(function($) {
 			}
 		});
 		
-	$("#offense-new-dialog").dialog({
+	$("#offense-new-statute").dialog({
 			resizable: false,
 			autoOpen:false,
 			modal: true,
-			width:500,
+			width:600,
 			buttons: {
-				'Add Offense': function() { $("#offense").submit()	},
+				'Add Offense': function() { $("#statute").submit();	},
 				'Cancel': function() { 
 					$(this).dialog('close'); 
-					$("#offense-new-dialog")[0].reset(); 
+					$("#statute")[0].reset();
+					$(".message").css("display","none");
 				}
 			}
 		});

@@ -8,6 +8,9 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_citation.php");
 
 $action = $_REQUEST["action"];
 
+/*********************************************************************************************
+	PRIMARY INFORMATION
+*********************************************************************************************/
 if( $action == "Add Defendant" || $action == "Edit Defendant" )
 {
 	$defendant = new Defendant();
@@ -30,6 +33,9 @@ if( $action == "Add Defendant" || $action == "Edit Defendant" )
 	header("location: view.php?id=".$defendant->getDefendantID() );
 }
 
+/*********************************************************************************************
+	TAB1: UPDATE PERSONAL INFORMATION
+*********************************************************************************************/
 if( $action == "Update Personal" )
 {	
 	$defendant = new Defendant();
@@ -70,7 +76,9 @@ if( $action == "Update Personal" )
 	header("location: view.php?id=".$defendant->getDefendantID() );
 }
 
-
+/*********************************************************************************************
+	TAB2: GUARDIAN INFORMATION
+*********************************************************************************************/
 if( $action == "Add Guardian" || $action == "Update Guardian" )
 {
 	$guardian = new Guardian( $_POST["defendantID"] );
@@ -115,6 +123,9 @@ if( $action == "Delete Guardian" )
 	}
 }
 
+/*********************************************************************************************
+	TAB3: CITATION INFORMATION
+*********************************************************************************************/
 if( $action == "Update Citation")
 {
 	$citation = new Citation( $_POST["defendantID"] );
@@ -135,20 +146,22 @@ if( $action == "Update Citation")
 	header("location: view.php?id=".$citation->getDefendantID() );
 }
 
+// Add common location
 if( $action == "Add Common Location")
 {
 	echo $program->addCommonLocation( $_POST["common-location-name"] );
 }
 
+// Add new officer
 if( $action == "Add Officer")
 {
 	 echo $program->addOfficer( $_POST["officer-firstname"], $_POST["officer-lastname"], $_POST["officer-idNumber"], $_POST["officer-phone"] );
 }
 
+// Add existing statute as an offense
 if( $action == "Add Offense")
 {	
 	$citation = new Citation( $_POST["defendantID"] );
-	
 	$citationID = $citation->addOffense( $_POST["statuteID"] );
 	
 	if( $citationID )
@@ -157,9 +170,9 @@ if( $action == "Add Offense")
 	echo $citationID;
 }
 
+// Remove an offense
 if( $action == "Delete Offense")
 {
-	
 	$citation = new Citation( $_GET["defendantID"] );
 		
 	if( $citation->removeOffense( $_GET["offenseID"] ) )
@@ -169,5 +182,22 @@ if( $action == "Delete Offense")
 	header("location: view.php?id=".$citation->getDefendantID() );
 }
 
+// Add new statute
+if( $action == "Add Statute" )
+{
+	$offenseID = NULL;
+	
+	// add statute to program_statutes
+	$statuteID = $program->addStatute( $user_programID,	$_POST["statute-code"],	$_POST["statute-title"], $_POST["statute-description"] );
+	
+	// add this new statute to the defendant
+	$citation = new Citation( $_POST["defendantID"] );
+	
+	if( $citation->addOffense( $statuteID ) )
+		$user->addEvent("Defendant: ".$action, $citation->getDefendantID() );
+	
+ 	// redirect to the defendant page	
+	header("location: view.php?id=".$citation->getDefendantID() );
+}
 
 ?>

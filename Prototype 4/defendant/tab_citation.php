@@ -49,20 +49,22 @@ $citation = new Citation( $defendant->getDefendantID() );
   </table> 
 </div>
 
-<div id="offense-new-dialog" title="Add New Offense">
-  <form id="offense">
+<div id="offense-new-statute" title="Add New Statute">
+  <form id="statute" action="process.php" method="post">
+    <input type="hidden" name="action" value="Add Statute" />
+  <input type="hidden" name="defendantID" value="<? echo $defendant->getDefendantID() ?>" />
      <table>
       <tr>
-        <td>Code:</td>
-        <td><input type="text" name="item" size="30"></td>
+        <td width="100">Code:</td>
+        <td><input type="text" name="statute-code"  id="statute-code" style="width: 300px" /></td>
       </tr>
       <tr>
         <td>Title:</td>
-        <td><input type="text" name="item" size="10"></td>
+        <td><input type="text" name="statute-title" id="statute-title" style="width: 300px" /></td>
       </tr>
       <tr>
-        <td>Description:</td>
-        <td><textarea name="description" id="description"></textarea></td>
+        <td valign="top">Description:</td>
+        <td><textarea name="statute-description" id="statute-description" style="width: 300px; height: 100px;"></textarea></td>
       </tr>
     </table>
   </form>
@@ -205,7 +207,7 @@ $citation = new Citation( $defendant->getProgramID() );
     </table>
     <div class="belowListing">
     <button id="add-existing-offense">Add Existing Offense</button>
-    <button id="add-new-offense">Add New Offense</button>
+    <button id="add-new-statute">Add New Statute</button>
     </div>
 </fieldset>
 

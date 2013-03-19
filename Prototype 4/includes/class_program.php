@@ -42,7 +42,6 @@ class Program {
       $this->active = 1; 
 	}	
 	
-  
   /*************************************************************************************************
    function: programExists
 	 purpose: checks the database to see if an email address exists for a user
@@ -72,8 +71,7 @@ class Program {
     }
 		return false;
 	}
-
-
+	
   /*************************************************************************************************
     function: getFromCode
     purpose: gets program information from an existing program code
@@ -302,6 +300,36 @@ class Program {
 			}			
 			return $officerID;
 		}
+		
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
+	public function addStatute( $programID,	$code,	$title, $description )
+	{
+		$statuteID = NULL;
+				
+		if( $code && $title )
+		{
+			$core = Core::dbOpen();
+			$sql = "INSERT INTO program_statutes (programID, statute, title, description) 
+							VALUES(:programID, :code, :title, :description)";
+			$stmt = $core->dbh->prepare($sql);
+			$stmt->bindParam(':programID', $this->programID);
+			$stmt->bindParam(':code', $code);
+			$stmt->bindParam(':title', $title);
+			$stmt->bindParam(':description', $description);
+			Core::dbClose();
+			
+			try
+			{
+				if( $stmt->execute() )
+						$statuteID = $core->dbh->lastInsertId();	
+			} catch ( PDOException $e ) {
+				echo "Add statute Failed!";
+			}         
+		}			
+		return $statuteID;
+	}
 	
   // public function removeCourt() { }
 	
