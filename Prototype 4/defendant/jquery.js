@@ -117,7 +117,19 @@ jQuery(function($) {
 				error.addClass('message');
 		},
 		rules: { 'item-name': { required: true } }
-	});	
+	});
+	
+	/* TODO
+	$("#vehicle").validate({
+		errorElement: "div",
+		wrapper: "div",
+		errorPlacement: function(error, element) {
+			  error.insertAfter(element);
+				error.addClass('message');
+		},
+		rules: { 'item-name': { required: true } }
+	});
+	*/
 		
 	/**************************************************************************************************
 		DIALOG FUNCTIONALITY
@@ -248,12 +260,9 @@ jQuery(function($) {
 			resizable: false,
 			autoOpen:false,
 			modal: true,
-			width:400,
+			width:475,
 			buttons: {
-				'Add Vehicle': function() {
-					$(this).dialog('close');
-						// TO DO: add vehicle
-					},
+				'Add Vehicle': function() { $("#vehicle").submit(); },
 				'Cancel': function() { $(this).dialog('close'); }
 			}
 		});
@@ -473,5 +482,15 @@ jQuery(function($) {
 		popupDialog( dTitle, dMsg, dHref );
 		return false
 	});
+	
+	// Delete an vehicle
+	$("a.delete-vehicle").click(function() {
+		dTitle = 'Delete Vehicle';
+		dMsg = 'Are you sure you want to delete this vehicle?';
+		dHref = $(this).attr("href");
+		popupDialog( dTitle, dMsg, dHref );
+		return false
+	});
+	
 	
 });

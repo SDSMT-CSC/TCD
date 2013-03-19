@@ -221,4 +221,30 @@ if( $action == "Delete Stolen Item" )
 	header("location: view.php?id=".$citation->getDefendantID() );
 }
 
+// add vehicle
+if( $action == "Add Vehicle" )
+{
+	$citation = new Citation( $_POST["defendantID"] );
+
+	if( $citation->addVehicle( $_POST["vehicle-year"], $_POST["vehicle-make"], $_POST["vehicle-model"], 
+														 $_POST["vehicle-color"], $_POST["vehicle-license"], $_POST["vehicle-state"], $_POST["vehicle-comment"] ) )
+		$user->addEvent("Defendant: ".$action." (".$_POST["item-name"].")", $citation->getDefendantID() );
+	
+ 	// redirect to the defendant page	
+	header("location: view.php?id=".$citation->getDefendantID() );
+}
+
+// delete vehicle
+if( $action == "Delete Vehicle" )
+{
+	$citation = new Citation( $_GET["defendantID"] );
+	
+	if( $citation->removeVehicle( $_GET["vehicleID"] ) )
+		$user->addEvent("Defendant: ".$action, $citation->getDefendantID() );
+		
+ 	// redirect to the defendant page	
+	header("location: view.php?id=".$citation->getDefendantID() );
+}
+
+
 ?>

@@ -86,38 +86,44 @@ $citation = new Citation( $defendant->getDefendantID() );
 </div>
 
 <div id="vehicle-dialog" title="Add Vehicle">
-  <form>
-  <table>
-    <tr>
-      <td>Year:</td>
-      <td><input type="text" name="item" ></td>
-    </tr>					
-    <tr>
-      <td>Make:</td>
-      <td><input type="text" name="item" ></td>
-    </tr>	
-    <tr>
-      <td>Model:</td>
-      <td><input type="text" name="item" ></td>
-    </tr>	
-    <tr>
-      <td>Color:</td>
-      <td><input type="text" name="item" ></td>
-    </tr>	
-    <tr>
-      <td>License:</td>
-      <td><input type="text" name="item" ></td>
-    </tr>	
-    <tr>
-      <td>State:</td>
-      <td><input type="text" name="item" ></td>
-    </tr>	
-  </table>
-</form>
+  <form id="vehicle" action="process.php" method="post">
+    <input type="hidden" name="action" value="Add Vehicle" />
+    <input type="hidden" name="defendantID" value="<? echo $defendant->getDefendantID() ?>" />
+    <table>
+      <tr>
+        <td width="50">Year:</td>
+        <td><input type="text" name="vehicle-year" id="vehicle-year" ></td>
+      </tr>					
+      <tr>
+        <td>Make:</td>
+        <td><input type="text" name="vehicle-make" id="vehicle-make" ></td>
+      </tr>	
+      <tr>
+        <td>Model:</td>
+        <td><input type="text" name="vehicle-model" id="vehicle-model" ></td>
+      </tr>	
+      <tr>
+        <td>Color:</td>
+        <td><input type="text" name="vehicle-color" id="vehicle-color" ></td>
+      </tr>	
+      <tr>
+        <td>License:</td>
+        <td><input type="text" name="vehicle-license" id="vehicle-license" ></td>
+      </tr>	
+      <tr>
+        <td>State:</td>
+        <td><input type="text" name="vehicle-state" id="vehicle-state" ></td>
+      </tr>	
+      <tr>
+        <td valign="top">Comment:</td>
+        <td><textarea name="vehicle-comment" id="vehicle-comment" style="width: 300px; height: 75px;"></textarea></td>
+      </tr>	
+    </table>
+	</form>
 </div>
 
 <?
-$citation = new Citation( $defendant->getProgramID() );
+$citation = new Citation( $defendant->getDefendantID() );
 ?>
 <form name="citation" id="citation" action="process.php" method="post">
   <input type="hidden" name="action" value="Update Citation" />
@@ -257,6 +263,32 @@ $citation = new Citation( $defendant->getProgramID() );
         </tr>
       </thead>
       <tbody>
+      <?
+			$vehicles = $citation->getVehicles();
+			if( count($vehicles) == 0 ) {
+				echo '<tr><td align="center" colspan="7">No vehicles to display</td></tr>';
+			} else {
+				foreach( $vehicles as $row )  { 
+					echo '<tr>';
+					echo '<td>'.$row["year"].'</td>';
+					echo '<td>'.$row["make"].'</td>';
+					echo '<td>'.$row["model"].'</td>';
+					echo '<td>'.$row["color"].'</td>';
+					echo '<td>'.$row["license"].'</td>';
+					echo '<td>'.$row["state"].'</td>';
+					echo '<td><a class="delete-vehicle" href="process.php?action=Delete Vehicle&defendantID='.$defendant->getDefendantID().
+							 '&vehicleID='.$row["vehicleID"].'">Delete</a></td>';
+					echo '</tr>';
+					
+					if( $row["comment"] ) {
+						echo '<tr><td></td>';
+						echo '<td colspan="6"><strong>Comments:</strong> '.$row["comment"].'</td>';
+						echo '</tr>';
+					}
+					
+				}
+			}
+			?>
       </tbody>
     </table>
     <div>

@@ -298,14 +298,73 @@ class Citation {
 	}
 
 	/*************************************************************************************************
+    function: getVehicles
+    purpose:
+    input:
+    output: 
+  ************************************************************************************************/
+	public function getVehicles()
+	{
+		$output = array();
+		
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT * FROM citation_vehicle WHERE citationID = :citationID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':citationID', $this->citationID);
+    Core::dbClose();
+		
+		try {
+			if($stmt->execute() && $stmt->rowCount() > 0) {
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					$row = array();
+					$row["vehicleID"] = $aRow["vehicleID"];
+					$row["license"] = $aRow["licenseNumber"];
+					$row["state"] = $aRow["licenseState"];
+					$row["year"] = $aRow["year"];
+					$row["make"] = $aRow["make"];
+					$row["model"] = $aRow["model"];
+					$row["color"] = $aRow["color"];
+					$row["comment"] = $aRow["comment"];
+										
+					$output[] = $row;
+				}
+			}
+		} catch (PDOException $e) {
+      		echo "Vehicle list fetch Failed!";
+    }
+		
+		return $output;
+	}
+	/*************************************************************************************************
     function: addVehicle
     purpose:
     input:
     output: 
   ************************************************************************************************/
-	public function addVehicle()
+	public function addVehicle( $year, $make, $model, $color, $license, $state, $comment )
 	{
+		$core = Core::dbOpen();
+		$sql = "INSERT INTO citation_vehicle (citationID, licenseNumber, licenseState, make, model, year, color, comment) 
+						VALUES (:citationID, :license, :state, :make, :model, :year, :color, :comment)";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':citationID', $this->citationID);
+		$stmt->bindParam(':license', $license);
+		$stmt->bindParam(':state', $state);
+		$stmt->bindParam(':make', $make);
+		$stmt->bindParam(':model', $model);
+		$stmt->bindParam(':year', $year);
+		$stmt->bindParam(':color', $color);
+		$stmt->bindParam(':comment', $comment);
+		Core::dbClose();
 		
+		try {
+			if($stmt->execute())
+				return true;				
+		} catch (PDOException $e) {
+			echo "Vehicle add failed!";
+		}
+		return false;
 	}
 	
 	/*************************************************************************************************
@@ -314,13 +373,28 @@ class Citation {
     input:
     output: 
   ************************************************************************************************/
-	public function removeVehicle()
+	public function removeVehicle( $vehicleID )
 	{
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "DELETE FROM citation_vehicle WHERE vehicleID = :vehicleID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':vehicleID', $vehicleID);
+    Core::dbClose();
 		
+		try {
+			if($stmt->execute())
+				return true;
+		} catch (PDOException $e) {
+      		echo "Delete vehicle Failed!";
+    }
+		return false;		
 	}
 		
 	// getters
 	public function getDefendantID() { return $this->defendantID; }
+	public function getCitationID() { return $this->citationID; }
+	
 }
 
 ?>
