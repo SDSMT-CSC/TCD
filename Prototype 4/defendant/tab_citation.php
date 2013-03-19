@@ -136,10 +136,9 @@ $citation = new Citation( $defendant->getDefendantID() );
         <td><input type="text" name="citation-date" id="citation-date" value="<? echo date("m/d/Y", $citation->citationDate); ?>" /></td>
         <td>Officer:</td>
         <td>
-        	<? $data = new Data(); ?>
           <select name="officerID" id="officerID">
           	<option></option>
-            <? echo $data->fetchOfficerDropdown( $user_programID, $citation->officerID )?>
+            <? echo $program->fetchOfficerDropdown( $citation->officerID )?>
           </select>
           <a id="add-officer" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
         </td>
@@ -171,10 +170,9 @@ $citation = new Citation( $defendant->getDefendantID() );
         <td>
           <select style="width: 310px;" name="common-location" id="common-location">
             <option></option>
-            <? echo $data->fetchCommonLocationDropdown( $user_programID, $citation->commonLocationID )?>
+            <? echo $program->fetchCommonLocationDropdown( $user_programID, $citation->commonLocationID )?>
           </select>
           <a id="add-common-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
-          <? unset( $data ); ?>
         </td>
       </tr>
       <tr>

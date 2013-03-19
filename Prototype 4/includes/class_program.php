@@ -242,7 +242,64 @@ class Program {
       }
       return false;
   }
-  
+  	
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
+	public function fetchOfficerDropdown( $officerID )
+	{
+	  $data = NULL; 
+    
+		//database connection and SQL query
+		$core = Core::dbOpen();
+		$sql = "SELECT programID, officerID, lastName, firstName FROM program_officers 
+						WHERE programID = :programID ORDER BY lastName";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $this->programID );
+    Core::dbClose();
+		
+		try {
+			if( $stmt->execute() ) {
+				$data = "";
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					( $officerID == $aRow["officerID"] ) ? $selected = " selected" : $selected = "";
+					$data .= '<option value="'.$aRow["officerID"].'"'.$selected.'>'.$aRow["lastName"].", ".$aRow["firstName"].'</option>';
+				}
+			}
+		} catch ( PDOException $e ) {
+			echo "Officer dropdown failed!";
+		}
+		return $data;
+	}
+	
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
+	public function fetchCommonLocationDropdown( $commonLocationID )
+	{
+		$data = NULL; 
+    
+		//database connection and SQL query
+		$core = Core::dbOpen();
+		$sql = "SELECT commonPlaceID, commonPlace FROM program_common_location WHERE programID = :programID ORDER BY commonPlace";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $this->programID );
+    Core::dbClose();
+		
+		try {
+			if( $stmt->execute() ) {
+				$data = "";
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					( $commonLocationID == $aRow["commonPlaceID"] ) ? $selected = " selected" : $selected = "";
+					$data .= '<option value="'.$aRow["commonPlaceID"].'"'.$selected.'>'.$aRow["commonPlace"].'</option>';
+				}
+			}
+		} catch ( PDOException $e ) {
+			echo "Common location dropdown failed!";
+		}
+		return $data;
+	}
+	
 	 /*************************************************************************************************
 	 
 	 *************************************************************************************************/

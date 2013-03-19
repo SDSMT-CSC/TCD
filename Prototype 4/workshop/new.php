@@ -186,7 +186,8 @@ $(function () {
 			<td>Officer:</td>
 			<td>
 				<select name="officer"/>
-				<? echo $data->fetchOfficerDropdown( $user_programID, $officerID )?>
+        <option></option>
+				<? echo $program->fetchOfficerDropdown( $officerID )?>
 				</select>
 			</td>
 		</tr>
@@ -217,7 +218,7 @@ $(function () {
 	</table>
 	<input type="button" class="add" id="court-location" value="List Locations" />
 	<input type="button" class="add" id="program-location" value="Add Location" />
-</fieldset>
+	</fieldset>
 </form>
 
 <?php

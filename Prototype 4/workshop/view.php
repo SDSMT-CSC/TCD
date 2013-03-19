@@ -27,6 +27,7 @@ if( isset($id) )
 	
 	$courtLocation = new courtLocation();
 	$courtLocation->getCourtLocation( $courtLocationID );
+	var_dump($courtLocation);
 	
 	$locationName = $courtLocation->getName();
 	$locationAddress = $courtLocation->getAddress();
@@ -264,7 +265,8 @@ $(function () {
 			<td>Officer:</td>
 			<td>
 				<select name="officer"/>
-				<? echo $data->fetchOfficerDropdown( $user_programID, $officerID )?>
+        <option></option>
+				<? echo $program->fetchOfficerDropdown( $officerID )?>
 				</select>
 			</td>
 		</tr>
