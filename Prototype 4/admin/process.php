@@ -3,15 +3,13 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 
 // make sure only certain levels of user get access to this area
 if( $user_type > 3 )
-{
 	header("location: /main.php");
-}
 
 $action = $_REQUEST["action"];
 
+// Add/Edit user
 if( $action == "Add User" || $action == "Edit User" )
 {
-	
 	$mod_user = new User();
 		
 	if($action == "Edit User") { $mod_user->setUserID( $_POST["userID"] ); }
@@ -23,33 +21,31 @@ if( $action == "Add User" || $action == "Edit User" )
 	$mod_user->setTimezoneID( $_POST["timezoneID"] );
 	$mod_user->setActive( $_POST["active"] );
 	$mod_user->setPassword( $_POST["password"] );
-	
+
+	// log the event on success	
 	if( $mod_user->updateUser() )
-	{
-		// log the event
-		$user->addEvent($action . ": " . $mod_user->getEmail() );
-	}
+		$user->addEvent($action . ": " . $mod_user->getEmail(), $mod_user->getUserID() );
 	
 	// redirect to the user page	
 	header("location: view_user.php?id=".$mod_user->getUserID() );
 }
 
+// Delete user (sets delete flag in db)
 if( $action == "Delete User" )
 {
 	$mod_user = new User();
 	$mod_user->getFromID($_GET["id"]);
 	$email = $mod_user->getEmail(); // get the email address before removing
 	
+	// log the event on success	
 	if( $mod_user->removeUser($_GET["id"]) )
-	{
-		// log the event
-		$user->addEvent("Updated user: " . $email );
-	}
+		$user->addEvent( $action . ": " . $email, $mod_user->getUserID() );
 	
 	// redirect to user list
 	header("location: users.php");
 }
 
+// Add/Edit program
 if( $action == "Add Program" || $action == "Edit Program" )
 {
 	$mod_program = new Program();
@@ -69,12 +65,9 @@ if( $action == "Add Program" || $action == "Edit Program" )
   $mod_program->expunge = $_POST["expunge"];
   $mod_program->timezoneID = $_POST["timezoneID"];
   
-  
+  // log the event on success
   if( $mod_program->updateProgram() )
-  {
-    // log the event
     $user->addEvent($action . ": " . $mod_program->getName() );  
-  }
   
   // redirect to the user page  
   header("location: view_program.php?id=".$mod_program->getProgramID() );

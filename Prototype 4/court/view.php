@@ -1,60 +1,28 @@
 <?
 $menuarea = "court";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
+
+$id = $_GET["id"];
+$error = 0;
+
+// $court = new Court();
+
+if( isset($id) ) {
+	$action = "Edit Court";
+	
+	
+} 
+else {	
+	$action = "Add Court";
+
+}
 ?>
 
-<script>
-jQuery(function($)
-{	
-	$("#tabs").tabs();
-	$("#tabs").show(); 
-	
-	$("#previous-court").button();
-	$("#close-court").button();
-	$("#delete-court").button();
-	$("#update-court").button();
-	$("#next-court").button();
-	$("#court-date").datepicker();
-	
-	$("#location-dialog").dialog({
-		resizable: false,
-		autoOpen:false,
-		modal: true,
-		width:450,
-		height:250,
-		buttons: {
-			'Add Location': function() {
-				$(this).dialog('close');
-					// TO DO: add location
-				},
-			Cancel: function() {
-				$(this).dialog('close');
-			}
-		}
-	});
+<? if( $error == 1 ) { ?>
+<p>You do not have access to this page.</p>
+<? } else { ?>
 
-	$("#jury-member-dialog").dialog({
-		resizable: false,
-		autoOpen:false,
-		modal: true,
-		width:450,
-		height:165,
-		buttons: {
-			'Add Jury Member': function() {
-				$(this).dialog('close');
-					// TO DO: add jury member
-				},
-			Cancel: function() {
-				$(this).dialog('close');
-			}
-		}
-	});
-	
-	$('#add-location').click(function(){ $('#location-dialog').dialog('open'); });
-	$('#add-jury-member').click(function(){ $('#jury-member-dialog').dialog('open'); });
-	
-});
-</script>
+<script type="text/javascript" src="jquery.js"></script>
 
 <div id="location-dialog" title="Add New Location">
 	<form>
@@ -105,233 +73,107 @@ jQuery(function($)
 </div>
 
 <div id="control-header">
-	
-	<div class="left"><h1>Court Information</h1></div>	
+	<div class="left"><h1><? echo $action ?></h1></div>	
 	<div class="right">
 		<div id="control" class="ui-state-error">
-			<button id="previous-court">Previous</button>
-			<button id="delete-court">Delete</button>
-			<button id="update-court">Update</button>
-			<button id="close-court">Close</button>
-			<button id="next-court">Next</button>
+			<button id="court-list">Back to List</button>
+			<? if( $action == "Add Defendant") { ?>
+			<button id="add-court">Add Court</button>
+      <? } else { ?>
+			<button id="delete-court">Delete Court</button>
+			<button id="update-court">Update Court</button>
+			<? } ?>
 		</div>
 	</div>
-
 </div>
 
 <form name="updateCourt" id="updateCourt" >
+  <fieldset>
+    <legend>Court Information</legend>
+    <table>
+      <tr>
+        <td>
+          <table>		
+            <tr>
+              <td>Defendant: </td>
+              <td>
+                <select id="court-defendant" name="court-defendant">
+                	<option></option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>Court Date: </td>
+              <td><input type="text" name="court-date" id="court-date" value=""></td>
+            </tr>
+            <tr>
+              <td>Court Time: </td>
+              <td><input type="text" name="court-time" id="court-time" value=""></td>
+            </tr>
+          </table>
+        </td>
+        <td>
+          <table>
+            <tr>
+              <td>Court Type: </td>
+              <td>
+                <select id="court-type" name="court-type">
+                  <option>Trial</option>
+                  <option>Hearing</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>Contract Signed? </td>
+              <td>
+                <select id="court-contract" name="court-contract">
+                  <option>Yes</option>
+                  <option>No</option>
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <td>Court Location: </td>
+              <td>
+                <select id="court-location" name="court-location">
+                
+                </select>
+                <a id="add-location" style="cursor:pointer;">+</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </fieldset>
+</form>
 
-<fieldset>
-	<legend>Court Information</legend>
-	<table>
-		<tr>
-			<td>
-				<table>		
-					<tr>
-						<td>Defendant: </td>
-						<td>
-							<select id="court-defendant" name="court-defendant">
-								<option>Smith, Mike (12320)</option>
-								<option>Adams, Sam (1000)</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td>Court Date: </td>
-						<td><input type="text" name="court-date" id="court-date" value="11/15/2012"></td>
-					</tr>
-					<tr>
-						<td>Court Time: </td>
-						<td><input type="text" name="court-time" id="court-time" value="11:00am"></td>
-					</tr>
-				</table>
-			</td>
-			<td>
-				<table>
-					<tr>
-						<td>Court Type: </td>
-						<td>
-							<select id="court-type" name="court-type">
-								<option>Trial</option>
-								<option>Hearing</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td>Contract Signed? </td>
-						<td>
-							<select id="court-contract" name="court-contract">
-								<option>Yes</option>
-								<option>No</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td>Court Location: </td>
-						<td>
-							<select id="court-location" name="court-location">
-								<option>Deadwood Court House</option>
-								<option>Spearfish Community Center</option>
-							</select>
-							<a id="add-location" style="cursor:pointer;">+</a>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-	</table>
-</fieldset>
+<?
+unset( $action );
+if( $id ) { 
+?>
 
 <div id="tabs">
 	<ul>
 		<li><a href="#tabs-members">Court Members</a></li>
 		<li><a href="#tabs-jury">Jury Members</a></li>
-		<li><a href="#tabs-parents">Parents/Guardians</a></li>
+		<li><a href="#tabs-guardians">Parents/Guardians</a></li>
 	</ul>
-	
 	<div id="tabs-members">
-		<table style="width: 400px">
-			<tr>
-				<td>Judge: </td>
-				<td>
-					<select id="judge" name="judge">
-						<option selected="selected">Mason, James</option>
-						<option>Baxter, Mary</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Defense Attorney: </td>
-				<td>
-					<select id="defense-attorney" name="defense-attorney">
-						<option selected="selected">Baxter, Mary</option>
-						<option>Smith, Allen</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Prosecuting Attorney: </td>
-				<td>
-					<select id="prosecuting-attorney" name="prosecuting-attorney">
-						<option>Baxter, Mary</option>
-						<option selected="selected">Smith, Allen</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Bailiff: </td>
-				<td>
-					<select id="defense-attorney" name="defense-attorney">
-						<option selected="selected">Jones, Cheryl</option>
-						<option>Smith, Allen</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Court Clerk: </td>
-				<td>
-					<select id="defense-attorney" name="defense-attorney">
-						<option selected="selected">Adams, Henry</option>
-						<option>Smith, Allen</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Exit Interviewer: </td>
-				<td>
-					<select id="defense-attorney" name="defense-attorney">
-						<option selected="selected">Sanders, Cindy</option>
-						<option>Jones, Cheryl</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Advisor: </td>
-				<td>
-					<select id="defense-attorney" name="defense-attorney">
-						<option>Baxter, Mary</option>
-						<option selected="selected">Sanders, Cindy</option>
-					</select>
-				</td>
-			</tr>
-		</table>
+		<? include("tab_members.php"); ?>	
 	</div>
-	
 	<div id="tabs-jury">
-		<table class="listing">
-			<thead>
-				<tr>
-					<th width="60%">Jury Member</th>
-					<th width="30%">Type</th>
-					<th width="10%"></th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>Smith, Tom</td>
-					<td>Volunteer</td>
-					<td><a href="view.php">Remove</a></td>
-				</tr>
-				<tr>
-					<td>Adams, Sam</td>
-					<td>Defendant</td>
-					<td><a href="view.php">Remove</a></td>
-				</tr>
-				<tr>
-					<td>Katz, Callie</td>
-					<td>Volunteer</td>
-					<td><a href="view.php">Remove</a></td>
-				</tr>
-				<tr>
-					<td>Nelson, Anthony</td>
-					<td>Volunteer</td>
-					<td><a href="view.php">Remove</a></td>
-				</tr>
-				<tr>
-					<td>Goodwin, Louise</td>
-					<td>Volunteer</td>
-					<td><a href="view.php">Remove</a></td>
-				</tr>
-				<tr>
-					<td>Swan, Tammy</td>
-					<td>Defendant</td>
-					<td><a href="view.php">Remove</a></td>
-				</tr>
-			</tbody>
-		</table>
-		<div>
-			<input type="button" class="add" id="add-jury-member" value="Add Jury Member" />
-		</div>
+		<? include("tab_jury.php"); ?>	
 	</div>
-	
-	<div id="tabs-parents">
-		<table style="width: 400px">
-			<tr>
-				<td>John Smith</td>
-				<td>
-					<select id="parent1" name="parent1">
-						<option>Yes</option>
-						<option>No</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Mary Smith</td>
-				<td>
-					<select id="parent2" name="parent2">
-						<option>Yes</option>
-						<option selected="selected">No</option>
-					</select>
-				</td>
-			</tr>
-		</table>
+	<div id="tabs-guardians">
+		<? include("tab_guardians.php"); ?>	
 	</div> 
 </div>
 
-
-
-</form>
+<? } ?>
 
 <?php
+} // end error check
+
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");
 ?>

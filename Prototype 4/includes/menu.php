@@ -24,7 +24,7 @@
 			<a id="court" href="/court/index.php">Courts</a>
 			<ul>
 				<li><a href="/court/index.php">List Courts</a></li>
-				<li><a href="/court/new.php">New Court</a></li>
+				<li><a href="/court/view.php">New Court</a></li>
 				<li><a href="/court/search.php">Search Courts</a></li>
 			</ul>
 		</li>
@@ -32,7 +32,7 @@
 			<a id="workshop" href="/workshop/index.php">Workshops</a>
 			<ul>
 				<li><a href="/workshop/index.php">List Workshops</a></li>
-				<li><a href="/workshop/new.php">New Workshop</a></li>
+				<li><a href="/workshop/view.php">New Workshop</a></li>
 				<li><a href="/workshop/search.php">Search Workshops</a></li>
 			</ul>
 		</li>
@@ -40,9 +40,9 @@
 		<li><a id="statistics" href="/statistics/index.php">Statistics</a></li>
 		<? } ?>
     
-		<? if ( $user_type == 2 ) { ?>
-		<li><a id="surveys" href="#">Surveys</a></li>
-		<? } ?>
+		<? // if ( $user_type == 2 ) { ?>
+		<!-- <li><a id="surveys" href="#">Surveys</a></li> -->
+		<? // } ?>
 		
 		<? if ( $user_type == 1 || $user_type == 2 ) { ?>
 		<li><a id="programs" href="/admin/programs.php">Programs</a></li>

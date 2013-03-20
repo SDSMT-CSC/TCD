@@ -2,11 +2,9 @@
 $menuarea = "defendant";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 ?>
-
 <script>
 jQuery(function($)
-{
-	
+{	
 	// if tab cookie is set, reset it to 0
 	$.removeCookie('ui-tabs-1');
 	
@@ -22,15 +20,7 @@ jQuery(function($)
 });
 </script>
 
-
-<div id="control-header">
-	<div class="left"><h1>Active Defendants</h1></div>	
-	<div class="right">
-		<div id="control" class="ui-state-error">
-			<button id="new-defendant">New Defendant</button>
-		</div>
-	</div>
-</div>
+<h1>Current Defendants</h1>
 
 <table id="data-table">
 	<thead>

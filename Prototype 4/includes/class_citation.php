@@ -118,7 +118,7 @@ class Citation {
     input:
     output: 
   ************************************************************************************************/
-	public function getOffenseList()
+	public function getOffenseList( $user_type )
 	{
 		$output = array();
 		
@@ -138,8 +138,13 @@ class Citation {
 					$row[] = $aRow["offenseID"];
 					$row[] = $aRow["statute"];
 					$row[] = '<strong>'.$aRow["title"].'</strong><br />'.$aRow["description"];
-					$row[] = '<a class="editor_remove" name="process.php?action=Delete Offense&defendantID='.
-					          $this->defendantID.'&offenseID='.$aRow["offenseID"].'">Delete</a>';
+					
+					if( $user_type != 5 )
+						$row[] = '<a class="editor_remove" name="process.php?action=Delete Offense&defendantID='.
+										$this->defendantID.'&offenseID='.$aRow["offenseID"].'">Delete</a>';
+					else
+						$row[] = '';										
+										
 					$output['aaData'][] = $row;
 				}
 				return json_encode($output);	

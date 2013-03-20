@@ -141,7 +141,6 @@ else
 																		$_REQUEST["recaptcha_challenge_field"],
 																		$_REQUEST["recaptcha_response_field"]);
 		
-		
 		if (!$resp->is_valid) 
 		{
 			die("<p>ReCapthca was entered wrong, please go <a href=\"/register.php\">back</a> and fill out the form.</p>");
@@ -155,18 +154,16 @@ else
 			$mod_user->setFirstName( $_POST["firstname"] );
 			$mod_user->setLastName( $_POST["lastname"] );
 			$mod_user->setEmail( $_POST["email"] );
-			$mod_user->setPassword( $_POST["password"] );
+			$mod_user->setPassword( $_POST["password1"] );
 			$mod_user->setProgramID( $mod_program->getProgramID() );
-			$mod_user->setTimezoneID( $mod_program->getTimezoneID() );
+			$mod_user->setTimezoneID( $mod_program->timezoneID );
 			$mod_user->setActive( 0 );
 			$mod_user->setType( 5 );
-				
-			$user->display();
-			$user->updateUser();
+			
+			$mod_user->updateUser();
 			
 			echo "<p>Thank you for registering. Your program administrator will review and activate your account.<br>
 						If you have any questions, contact them or the site administrator</p>";
-			
 		}
 }
 ?>

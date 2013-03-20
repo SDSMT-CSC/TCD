@@ -42,6 +42,9 @@ table.dataTable tr.even { background-color: white;  cursor: pointer; }
 table.dataTable tr.odd:hover { background-color: #fefcc5; }
 table.dataTable tr.even:hover { background-color: #fffee8; }
 
+table.dataTable tr.even:hover td.sorting_1 { background-color: #f5e7c7; }
+table.dataTable tr.odd:hover td.sorting_1 { background-color: #fce4aa; }
+
 table.dataTable tr.odd td.sorting_1 { background-color: #c0ddeb; }
 table.dataTable tr.odd td.sorting_2 { background-color: #bbbaab; }
 table.dataTable tr.odd td.sorting_3 { background-color: #E0E2FF; }

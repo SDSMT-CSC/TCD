@@ -3,11 +3,11 @@ $menuarea = "program";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 ?>
 
-
- program_common_location
- program_locations
- program_officers
- program_statutes
+Areas to allow program admins to modify:
+ program_common_location<br />
+ program_locations<br />
+ program_officers<br />
+ program_statutes<br />
  program_schools
 
 <?php

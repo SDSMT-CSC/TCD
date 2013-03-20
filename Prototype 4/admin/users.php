@@ -4,7 +4,6 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 ?>
 
 <script>
-
 jQuery(function($)
 {
 	$( "#new-user" ).button().click(function() {	window.location.href = "view_user.php";	});

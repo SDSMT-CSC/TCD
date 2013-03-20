@@ -5,5 +5,5 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_citation.php");
 
 // pulls the data, and gets the table
 $citation = new Citation( $_GET["id"] );
-echo $citation->getOffenseList();
+echo $citation->getOffenseList( $user_type );
 ?>

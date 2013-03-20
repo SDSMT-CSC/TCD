@@ -124,6 +124,10 @@ $citation = new Citation( $defendant->getDefendantID() );
 
 <?
 $citation = new Citation( $defendant->getDefendantID() );
+
+$citationDate = ( $citation->citationDate ) ? date("m/d/Y", $citation->citationDate) : NULL;
+$citationTime = ( $citation->citationDate ) ? date("h:i A", $citation->citationDate) : NULL;
+
 ?>
 <form name="citation" id="citation" action="process.php" method="post">
   <input type="hidden" name="action" value="Update Citation" />
@@ -133,7 +137,7 @@ $citation = new Citation( $defendant->getDefendantID() );
     <table>
       <tr>
         <td>Date:</td>
-        <td><input type="text" name="citation-date" id="citation-date" value="<? echo date("m/d/Y", $citation->citationDate); ?>" /></td>
+        <td><input type="text" name="citation-date" id="citation-date" value="<? echo $citationDate ?>" /></td>
         <td>Officer:</td>
         <td>
           <select name="officerID" id="officerID">
@@ -145,7 +149,7 @@ $citation = new Citation( $defendant->getDefendantID() );
       </tr>
       <tr>
         <td>Time:</td>
-        <td><input type="text" name="citation-time" id="citation-time" value="<? echo date("h:i A", $citation->citationDate); ?>" /></td>
+        <td><input type="text" name="citation-time" id="citation-time" value="<? echo $citationTime ?>" /></td>
         <td>Miranda Given?</td>
         <td>
           <select name="miranda">
@@ -170,7 +174,7 @@ $citation = new Citation( $defendant->getDefendantID() );
         <td>
           <select style="width: 310px;" name="common-location" id="common-location">
             <option></option>
-            <? echo $program->fetchCommonLocationDropdown( $user_programID, $citation->commonLocationID )?>
+            <? echo $program->fetchCommonLocationDropdown( $citation->commonLocationID )?>
           </select>
           <a id="add-common-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
         </td>
@@ -235,8 +239,13 @@ $citation = new Citation( $defendant->getDefendantID() );
 					echo '<tr>';
 					echo '<td>'.$row["name"].'</td>';
 					echo '<td>'.$row["value"].'</td>';
-					echo '<td><a class="delete-item" href="process.php?action=Delete Stolen Item&defendantID='.$defendant->getDefendantID().
-							 '&itemID='.$row["itemID"].'">Delete</a></td>';
+					
+					if( $user_type != 5 )
+						echo '<td><a class="delete-item" href="process.php?action=Delete Stolen Item&defendantID='.$defendant->getDefendantID().
+								 '&itemID='.$row["itemID"].'">Delete</a></td>';
+					else
+						echo '<td></td>';
+						
 					echo '</tr>';
 				}
 			}
@@ -276,8 +285,13 @@ $citation = new Citation( $defendant->getDefendantID() );
 					echo '<td>'.$row["license"].'</td>';
 					echo '<td>'.$row["state"].'</td>';
 					echo '<td>'.$row["comment"].'</td>';
-					echo '<td><a class="delete-vehicle" href="process.php?action=Delete Vehicle&defendantID='.$defendant->getDefendantID().
-							 '&vehicleID='.$row["vehicleID"].'">Delete</a></td>';
+					
+					if( $user_type != 5 )
+						echo '<td><a class="delete-vehicle" href="process.php?action=Delete Vehicle&defendantID='.$defendant->getDefendantID().
+								 '&vehicleID='.$row["vehicleID"].'">Delete</a></td>';
+					else
+						echo '<td></td>';
+						
 					echo '</tr>';				
 				}
 			}

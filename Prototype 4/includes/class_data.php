@@ -307,7 +307,7 @@ class Data {
 						$row[] = $aRow["lastName"];
 						$row[] = $aRow["date"];
 						$row[] = $aRow["name"];
-						$row[] = "<a href=\"/court/view_court.php?id=". $aRow["courtID"] ."\">Edit</a>";				
+						$row[] = '<a href="/court/view_court.php?id='. $aRow["courtID"] .'">View</a>';				
 						
 						$output['aaData'][] = $row;
 				}
@@ -315,7 +315,7 @@ class Data {
 			}
 		}
 		catch (PDOException $e) {
-      		echo "Trial Data Read Failed!";
+      		echo "Court Data Read Failed!";
     }	
 		return '{"aaData":[]}';
 	}
@@ -385,7 +385,7 @@ class Data {
 							$row[] = "";
 						
 						$row[] = date("n/j/y h:i a",$aRow["added"]);					
-						$row[] = "<a href=\"/defendant/view.php?id=". $aRow["defendantID"] ."\">Edit</a>";				
+						$row[] = '<a href="/defendant/view.php?id='. $aRow["defendantID"] .'">View</a>';				
 						
 						$output['aaData'][] = $row;
 				}
@@ -425,7 +425,7 @@ class Data {
 						$row[] = $aRow["lastName"];
 						$row[] = $aRow["phone"];
 						$row[] = $aRow["email"];
-						$row[] = "<a href=\"/volunteer/view.php?id=". $aRow["volunteerID"] ."\">Edit</a>";				
+						$row[] = '<a href="/volunteer/view.php?id='. $aRow["volunteerID"] .'">View</a>';				
 						
 						$output['aaData'][] = $row;
 				}
@@ -447,7 +447,9 @@ class Data {
 		$core = Core::dbOpen();
 		
 		$sql = "SELECT w.workshopID, UNIX_TIMESTAMP(w.date) AS date, w.title, w.instructor, o.lastName 
-				FROM workshop w JOIN program_officers o ON w.officerID = o.officerID AND w.programID = :programID";
+				FROM workshop w JOIN program_officers o ON w.officerID = o.officerID AND w.programID = :programID
+				UNION ALL SELECT w.workshopID, UNIX_TIMESTAMP(w.date) AS date, w.title, w.instructor, '' AS lastName
+				FROM workshop w WHERE w.officerID = 0 AND w.programID = :programID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();
@@ -462,7 +464,7 @@ class Data {
 						$row[] = $aRow["title"];
 						$row[] = $aRow["instructor"];
 						$row[] = $aRow["lastName"];
-						$row[] = "<a href=\"/workshop/view.php?id=". $aRow["workshopID"] ."\">Edit</a>";				
+						$row[] = '<a href="/workshop/view.php?id='. $aRow["workshopID"] .'">View</a>';				
 						
 						$output['aaData'][] = $row;
 				}

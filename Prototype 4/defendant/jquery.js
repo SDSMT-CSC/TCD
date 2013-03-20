@@ -462,7 +462,7 @@ jQuery(function($) {
 		dMsg = 'Are you sure you want to delete this guardian?';
 		dHref = $(this).val();
 		popupDialog( dTitle, dMsg, dHref );
-		return false
+		return false;
 	});
 	
 	// Delete an item
@@ -471,7 +471,7 @@ jQuery(function($) {
 		dMsg = 'Are you sure you want to delete this item?';
 		dHref = $(this).attr("href");
 		popupDialog( dTitle, dMsg, dHref );
-		return false
+		return false;
 	});
 	
 	// Delete an vehicle
@@ -480,7 +480,7 @@ jQuery(function($) {
 		dMsg = 'Are you sure you want to delete this vehicle?';
 		dHref = $(this).attr("href");
 		popupDialog( dTitle, dMsg, dHref );
-		return false
+		return false;
 	});
 	
 });

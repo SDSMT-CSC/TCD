@@ -105,7 +105,7 @@ class Program {
   				$this->mail_city = $row["mCity"];
   				$this->mail_state = $row["mState"];
   				$this->mail_zip = $row["mZip"];
-  				$this->timezoneID = $row["timezoneID"];	
+					$this->timezoneID = $row["timezoneID"];	
   				$this->expunge = $row["expunge"];	
   				return true;
         }
@@ -306,7 +306,7 @@ class Program {
 	public function fetchCommonLocationDropdown( $commonLocationID )
 	{
 		$data = NULL; 
-    
+		    
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		$sql = "SELECT commonPlaceID, commonPlace FROM program_common_location WHERE programID = :programID ORDER BY commonPlace";

@@ -40,6 +40,28 @@ else {
 <p>You do not have access to this page.</p>
 <? } else { ?>
 
+<? if( $user_type == 5 ) { ?>
+<script type="text/javascript">
+jQuery(function($) {	
+	$('form :input').attr ( 'disabled', true );
+	$('.select-location').css("display","none");
+	$('#select-school-location').css("display","none");
+	$('#add-common-location').css("display","none");
+	$('#add-officer').css("display","none");
+	$('.add').css("display","none");
+	$('#add-existing-offense').css("display","none");
+	$('#add-new-statute').css("display","none");
+	$('#add-item').css("display","none");
+	$('#add-vehicle').css("display","none");	
+		 
+	$('#add-defendant').attr ( 'disabled', true );
+	$('#delete-defendant').attr ( 'disabled', true );
+	$('#update-defendant').attr ( 'disabled', true );
+	
+});
+</script>
+<? } ?>
+
 <script type="text/javascript" src="jquery.js"></script>
 
 <div id="control-header">	
@@ -150,9 +172,9 @@ else {
 
 <? 
 unset( $action );
-
 if( isset($id) ) { 
 ?>
+
 <div id="tabs">
 	<ul>
 		<li><a href="#tab-personal">Personal</a></li>
@@ -197,6 +219,7 @@ if( isset($id) ) {
 		<? include("tab_notes.php"); ?>
 	</div>
 </div>
+
 <? } ?>
 
 <?php 

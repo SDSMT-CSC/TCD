@@ -29,7 +29,7 @@ jQuery(function($)
 	$("#submit").button();
 	$(".delete").button();
 	$(".add").button();
-	
+		
 	$("#menu ul li ul").hover( 
 		 function () {
 			$(this).parent().children("a").removeClass("selected");
@@ -47,7 +47,7 @@ jQuery(function($)
 	
 	$(".listing").each(function() {
 			$(this).children('tbody').children(':even').css("background-color", "#EFF4F6");
-    });
+    });		
 });
 
 // function to reset the datatables

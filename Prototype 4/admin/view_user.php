@@ -62,7 +62,14 @@ $(function () {
 	$( "#user-list" ).button().click(function() {	window.location.href = "users.php";	});	
 	$( "#add-user" ).button().click(function() {	$("#user").submit();	});	
 	$( "#update-user" ).button().click(function() {	$("#user").submit();	});
-	$( "#delete-user" ).button().click(function(){$('#confirm-dialog').dialog('open');});
+		
+	// Delete user
+	$("#delete-user").button().click(function() {
+		dTitle = 'Delete User';
+		dMsg = 'Are you sure you want to delete this user?';
+		dHref = $(this).attr("name");
+		popupDialog( dTitle, dMsg, dHref );
+	});
 	
 	$("#user").validate({
 		errorElement: "div",
@@ -86,25 +93,7 @@ $(function () {
 			<? } ?>
 			
 		}
-	});
-	
-	$("#confirm-dialog").dialog({
-				resizable: false,
-				autoOpen:false,
-				modal: true,
-				width:300,
-				height:175,
-				buttons: {
-					'Delete User': function() {
-							window.location.href = 'process.php?action=Delete%20User&id=<? echo $id ?>';
-						},
-					Cancel: function() {
-						$(this).dialog('close');
-					}
-				}
-			
-			});
-			
+	});			
 	
 	$("#data-table").dataTable( { 
 				"aaSorting": [],
@@ -116,10 +105,6 @@ $(function () {
 });
 </script>
 
-<div id="confirm-dialog" title="Delete User">
-<p>Are you sure you want to delete this user?</p>
-</div>
-
 <div id="control-header">
 	<div class="left"><h1><? echo $action ?></h1></div>	
 	<div class="right">
@@ -129,7 +114,7 @@ $(function () {
 			<button id="add-user">Add User</button>
 			<? } else { ?>
 			<button id="update-user">Update User</button>
-			<button id="delete-user">Delete User</button>
+			<button id="delete-user" name="process.php?action=Delete%20User&id=<? echo $mod_user->getUserID() ?>">Delete User</button>
       <? } ?>
 		</div>
 	</div>

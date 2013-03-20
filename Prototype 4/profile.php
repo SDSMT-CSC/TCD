@@ -6,7 +6,7 @@ $data = new Data();
 
 $action = $_REQUEST["action"];
 
-if( $action == "UpdateUser" )
+if( $action == "Update Profile" )
 {
 	$user->setEmail( $_POST["email"] );
 	$user->setFirstName( $_POST["firstname"] );
@@ -14,22 +14,25 @@ if( $action == "UpdateUser" )
 	$user->setTimezoneID( $_POST["timezoneID"] );
 	
 	if( $_POST["password1"] )
-	{
 		$user->setPassword( $_POST["password1"] );
-	}
 	
-	$user->updateUser();
-	
+  // log the event on success
+  if( $user->updateUser() )
+    $user->addEvent($action, $user->getUserID() );	
 }
 
-if( $action == "AddPhone" )
+if( $action == "Add Phone" )
 {
-	$user->addPhone( $_POST["type"], $_POST["number"], $_POST["ext"] );
+  // log the event on success
+  if($user->addPhone( $_POST["type"], $_POST["number"], $_POST["ext"] ) )
+    $user->addEvent($action, $user->getUserID() );
 }
 
-if( $action == "remphone" )
+if( $action == "Delete Phone" )
 {
-	$user->removePhone( $_GET["id"] );
+  // log the event on success
+  if( $user->removePhone( $_GET["id"] ) )
+    $user->addEvent($action, $user->getUserID() );	
 }
 
 ?>
@@ -47,7 +50,6 @@ jQuery(function($) {
 		autoOpen:false,
 		modal: true,
 		width:400,
-		height:215,
 		buttons: {
 			'Add Number': function() {
 				$(this).dialog('close');
@@ -72,8 +74,17 @@ jQuery(function($) {
 		}
 	});
 	
-	
+	// phone number dialog
 	$('#add-number').click(function(){ $('#phone-dialog').dialog('open'); });
+	
+	// Delete an phone
+	$("a.delete-phone").click(function() {
+		dTitle = 'Delete Phone';
+		dMsg = 'Are you sure you want to delete this phone number?';
+		dHref = $(this).attr("href");
+		popupDialog( dTitle, dMsg, dHref );
+		return false;
+	});
 	
 });
 </script>
@@ -90,7 +101,7 @@ jQuery(function($) {
 
 <div id="phone-dialog" title="Add Phone Number">
 	<form name="phone-number" id="phone-number" method="post">
-  	<input type="hidden" name="action" value="AddPhone" />
+  	<input type="hidden" name="action" value="Add Phone" />
 		<table>
 			<tr>
 				<td>Type:</td>
@@ -109,7 +120,7 @@ jQuery(function($) {
 </div>
 
 <form name="user-profile" id="user-profile" method="post">
-<input type="hidden" name="action" value="UpdateUser" />
+<input type="hidden" name="action" value="Update User" />
 <fieldset>
 	<legend>Login Information</legend>
 	<table>
@@ -172,7 +183,7 @@ jQuery(function($) {
 						echo '<td>' . $row["type"] . '</td>';
 						echo '<td>' . $row["phoneNum"] . '</td>';
 						echo '<td>' . $row["ext"] . '</td>';
-						echo '<td><a href="profile.php?action=remphone&id=' . $row["phoneID"] . '">Remove</a></td>';
+						echo '<td><a class="delete-phone" href="profile.php?action=Delete Phone&id=' . $row["phoneID"] . '">Remove</a></td>';
 						echo '</tr>';
 					}
 				}

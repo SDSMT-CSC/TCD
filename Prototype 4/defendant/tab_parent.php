@@ -115,8 +115,12 @@
 $guardian = new Guardian( $id );
 
 $gList =  $defendant->getGuardianList(); 
-foreach( $gList as $gID )
-{
+
+if( sizeof( $gList ) == 0 )
+	echo "<p>No parent or guardian information has been entered.</p>";
+else
+	foreach( $gList as $gID )
+	{
 	$guardian->getFromID( $gID );
 	?>
   <form id="update-guardian-form-<? echo $gID ?>" action="process.php" method="post">
