@@ -88,9 +88,41 @@ class Workshop {
 		return false;
 	}
 	
-	private function deleteWorkshop()
+	public function deleteWorkshop()
 	{
+		//remove participants first
+		$core = Core::dbOpen();
+		$sql = "DELETE FROM workshop_roster WHERE workshopID = :id";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':id', $id);
+		Core::dbClose();
 		
+		try
+		{
+			if ( $stmt->execute() ) {
+				
+			}
+		} catch ( PDOException $e ) {
+			echo "Delete Workshop Participants Failed!";
+			return false;
+		}
+		
+		//delete workshop
+		$core = Core::dbOpen();
+		$sql = "DELETE FROM workshop WHERE workshopID = :id";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':id', $id);
+		Core::dbClose();
+		
+		try
+		{
+			if ( $stmt->execute() ) {
+				return true;
+			}
+		} catch ( PDOException $e ) {
+			echo "Delete Workshop Failed!";
+			return false;
+		}
 	}
 	
 	private function printWorkshopInformation()

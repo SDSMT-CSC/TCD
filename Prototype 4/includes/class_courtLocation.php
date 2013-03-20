@@ -24,6 +24,27 @@ class courtLocation {
 	
 	public function addCourtLocation()
 	{
+		//get locationID to insert
+		$core = Core::dbOpen();
+		$sql = "SELECT locationID FROM program_locations WHERE programID = :programID AND
+		        city = :city AND state = :state AND zip = :zip";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $this->programID);
+		$stmt->bindParam(':city', $this->city);
+		$stmt->bindParam(':state', $this->state);
+		$stmt->bindParam(':zip', $this->zip);
+		
+		Core::dbClose();
+		
+		try {
+			if ( $stmt->execute() ) {
+				$row = $stmt->fetch();
+				$this->locationID = $row["locationID"];
+			}
+		} catch ( PDOException $e ) {
+			echo "Get LocationID Failed";
+		}
+		
 		$core = Core::dbOpen();
 		$sql = "INSERT INTO court_location (programID,name,address,locationID)
 		        VALUES (:programID, :name, :address, :locationID)";

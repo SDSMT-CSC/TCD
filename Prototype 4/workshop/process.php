@@ -27,9 +27,11 @@ if( $action == "Add Workshop" ) {
 	$workshop->setDate( $storeDate );
 	$workshop->setTitle( $_POST["title"] );
 	$workshop->setDescription( $_POST["description"] );
+	$workshop->getDescription();
 	$workshop->setInstructor( $_POST["instructor"] );
 	$workshop->setOfficerID( $_POST["officer"] );
 	$workshop->setcourtLocationID( $_POST["courtLocationID"] );
+	//$workshop->display();
 	
 	if( $workshop->addWorkshop() )
 	{
@@ -76,7 +78,7 @@ elseif ( $action == "Add Participant" )
 	//redirect to edit page
 	header("location:view.php?id=" . $workshop->getWorkshopID());
 } 
-elseif ( $action == "Add Location")
+elseif ( $action == "Add Location" )
 {
 	$location = new courtLocation();
 	$location->setProgramID( $_POST["programID"] );
@@ -95,6 +97,22 @@ elseif ( $action == "Add Location")
 	//redirect based on return variable
 	$return = $_POST["return"];
 	header("location:" . $return );
+}
+elseif ( $action == "Delete Workshop" )
+{
+	$id = $_POST["id"];
+	$workshop = new Workshop();
+	
+	if( $user_type < 5 )
+	{
+		if( $workshop->deleteWorkshop($id))
+		{
+			//record if successful
+			$user->addEvent("Deleted Workshop" . $id);
+		}
+	}
+	
+	//header("location: view.php");
 }
 elseif ( isset($remove) )
 {

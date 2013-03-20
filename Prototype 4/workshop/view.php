@@ -27,8 +27,8 @@ if( isset($id) )
 	
 	$courtLocation = new courtLocation();
 	$courtLocation->getCourtLocation( $courtLocationID );
-	var_dump($courtLocation);
 	
+	$locationID = $courtLocation->getLocationID();
 	$locationName = $courtLocation->getName();
 	$locationAddress = $courtLocation->getAddress();
 	$locationCity = $courtLocation->getCity();
@@ -37,8 +37,25 @@ if( isset($id) )
 }
 else
 {
-	//should not be here
-	header("location:index.php");
+	$workshop = new Workshop();
+	$data = new Data();
+	
+	$action = "Add Workshop";
+	$date = date("m/d/Y");
+	$time = date("g:i a");
+	$title = "";
+	$instructor = "";
+	$description = "";
+	$officerID = 0;
+	$courtLocationID = 0;
+	$programID = 0;
+	
+	$locationID = 0;
+	$locationName = "";
+	$locationAddress = "";
+	$locationCity = "";
+	$locationState = "";
+	$locationZip = "";
 }
 ?>
 
@@ -53,7 +70,7 @@ $(function () {
 		autoOpen:false,
 		modal: true,
 		width:550,
-		height:250,
+		height:450,
 		buttons: {
 			Cancel: function() {
 				$(this).dialog('close');
@@ -146,6 +163,28 @@ $(function () {
 		}
 	});
 	
+	$('#editWorkshop').validate({
+		errorElement: "div",
+		wrapper: "div",
+		errorPlacement: function(error, element) {
+			error.insertAfter(element);
+			error.addClass('messsage');
+		},
+		rules: {
+			date: {	required: true },
+			time: { required: true },
+			title: { required: true },
+			instructor: { required: true }
+		}
+	});
+	
+	$("#delete-workshop").button().click(function() {
+		dTitle = 'Delete Guardian';
+		dMsg = 'Are you sure you want to delete this workshop?';
+		dHref = $(this).val();
+		popupDialog( dTitle, dMsg, dHref );
+	});
+	
 	$('#court-location').click(function(){ $('#courtLocation-dialog').dialog('open'); });
 	$('#program-location').click(function(){ $('#programLocation-dialog').dialog('open'); });	
 	$('#add-participant').click(function(){ $('#participant-dialog').dialog('open'); });
@@ -190,7 +229,8 @@ $(function () {
 <div id="programLocation-dialog" title="Add New Court Location">
 	<form id="courtLocation-form" action="process.php" method="post">
 		<input type="hidden" name="action" value="Add Location" />
-		<input type="hidden" name="programID" value=<? echo $user->getProgramID(); ?> />
+		<input type="hidden" name="locationID" value="<? echo $locationID; ?>" />
+		<input type="hidden" name="programID" value="<? echo $user->getProgramID(); ?>" />
 		<table>
 			<tr>
 				<td>Name</td>
@@ -239,8 +279,17 @@ $(function () {
 
 <form name="editWorkshop" id="editWorkshop" method="post" action="process.php">
 <input type="hidden" name="action" value="<? echo $action ?>" />
-<input type="hidden" name="workshopID" value="<?echo $workshop->getWorkshopID() ?>" />
-<input type="hidden" name="return" value="new.php" />
+<? if ( $action == "Edit Workshop" ) {
+echo "<input type=\"hidden\" name=\"workshopID\" value=\""; echo $workshop->getWorkshopID(); echo"\" />";
+} elseif ( $action == "Add Workshop" ) {
+echo "<input type=\"hidden\" name=\"programID\" value=\""; echo $user->getProgramID(); echo"\" />";
+} if ( isset($id) ) {
+echo "<input type=\"hidden\" name=\"return\" value=\"view.php?id="; echo $id; echo "\" />";
+} else {
+echo "<input type=\"hidden\" name=\"return\" value=\"view.php\" />";
+}
+?>
+<input type="hidden" name="courtLocationID" id="courtLocationID" value=<? echo $courtLocationID ?> />
 
 <fieldset>
 	<legend>Workshop Information</legend>
@@ -272,7 +321,7 @@ $(function () {
 		</tr>
 		<tr>
 			<td>Description:</td>
-			<td><input type="text" name="description" value="<? echo $description ?>"/></td>
+			<td><textarea rows="3" col="100" name="description" id="description" /><? echo $description ?></textarea></td>
 		</tr>
 	</table>
 </fieldset>
@@ -299,24 +348,27 @@ $(function () {
 	<input type="button" class="add" id="program-location" value="Add Location" />
 </fieldset>
 
+<? if ($action == "Edit Workshop") {
+	echo"
 <fieldset>
 	<legend>Workshop Participant</legend>
-	<table class="listing">
+	<table class=\"listing\">
 		<thead>
 			<tr>
-				<th width="30%">Participant</th>
-				<th width="30%">Phone</th>
-				<th width="20%">Completion</th>
-				<th width="10%"></th>
-				<th width="10%"></th>
+				<th width=\"30%\">Participant</th>
+				<th width=\"30%\">Phone</th>
+				<th width=\"20%\">Completion</th>
+				<th width=\"10%\"></th>
+				<th width=\"10%\"></th>
 			</tr>
 		</thead>
-		<tbody>
-			<? echo $workshop->listWorkshopParticipants( $id ); ?>
-		</tbody>
+		<tbody>";
+			echo $workshop->listWorkshopParticipants( $id );
+		echo "</tbody>
 	</table>
-	<input type="button" class="add" id="add-participant" value="Add Participant" />
-</fieldset>
+	<input type=\"button\" class=\"add\" id=\"add-participant\" value=\"Add Participant\" />
+	<button class=\"delete-workshop\" id=\"delete-workshop\" value=\""; echo "process.php?action=Delete%20Workshop&id="; echo $id; echo "\">Delete Workshop</button>";
+echo "</fieldset>"; }?>
 
 </form>
 
