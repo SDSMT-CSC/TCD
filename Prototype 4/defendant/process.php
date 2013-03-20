@@ -250,8 +250,18 @@ if( $action == "Delete Vehicle" )
 	TAB4: INTAKE INFORMATION
 *********************************************************************************************/
 if( $action == "Update Intake" )
-{
-	print_r( $_POST );
+{	
+	$intake = $_POST["intake-date"]. " " . $_POST["intake-time"];
+	$reschedule = ( $_POST["reschedule-date"] ) ? $_POST["reschedule-date"] . " " . $_POST["reschedule-time"] : NULL;
+	
+	$defendant = new Defendant();
+	$defendant->getFromID( $_POST["defendantID"] );
+
+	if( $defendant->updateIntake( $intake, $reschedule, $_POST["intake-inteviewer"], $_POST["intake-referred"], $_POST["intake-dismissed"] ) )
+		$user->addEvent("Defendant: ".$action, $defendant->getDefendantID() );
+	
+ 	// redirect to the defendant page	
+	header("location: view.php?id=".$defendant->getDefendantID() );
 }
 
 ?>

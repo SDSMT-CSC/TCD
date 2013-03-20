@@ -35,6 +35,11 @@ class Defendant {
 	public $licenseNum;
 	public $licenseState;
 	public $notes;
+	public $intake;
+	public $reschedule;
+	public $inteviewer;
+	public $referred;
+	public $dismissed;
 	public $added;
 	
 	public function __construct()
@@ -73,6 +78,11 @@ class Defendant {
 		$this->licenseNum = NULL;
 		$this->licenseState = NULL;
 		$this->notes = NULL;
+		$this->intake = NULL;
+		$this->reschedule = NULL;
+		$this->inteviewer = NULL;
+		$this->referred = NULL;
+		$this->dismissed = NULL;
 		$this->added = NULL;
 	}
 	
@@ -85,8 +95,12 @@ class Defendant {
   public function getFromID( $id )
   {
     // database connection and sql query
+    $sql = "SELECT d.*, UNIX_TIMESTAMP( added ) AS added, UNIX_TIMESTAMP( intake ) AS intake,
+							 UNIX_TIMESTAMP( reschedule ) AS reschedule, UNIX_TIMESTAMP( referred ) AS referred, UNIX_TIMESTAMP( dismissed ) AS dismissed 
+						FROM defendant d 
+						LEFT JOIN intake_information i ON d.defendantID = i.defendantID
+						WHERE d.defendantID = :defendantID";
     $core = Core::dbOpen();
-    $sql = "SELECT d.*, UNIX_TIMESTAMP(added) as added FROM defendant d WHERE d.defendantID = :defendantID";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':defendantID', $id);
     Core::dbClose();
@@ -124,7 +138,13 @@ class Defendant {
 				$this->licenseNum = $row["licenseNum"];
 				$this->licenseState = $row["licenseState"];
 				$this->notes = $row["notes"];
+				$this->intake = $row["intake"];
+				$this->reschedule = $row["reschedule"];
+				$this->inteviewer = $row["inteviewer"];
+				$this->referred = $row["referred"];
+				$this->dismissed = $row["dismissed"];				
 				$this->added = date("n/j/y h:i a", $row["added"]);
+								
         return true;
       }
     } catch ( PDOException $e ) {
@@ -141,46 +161,42 @@ class Defendant {
 	*************************************************************************************************/
   public function updateDefendant()
   {		
-			// database connection and sql query
-			$core = Core::dbOpen();
-			
-			if( $this->defendantID == 0 ) // add new defendant
-			{
-				$sql = "INSERT INTO defendant (programID, firstName, lastName, middleName, homePhone, dob, courtCaseNumber, agencyCaseNumber)
-								VALUES (:programID, :firstname, :lastname, :middlename, :homePhone, :dob, :courtCaseNumber, :agencyCaseNumber)";
+		// add new defendant or update existing record
+		if( $this->defendantID == 0 ) {
+			$sql = "INSERT INTO defendant (programID, firstName, lastName, middleName, homePhone, dob, courtCaseNumber, agencyCaseNumber)
+							VALUES (:programID, :firstname, :lastname, :middlename, :homePhone, :dob, :courtCaseNumber, :agencyCaseNumber)";
+		} else {
+			$sql = "UPDATE defendant SET programID = :programID, firstName = :firstname, lastName = :lastname, middleName = :middlename,
+							homePhone = :homePhone, dob = :dob, courtCaseNumber = :courtCaseNumber, agencyCaseNumber = :agencyCaseNumber
+							WHERE defendantID = :defendantID";
+		}
+		
+		// database connection and sql query			
+		$core = Core::dbOpen();
+		$stmt = $core->dbh->prepare($sql);
+		if( $this->defendantID > 0 ) { $stmt->bindParam(':defendantID', $this->defendantID); }
+		$stmt->bindParam(':programID', $this->programID);
+		$stmt->bindParam(':firstname', $this->firstName);
+		$stmt->bindParam(':lastname', $this->lastName);
+		$stmt->bindParam(':middlename', $this->middleName);
+		$stmt->bindParam(':homePhone', $this->phoneNumber);
+		$stmt->bindParam(':dob', $this->dateOfBirth);
+		$stmt->bindParam(':courtCaseNumber', $this->courtCaseNumber);
+		$stmt->bindParam(':agencyCaseNumber', $this->agencyCaseNumber);
+		Core::dbClose();
+		
+		try
+		{
+			if( $stmt->execute()) {
+				// if it's a new defendant, get the last insertId
+				if( $this->defendantID == 0 )
+					$this->defendantID = $core->dbh->lastInsertId(); 
+				return true;
 			}
-			else  // update existing record
-			{
-				$sql = "UPDATE defendant SET programID = :programID, firstName = :firstname, lastName = :lastname, middleName = :middlename,
-								homePhone = :homePhone, dob = :dob, courtCaseNumber = :courtCaseNumber, agencyCaseNumber = :agencyCaseNumber
-								WHERE defendantID = :defendantID";
-			}
-			
-			$stmt = $core->dbh->prepare($sql);
-			if( $this->defendantID > 0 ) { $stmt->bindParam(':defendantID', $this->defendantID); }
-			$stmt->bindParam(':programID', $this->programID);
-			$stmt->bindParam(':firstname', $this->firstName);
-			$stmt->bindParam(':lastname', $this->lastName);
-			$stmt->bindParam(':middlename', $this->middleName);
-			$stmt->bindParam(':homePhone', $this->phoneNumber);
-			$stmt->bindParam(':dob', $this->dateOfBirth);
-			$stmt->bindParam(':courtCaseNumber', $this->courtCaseNumber);
-			$stmt->bindParam(':agencyCaseNumber', $this->agencyCaseNumber);
-			Core::dbClose();
-			
-			try
-			{
-				if( $stmt->execute()) {
-
-					// if it's a new defendant, get the last insertId
-					if( $this->defendantID == 0 )
-						$this->defendantID = $core->dbh->lastInsertId(); 
-					return true;
-				}
-			} catch ( PDOException $e ) {
-				echo "Set Defendant Information Failed!";
-			}
-			return false;
+		} catch ( PDOException $e ) {
+			echo "Set Defendant Information Failed!";
+		}
+		return false;
   }
 	
 	/*************************************************************************************************
@@ -193,13 +209,13 @@ class Defendant {
   public function updatePersonal()
 	{
 		// database connection and sql query
-		$core = Core::dbOpen();
 		$sql = "UPDATE defendant SET pAddress	= :pAddress, pLocationID = :pID, mAddress = :mAddress,	
 					  mLocationID	= :mID, schoolID	= :schoolID, schoolContactName	= :schoolContactName, 
 						schoolContactPhone	= :schoolContactPhone, schoolGrade	= :schoolGrade, height	= :height, 
 						weight	= :weight, eyecolor	= :eyecolor, haircolor	= :haircolor, sex	= :sex, ethnicity	= :ethnicity, 
 						licenseNum	= :licenseNum, licenseState = :licenseState	
 						WHERE defendantID = :defendantID";
+		$core = Core::dbOpen();
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':defendantID', $this->defendantID);
 		$stmt->bindParam(':pID', $this->pID);
@@ -225,8 +241,73 @@ class Defendant {
 				if( $stmt->execute())
 					return true;
 		} catch ( PDOException $e ) {
-			echo "Update Defendant Personal Failed!";
+			echo "Update defendant personal information failed!";
 		}
+		return false;
+	}
+	
+	/*************************************************************************************************
+		function: updateIntake
+		purpose: 
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function updateIntake( $intake, $reschedule, $inteviewer, $referred, $dismissed )
+	{		
+		 // database connection and sql query
+    $core = Core::dbOpen();
+		
+		// if options checked, set to timestamp	otherwise leave them as current or if toggled set to null
+		$timestamp = date( 'Y-m-d H:i:s', time() );	// current time
+
+		if( $referred == 'on' && $this->referred ) { // checked, class set - stays the same
+			$referred = $core->convertToServerDate( date( 'Y-m-d H:i:s', $this->referred ), $_SESSION["timezone"] );  // set to class time
+		}
+		else if ( $referred == 'on' && !$this->referred ) { // checked, class not set - update
+			$referred = $core->convertToServerDate( $timestamp, $_SESSION["timezone"] );   // set to current time
+		}
+	  else { // toggled off - set to null
+			$referred = NULL;			
+		}
+		
+		if( $dismissed == 'on' && $this->referred ) {  // checked, class set - stays the same
+			$dismissed = $core->convertToServerDate( date( 'Y-m-d H:i:s', $this->referred ), $_SESSION["timezone"] );  // set to class time
+		}
+		else if ( $dismissed == 'on' && !$this->referred ) { // checked, class not set - update
+			$dismissed = $core->convertToServerDate( $timestamp, $_SESSION["timezone"] );   // set to current time
+		}
+	  else { // toggled off - set to null
+			$dismissed = NULL;			
+		}
+
+		// if rescheduled is set, adjust time
+		if( $reschedule ) { $reschedule = $core->convertToServerDate( $reschedule, $_SESSION["timezone"] ); }
+		
+		// update if existing, otherwise insert it
+		if( !$this->intake ) {
+			$sql = "INSERT INTO intake_information (defendantID, intake, reschedule, inteviewer, referred, dismissed) 
+							VALUES(:defendantID, :intake, :reschedule, :inteviewer, :referred, :dismissed)";
+		}	else {
+			$sql = "UPDATE intake_information SET intake = :intake, reschedule = :reschedule, inteviewer = :inteviewer, 
+							referred = :referred, dismissed = :dismissed WHERE defendantID = :defendantID";			
+		}
+
+		$stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    $stmt->bindParam(':intake', $core->convertToServerDate( $intake, $_SESSION["timezone"] ) );
+    $stmt->bindParam(':reschedule',  $reschedule );
+    $stmt->bindParam(':inteviewer', $inteviewer );
+    $stmt->bindParam(':referred', $referred );
+    $stmt->bindParam(':dismissed', $dismissed );
+    Core::dbClose();
+		
+		try {
+			if( $stmt->execute() )
+				return true;
+		} 
+		catch (PDOException $e) {
+      		echo "Program intake update Failed!";
+    }
 		return false;
 	}
 	
@@ -241,8 +322,8 @@ class Defendant {
 		$output = array();
 		
 		 // database connection and sql query
-    $core = Core::dbOpen();
     $sql = "SELECT guardianID FROM guardian WHERE defendantID = :defendantID";
+    $core = Core::dbOpen();
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':defendantID', $this->defendantID);
     Core::dbClose();
@@ -253,7 +334,7 @@ class Defendant {
 						$output[] = $aRow["guardianID"];
 		} 
 		catch (PDOException $e) {
-      		echo "Program guardian Read Failed!";
+      		echo "Program guardian read Failed!";
     }
 		return $output;
 	}

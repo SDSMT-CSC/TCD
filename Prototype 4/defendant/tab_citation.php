@@ -252,11 +252,12 @@ $citation = new Citation( $defendant->getDefendantID() );
       <thead>
         <tr>
           <th width="10%">Year</th>
-          <th width="20%">Make</th>
-          <th width="20%">Model</th>
-          <th width="20%">Color</th>
+          <th width="10%">Make</th>
+          <th width="10%">Model</th>
+          <th width="10%">Color</th>
           <th width="15%">License</th>
           <th width="10%">State</th>
+          <th width="20%">Comment</th>
           <th width="5%"></th>
         </tr>
       </thead>
@@ -274,16 +275,10 @@ $citation = new Citation( $defendant->getDefendantID() );
 					echo '<td>'.$row["color"].'</td>';
 					echo '<td>'.$row["license"].'</td>';
 					echo '<td>'.$row["state"].'</td>';
+					echo '<td>'.$row["comment"].'</td>';
 					echo '<td><a class="delete-vehicle" href="process.php?action=Delete Vehicle&defendantID='.$defendant->getDefendantID().
 							 '&vehicleID='.$row["vehicleID"].'">Delete</a></td>';
-					echo '</tr>';
-					
-					if( $row["comment"] ) {
-						echo '<tr><td></td>';
-						echo '<td colspan="6"><strong>Comments:</strong> '.$row["comment"].'</td>';
-						echo '</tr>';
-					}
-					
+					echo '</tr>';				
 				}
 			}
 			?>
