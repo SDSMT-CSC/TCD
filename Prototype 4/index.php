@@ -88,10 +88,12 @@ $(function() {
 			}
 		}
 	});
-
+	
+	
   $("#login").css("display","block");
   $(".register").css("display","block");
   
+	$("#email").focus();
 });
 </script>
 
