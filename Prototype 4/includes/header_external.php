@@ -3,15 +3,15 @@
 <html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>Teen Court Database</title>
-	<meta http-equiv="content-type" content="text/html;charset=UTF-8">
-	<meta http-equiv="Content-type" content="text/html">
-	<meta http-equiv="Cache-Control" content="must-revalidate">
-	<meta http-equiv="Cache-Control" content="no-store">
-	<meta http-equiv="Cache-Control" content="no-cache">
-	<meta http-equiv="Cache-Control" content="private">
-	<meta http-equiv="Pragma" content="no-cache">
-	
-	<link rel="shortcut icon" href="/favicon.ico">
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="Content-type" content="text/html" />
+  <meta http-equiv="Cache-Control" content="must-revalidate" />
+  <meta http-equiv="Cache-Control" content="no-store" />
+  <meta http-equiv="Cache-Control" content="no-cache" />
+  <meta http-equiv="Cache-Control" content="private" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  
+  <link rel="shortcut icon" href="/favicon.ico" />
 	<style type="text/css" media="screen">
 		@import "/includes/css/site.css";
 		@import "/includes/css/jquery-ui-teencourt.css";

@@ -12,12 +12,24 @@ $submit = $_POST["submit"];
 jQuery(function($)
 {
 	$("#submit").button();
+	
+	$("#registerForm").validate({
+    errorElement: "div",
+    wrapper: "div",
+    errorPlacement: function(error, element) {
+        error.insertAfter(element);
+        error.addClass('message');
+    },
+    rules: {
+      email: { required: true, email: true, remote: "/includes/check_email.php" }
+    }
+	
 });
 </script>
 
 <div style="padding: .7em">If you can't remember your password, enter your registered email address and it will be sent to you. Once you login, visit your profile page to change it.</div>
 
-<form id="registerForm" name="registerForm" method="post" >
+<form id="passwordRecover" name="passwordRecover" method="post" action="#">
 
 <fieldset class="ui-corner-all">
 	<legend>Password Recovery Form</legend>
