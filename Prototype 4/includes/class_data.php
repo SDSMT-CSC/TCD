@@ -41,7 +41,7 @@ class Data {
 						$row[] = $aRow["lastName"];
 						$row[] = $aRow["email"];
 						( $aRow["active"] == 1 ) ? $row[] = "Yes" : $row[] = "No";
-						$row[] = "<a href=\"/admin/view_user.php?id=". $aRow["userID"] ."\">Edit</a>";				
+						$row[] = "<a href=\"/admin/view_user.php?id=". $aRow["userID"] ."\">View</a>";				
 						
 						$output['aaData'][] = $row;
 				}
@@ -79,7 +79,7 @@ class Data {
 						$row[] = $aRow["pState"];
 						$row[] = $aRow["pZip"];
             ( $aRow["active"] == 1 ) ? $row[] = "Yes" : $row[] = "No";
-						$row[] = "<a href=\"/admin/view_program.php?id=". $aRow["programID"] ."\">Edit</a>";				
+						$row[] = "<a href=\"/admin/view_program.php?id=". $aRow["programID"] ."\">View</a>";				
 						
 						$output['aaData'][] = $row;
 				}

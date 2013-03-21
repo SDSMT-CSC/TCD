@@ -107,7 +107,7 @@ $(function () {
 		<td colspan="2">
 			
 			<fieldset>
-				<legend>Court Program Information</legend>
+				<legend>Program Information</legend>
 				<table>
           <tr>
             <td>Active:</td>
@@ -156,7 +156,7 @@ $(function () {
 	<tr>
 		<td>
 			<fieldset>
-				<legend>Program Physical Address</legend>
+				<legend>Physical Address</legend>
 				<table>
 					<tr>
 						<td>Street</td>

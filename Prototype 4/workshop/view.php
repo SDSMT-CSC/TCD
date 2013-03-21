@@ -61,9 +61,8 @@ else
 
 <script>
 $(function () {	
-	$( "#previous-workshop" ).button().click(function() {  });
 	$( "#update-workshop" ).button().click(function() {	$("#editWorkshop").submit(); });
-	$( "#next-workshop" ).button().click(function() {		});
+	$("#workshop-list").button().click(function() {	window.location.href = "index.php";	});
 
 	$("#courtLocation-dialog").dialog({
 		resizable: false,
@@ -183,6 +182,7 @@ $(function () {
 		dMsg = 'Are you sure you want to delete this workshop?';
 		dHref = $(this).val();
 		popupDialog( dTitle, dMsg, dHref );
+		return false
 	});
 	
 	$('#court-location').click(function(){ $('#courtLocation-dialog').dialog('open'); });
@@ -267,12 +267,21 @@ $(function () {
 </div>
 
 <div id="control-header">
-	<div class="left"><h1>Edit Workshop</h1></div>	
+	<div class="left">
+		<?   if ( $action == "Add Workshop") { ?>
+		<h1>Add Workshop</h1></div>
+		<? } if ( $action == "Edit Workshop") { ?>
+		<h1>Edit Workshop</h1></div>
+		<? } ?>
 	<div class="right">
 		<div id="control" class="ui-state-error">
-			<button id="previous-workshop">Previous</button>
-			<button id="update-workshop">Update</button>
-			<button id="next-workshop">Next</button>
+			<button id="workshop-list">Back to List</button>
+			<? if ( $action == "Edit Workshop") { ?>
+			<button id="update-workshop">Update Workshop</button>
+			<button class="delete-workshop" id="delete-workshop" value="process.php?action=Delete%20Workshop&id=<? echo $id; ?>" \>Delete Workshop</button>
+			<? } if ( $action == "Add Workshop") { ?>
+			<button id="update-workshop">Add Workshop</button>
+			<? } ?>
 		</div>
 	</div>
 </div>
@@ -293,7 +302,7 @@ echo "<input type=\"hidden\" name=\"return\" value=\"view.php\" />";
 
 <fieldset>
 	<legend>Workshop Information</legend>
-	<table>
+	<table  valign="top">
 		<tr>
 			<td>Date:</td>
 			<td><input type="text" name="date" id="date" value="<? echo $date ?>"/></td>
@@ -367,8 +376,7 @@ echo "<input type=\"hidden\" name=\"return\" value=\"view.php\" />";
 		echo "</tbody>
 	</table>
 	<input type=\"button\" class=\"add\" id=\"add-participant\" value=\"Add Participant\" />
-	<button class=\"delete-workshop\" id=\"delete-workshop\" value=\""; echo "process.php?action=Delete%20Workshop&id="; echo $id; echo "\">Delete Workshop</button>";
-echo "</fieldset>"; }?>
+</fieldset>"; }?>
 
 </form>
 
