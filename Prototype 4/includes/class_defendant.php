@@ -366,6 +366,41 @@ class Defendant {
 		return $count;
 	}
 	
+	/*************************************************************************************************
+		function: totalGuardians
+		purpose: 
+		input: none
+  	output: int count of guardians
+	*************************************************************************************************/
+	public function checkWorkshop()
+	{
+		$output = array();
+		
+		// database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT workshopID, UNIX_TIMESTAMP( completed ) as completed FROM workshop_roster WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    Core::dbClose();
+		
+		try {
+			if( $stmt->execute() && $stmt->rowCount() > 0 )
+			{
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC))
+				{
+					$row = array();
+					$row["workshopID"] = $aRow["workshopID"];
+					$row["completed"] = $aRow["completed"];
+					$output[] = $row;				
+				}
+			}
+		} 
+		catch (PDOException $e) {
+      		echo "Workshop check failed!";
+    }
+		return $output;
+	}
+	
 	// setters
 	public function setDefendantID( $str ) { $this->defendantID = $str; }
 	public function setProgramID( $str ) { $this->programID = $str; }

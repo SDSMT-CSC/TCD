@@ -41,6 +41,9 @@ jQuery(function($) {
 	$("#referred-date").datepicker();
 	$("#dismissed-date").datepicker();
 
+	// TAB7: Workshop
+	$("#create-workshop").button().click(function() {	window.location.href = "/workshop/view.php";	});	
+
 	/**************************************************************************************************
 		FORM VALIDATION
 	**************************************************************************************************/
