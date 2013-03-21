@@ -142,7 +142,40 @@ class Volunteer {
 		}
 		return false;
 	}
-	public function deleteVolunteer() {}
+	public function deleteVolunteer()
+	{
+		//delete volunteer positions
+		$core = Core::dbOpen();
+		$sql = "DELETE FROM volunteer_position WHERE volunteerID = :id";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':id', $this->volunteerID);
+		Core::dbClose();
+		
+		try
+		{
+			$stmt->execute();
+		}
+		catch ( PDOException $e )
+		{
+			echo "Delete Volunteer Positions Failed!";
+		}
+		
+		//delete volunteer
+		$core = Core::dbOpen();
+		$sql = "DELETE FROM volunteer WHERE volunteerID = :id";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':id', $this->volunteerID);
+		Core::dbClose();
+		
+		try
+		{
+			$stmt->execute();
+		}
+		catch ( PDOException $e )
+		{
+			echo "Delete Volunteer Failed!";
+		}
+	}
 	public function editVolunteerHours() {}
 	public function printVolunteerHours() {}
 	

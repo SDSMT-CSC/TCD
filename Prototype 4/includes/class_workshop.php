@@ -1,7 +1,7 @@
 <?php
 class Workshop {
-  private $workshopID;
-  private $programID;
+	private $workshopID;
+	private $programID;
 	private $date;
 	private $title;
 	private $description;

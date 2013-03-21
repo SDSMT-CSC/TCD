@@ -302,10 +302,10 @@ echo "<input type=\"hidden\" name=\"return\" value=\"view.php\" />";
 
 <fieldset>
 	<legend>Workshop Information</legend>
-	<table  valign="top">
+	<table width="100%" valign="top">
 		<tr>
-			<td>Date:</td>
-			<td><input type="text" name="date" id="date" value="<? echo $date ?>"/></td>
+			<td width="30%" valign="top">Date:</td>
+			<td width="70%" valign="top"><input type="text" name="date" id="date" value="<? echo $date ?>"/></td>
 		</tr>
 		<tr>
 			<td>Time:</td>

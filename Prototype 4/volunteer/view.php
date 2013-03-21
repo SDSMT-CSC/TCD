@@ -27,11 +27,10 @@ else
 
 <script>
 $(function () {
-	$( "#previous-volunteer" ).button().click(function() {		});
+	$( "#volunteer-list" ).button().click(function() { window.location.href = "index.php";});
 	$( "#update-volunteer" ).button().click(function() { $("#updateVolunteer").submit(); });
-	$( "#next-volunteer" ).button().click(function() {		});
 	
-	("#updateVolunteer").validate({
+	$("#updateVolunteer").validate({
 		errorElement: "div",
 		wrapper: "div",
 		errorPlacement: function(error, element) {
@@ -47,6 +46,14 @@ $(function () {
 			}
 		}
 	} );
+	
+	$("#delete-volunteer").button().click(function() {
+		dTitle = 'Delete Volunteer';
+		dMsg = 'Are you sure you want to delete this volunteer?';
+		dHref = $(this).val();
+		popupDialog( dTitle, dMsg, dHref );
+		return false
+	});
 });
 </script>
 
@@ -55,9 +62,9 @@ $(function () {
 	<div class="left"><h1>Edit Existing Volunteer</h1></div>	
 	<div class="right">
 		<div id="control" class="ui-state-error">
-			<button id="previous-volunteer">Previous</button>
+			<button id="volunteer-list">Back to List</button>
 			<button id="update-volunteer">Update Volunteer</button>
-			<button id="next-volunteer">Next</button>
+			<button class="delete-volunteer" id="delete-volunteer" value="process.php?action=Delete%20Volunteer&id=<? echo $id; ?>" \>Delete Volunteer</button>
 		</div>
 	</div>
 	

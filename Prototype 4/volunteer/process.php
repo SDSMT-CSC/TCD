@@ -25,7 +25,7 @@ if( $action == "Add Volunteer")
 	if( $new_volunteer->addVolunteer() )
 	{
 		//log if successful
-		$user->addEvent("Added Volunteer: " . $new_volunteer->getLastName() );
+		$user->addEvent("Added Volunteer: " . $new_volunteer->getLastName(), $new_volunteer->getVolunteerID() );
 	}
 	
 	//redirect to edit page
@@ -47,11 +47,29 @@ elseif( $action == "Edit Volunteer")
 	if( $edit_volunteer->editVolunteer() )
 	{
 		//log if successful
-		$user->addEvent("Edited Volunteer: " . $edit_volunteer->getLastName() );
+		$user->addEvent("Edited Volunteer: " . $edit_volunteer->getLastName(), $edit_volunteer->getVolunteerID() );
 	}
 	
 	//redirect to edit page
 	header("location:view.php?id=".$edit_volunteer->getVolunteerID() );
+}
+
+elseif( $action == "Delete Volunteer" )
+{
+	$id = $_GET["id"];
+	$volunteer = new Volunteer();
+	$volunteer->getVolunteer( $id );
+	
+	if( $user_type < 5 && $user->getProgramID() == $volunteer->getProgramID() )
+	{
+		if( $volunteer->deleteVolunteer() )
+		{
+			//record if successful
+			$user->addEvent("Deleted Volunteer" . $volunteer->getLastName(), $volunteer->getVolunteerID());
+		}
+	}
+	
+	header("location:index.php");
 }
 
 else
