@@ -13,7 +13,7 @@ jQuery(function($)
 {
 	$("#submit").button();
 	
-	$("#registerForm").validate({
+  $("#passwordRecover").validate({
     errorElement: "div",
     wrapper: "div",
     errorPlacement: function(error, element) {
@@ -21,32 +21,37 @@ jQuery(function($)
         error.addClass('message');
     },
     rules: {
-      email: { required: true, email: true, remote: "/includes/check_email.php" }
+      email: { required: true, email: true, remote: "/includes/check_email.php?type=false" }
     }
-	
+  });
 });
 </script>
 
-<div style="padding: .7em">If you can't remember your password, enter your registered email address and it will be sent to you. Once you login, visit your profile page to change it.</div>
+<div style="padding: .7em">
+  If you can't remember your password, enter your registered email address 
+  and a new one will be created and sent to you. Once you login, visit your profile page to change it.
+</div>
 
 <form id="passwordRecover" name="passwordRecover" method="post" action="#">
-
-<fieldset class="ui-corner-all">
+<fieldset class="ui-corner-all" style="width: 600px; margin: 0 auto;">
 	<legend>Password Recovery Form</legend>
-	<table>
+	<table style="width: 650px">
 		<tr>
-			<td align="right">Email Address</td>
-			<td><input type="text" name="email" id="email" class="input wide" /></td>
+			<td>Email Address: <input type="text" name="email" id="email" class="input wide" /></td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right"><input type="submit" class="submitButton" name="submit" id="submit" value="Send Password" /></td>
+			<td><input style="left: 225px;" type="submit" id="submit" value="Send Password" /></td>
 		</tr>
 	</table>
 	</fieldset>
 </form>
 
 
-<? } else { ?>
+<? 
+} else { 
+  
+  
+?>
 <div class="ui-state-highlight ui-corner-all" style="margin-top: 10px; padding: 0 .7em;">
 <p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
 An email has been sent to your account, please check it for your lost password!</p>

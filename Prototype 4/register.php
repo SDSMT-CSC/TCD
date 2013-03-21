@@ -22,7 +22,7 @@ to your account that must be verified before access is granted.</p>
 <? 
 if( !$submit ) { 
 ?>
-<script>
+<script type="text/javascript">
 jQuery(function($)
 {
 	$("#submit").button();
@@ -42,7 +42,7 @@ jQuery(function($)
 			firstname: { required: true },
 			password1: { required: true, minlength: 6 },
 			password2: { required: true, minlength: 6, equalTo: "#password1" },
-			email: { required: true, email: true, remote: "/includes/check_email.php" },
+			email: { required: true, email: true, remote: "/includes/check_email.php?type=true" },
 			recaptcha_response_field: { required: true }
 		}
 	});
@@ -68,7 +68,7 @@ var RecaptchaOptions = {
 <div style="padding: .5em; font-style: italic;">Due to sensetive data contained in this website, it is advised you do not use a frequent password. 
 Passwords should contain a combination of letters (both upper and lower case) and numbers along with special characters.</div>
 
-<form id="registerForm" name="registerForm" method="post" >
+<form id="registerForm" name="registerForm" method="post" action="#">
 
 <fieldset class="ui-corner-all">
 	<legend>Regsitration Form</legend>
@@ -98,7 +98,7 @@ Passwords should contain a combination of letters (both upper and lower case) an
 			<td><input type="password" name="password2" id="password2" class="wide" /></td>
 		</tr>
 		<tr>
-			<td align="right" valign="top" style="padding-bottom:3px;">Prove you are a real person!<br>Retype the characters from the picture</td>			
+			<td align="right" valign="top" style="padding-bottom:3px;">Prove you are a real person!<br /> the characters from the picture</td>			
 			<td>
         <div id="recaptcha_widget" style="display:none">
 
@@ -117,9 +117,9 @@ Passwords should contain a combination of letters (both upper and lower case) an
        
        <script type="text/javascript" src="http://www.google.com/recaptcha/api/challenge?k=6Le_gNsSAAAAAMQuZZBUxdtnFeSWqNLW_AwAxEc4"></script>
 			 <noscript>
-				 <iframe src="http://www.google.com/recaptcha/api/noscript?k=6Le_gNsSAAAAAMQuZZBUxdtnFeSWqNLW_AwAxEc4" height="300" width="500" frameborder="0"></iframe><br>
+				 <iframe src="http://www.google.com/recaptcha/api/noscript?k=6Le_gNsSAAAAAMQuZZBUxdtnFeSWqNLW_AwAxEc4" height="300" width="500" frameborder="0"></iframe><br />
 				 <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
-				 <input type="hidden" name="recaptcha_response_field"	value="manual_challenge">
+				 <input type="hidden" name="recaptcha_response_field"	value="manual_challenge" />
 			 </noscript>
        
 			</td>
