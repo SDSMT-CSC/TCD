@@ -6,12 +6,12 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_courtLocation.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 
 $id = $_GET["id"];
+$workshop = new Workshop();
+$data = new Data();
+	
 if( isset($id) )
 {
 	$action = "Edit Workshop";
-	
-	$workshop = new Workshop();
-	$data = new Data();
 	
 	$workshop->getWorkshop($id);
 	$date = $workshop->getDate();
@@ -37,9 +37,6 @@ if( isset($id) )
 }
 else
 {
-	$workshop = new Workshop();
-	$data = new Data();
-	
 	$action = "Add Workshop";
 	$date = date("m/d/Y");
 	$time = date("g:i A");
@@ -164,7 +161,7 @@ jQuery(function($) {
 	});
 	
 	$("#delete-workshop").button().click(function() {
-		dTitle = 'Delete Guardian';
+		dTitle = 'Delete Workshop';
 		dMsg = 'Are you sure you want to delete this workshop?';
 		dHref = $(this).val();
 		popupDialog( dTitle, dMsg, dHref );
@@ -177,12 +174,12 @@ jQuery(function($) {
 	$("#date").datepicker( );
 	$("#time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: ''});
 	
-	$('#editWorkshop').validate({
+	$("#editWorkshop").validate({
 		errorElement: "div",
 		wrapper: "div",
 		errorPlacement: function(error, element) {
 			error.insertAfter(element);
-			error.addClass('messsage');
+			  error.addClass('message');
 		},
 		rules: {
 			date: {	required: true },
@@ -200,7 +197,7 @@ jQuery(function($) {
 	<input type="hidden" name="workshopID" value="<? echo $workshop->getWorkshopID() ?>" />
 	<input type="hidden" name="action" value="Add Participant" />
 	<input type="hidden" name="add" id="add" value="" />
-		<table id="defendant-table">
+	<table id="defendant-table">
       <thead>
           <tr>
             <th>First Name</th>
@@ -233,6 +230,13 @@ jQuery(function($) {
 		<input type="hidden" name="action" value="Add Location" />
 		<input type="hidden" name="locationID" value="<? echo $locationID; ?>" />
 		<input type="hidden" name="programID" value="<? echo $user->getProgramID(); ?>" />
+		
+		<? if ( isset($id) ) { ?>
+		<input type="hidden" name="return" value="view.php?id=<? echo $id ?>" />
+		<? } else { ?>
+		<input type="hidden" name="return" value="view.php" />
+		<? } ?>
+
 		<table>
 			<tr>
 				<td>Name</td>
@@ -284,7 +288,7 @@ jQuery(function($) {
 </div>
 
 <form name="editWorkshop" id="editWorkshop" method="post" action="process.php">
-
+<input type="hidden" name="courtLocationID" id="courtLocationID" value="<? echo $courtLocationID ?>" />
 <input type="hidden" name="action" value="<? echo $action ?>" />
 <? if ( $action == "Edit Workshop" ) { ?>
 <input type="hidden" name="workshopID" value="<? echo $workshop->getWorkshopID() ?>" />
@@ -292,47 +296,49 @@ jQuery(function($) {
 <input type="hidden" name="programID" value="<? echo $user->getProgramID() ?>" />
 <? } ?>
 
-<? if ( isset($id) ) { ?>
-<input type="hidden" name="return" value="view.php?id=<? echo $id ?>" />
-<? } else { ?>
-<input type="hidden" name="return" value="view.php" />
-<? } ?>
-
-<input type="hidden" name="courtLocationID" id="courtLocationID" value="<? echo $courtLocationID ?>" />
-
 <fieldset>
 	<legend>Workshop Information</legend>
   <table>
     <tr>
-      <td width="125">Date:</td>
-      <td><input type="text" name="date" id="date" value="<? echo $date ?>"/></td>
-    </tr>
-    <tr>
-      <td>Time:</td>
-      <td><input type="text" name="time" id="time" value="<? echo $time ?>"/></td>
-    </tr>
-    <tr>
-      <td>Title:</td>
-      <td><input type="text" name="title" id="title" value="<? echo $title ?>" /></td>
-    </tr>
-    <tr>
-      <td>Instructor:</td>
-      <td><input type="text" name="instructor" id="instructor" value="<? echo $instructor ?>"/></td>
-    </tr>
-    <tr>
-      <td>Officer:</td>
-      <td>
-        <select name="officer" id="officer" />
-        <option></option>
-        <? echo $program->fetchOfficerDropdown( $officerID )?>
-        </select>
+      <td width="50%" valign="top">
+      	<table width="100%">
+      		<tr>
+			      <td width="125">Date:</td>
+			      <td><input type="text" name="date" id="date" value="<? echo $date ?>"/></td>
+			    </tr>
+			    <tr>
+			      <td>Title:</td>
+			      <td><input type="text" name="title" id="title" value="<? echo $title ?>" /></td>
+			    </tr>
+			    <tr>
+			      <td>Officer:</td>
+			      <td>
+			        <select name="officer" id="officer" />
+			        <option></option>
+			        <? echo $program->fetchOfficerDropdown( $officerID )?>
+			        </select>
+			      </td>
+			    </tr>
+      	</table>
       </td>
-    </tr>
-    <tr>
-      <td>Description:</td>
-      <td><textarea rows="3" col="100" name="description" id="description" /><? echo $description ?></textarea></td>
-    </tr>
- </table>
+      <td width="50%" valign="top">
+      	<table width="100%">
+			    <tr>
+			      <td width="125">Time:</td>
+			      <td><input type="text" name="time" id="time" value="<? echo $time ?>"/></td>
+			    </tr>
+			    <tr>
+			      <td>Instructor:</td>
+			      <td><input type="text" name="instructor" id="instructor" value="<? echo $instructor ?>"/></td>
+			    </tr>
+			    <tr>
+			      <td>Description:</td>
+			      <td><textarea rows="3" col="100" name="description" id="description" /><? echo $description ?></textarea></td>
+			    </tr>
+			  </table>
+			</td>
+		</tr>
+	</table>
 </fieldset>
 
 <fieldset>

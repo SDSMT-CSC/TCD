@@ -35,7 +35,7 @@ $(function () {
 		wrapper: "div",
 		errorPlacement: function(error, element) {
 			error.insertAfter(element);
-			error.addClass('messsage');
+			error.addClass('message');
 		},
 		rules: {
 			lastName: {
@@ -64,7 +64,7 @@ $(function () {
 		<div id="control" class="ui-state-error">
 			<button id="volunteer-list">Back to List</button>
 			<button id="update-volunteer">Update Volunteer</button>
-			<button class="delete-volunteer" id="delete-volunteer" value="process.php?action=Delete%20Volunteer&id=<? echo $id; ?>" \>Delete Volunteer</button>
+			<button class="delete-volunteer" id="delete-volunteer" value="process.php?action=Delete%20Volunteer&id=<? echo $id; ?>" \>Delete Workshop</button>
 		</div>
 	</div>
 	
