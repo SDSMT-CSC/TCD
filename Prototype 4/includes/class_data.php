@@ -508,5 +508,39 @@ class Data {
 		
 		return '{"aaData":[]}';
 	}
+	
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
+
+	public function fetchWorkshopLocation ( $user_programID ) {
+		//database connection and SQL query
+		$core = Core::dbOpen();
+		$sql = "SELECT wl.name, wl.address, l.city, l.state, l.zip, wl.workshopLocationID FROM workshop_location wl
+		        JOIN program_locations l ON wl.programID = :programID AND wl.locationID = l.locationID";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $user_programID );
+		
+		try{
+			if($stmt->execute() && $stmt->rowCount() > 0) {
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					$row = array();
+					
+					$row[] = $aRow["name"];
+					$row[] = $aRow["address"];
+					$row[] = $aRow["city"];
+					$row[] = $aRow["state"];
+					$row[] = $aRow["zip"];
+					$row[] = $aRow["workshopLocationID"];
+					
+					$output['aaData'][] = $row;
+				}
+				return json_encode($output);
+			}
+		} catch ( PDOException $e ) {
+			echo "Court Location Read Failed!";
+		}
+		return '{"aaData":[]}';
+	}
 } // end class
 ?>

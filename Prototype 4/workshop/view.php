@@ -2,7 +2,7 @@
 $menuarea = "workshop";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop.php");
-include($_SERVER['DOCUMENT_ROOT']."/includes/class_courtLocation.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 
 $id = $_GET["id"];
@@ -23,10 +23,10 @@ if( isset($id) )
 	$instructor = $workshop->getInstructor();
 	$description = $workshop->getDescription();
 	$officerID = $workshop->getOfficerID();
-	$courtLocationID = $workshop->getcourtLocationID();
+	$workshopLocationID = $workshop->getworkshopLocationID();
 	
 	$courtLocation = new courtLocation();
-	$courtLocation->getCourtLocation( $courtLocationID );
+	$courtLocation->getCourtLocation( $workshopLocationID );
 	
 	$locationID = $courtLocation->getLocationID();
 	$locationName = $courtLocation->getName();
@@ -44,7 +44,7 @@ else
 	$instructor = "";
 	$description = "";
 	$officerID = 0;
-	$courtLocationID = 0;
+	$workshopLocationID = 0;
 	$programID = 0;
 	
 	$locationID = 0;
@@ -109,7 +109,7 @@ jQuery(function($) {
 				"aaSorting": [],
 				"sPaginationType": "full_numbers",
 				"bProcessing": false,
-				"sAjaxSource": '/data/courtLocation.php'
+				"sAjaxSource": '/data/workshop_location.php'
 	});
 	
 	var locTable = $("#programLocation-table").dataTable( { 
@@ -145,7 +145,7 @@ jQuery(function($) {
 			$("#workshop-city").val(oData[2]);
 			$("#workshop-state").val(oData[3]);
 			$("#workshop-zip").val(oData[4]);
-			$("#courtLocationID").val(oData[5]);
+			$("#workshopLocationID").val(oData[5]);
 			$("#courtLocation-dialog").dialog('close');
 		}
 	});
@@ -288,7 +288,7 @@ jQuery(function($) {
 </div>
 
 <form name="editWorkshop" id="editWorkshop" method="post" action="process.php">
-<input type="hidden" name="courtLocationID" id="courtLocationID" value="<? echo $courtLocationID ?>" />
+<input type="hidden" name="workshopLocationID" id="workshopLocationID" value="<? echo $workshopLocationID ?>" />
 <input type="hidden" name="action" value="<? echo $action ?>" />
 <? if ( $action == "Edit Workshop" ) { ?>
 <input type="hidden" name="workshopID" value="<? echo $workshop->getWorkshopID() ?>" />

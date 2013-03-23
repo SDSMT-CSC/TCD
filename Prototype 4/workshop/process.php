@@ -1,7 +1,7 @@
 <?
 include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop.php");
-include($_SERVER['DOCUMENT_ROOT']."/includes/class_courtLocation.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop_location.php");
 
 // make sure only certain levels of user get access to this area
 if( $user_type == 1 || $user_type == 5)
@@ -30,8 +30,7 @@ if( $action == "Add Workshop" ) {
 	$workshop->getDescription();
 	$workshop->setInstructor( $_POST["instructor"] );
 	$workshop->setOfficerID( $_POST["officer"] );
-	$workshop->setcourtLocationID( $_POST["courtLocationID"] );
-	//$workshop->display();
+	$workshop->setworkshopLocationID( $_POST["workshopLocationID"] );
 	
 	if( $workshop->addWorkshop() )
 	{
@@ -53,7 +52,7 @@ if( $action == "Add Workshop" ) {
 	$workshop->setDescription( $_POST["description"] );
 	$workshop->setInstructor( $_POST["instructor"] );
 	$workshop->setOfficerID( $_POST["officer"] );
-	$workshop->setcourtLocationID( $_POST["courtLocationID"] );
+	$workshop->setworkshopLocationID( $_POST["workshopLocationID"] );
 	
 	if( $workshop->editWorkshop() )
 	{
@@ -100,10 +99,11 @@ elseif ( $action == "Add Location" )
 }
 elseif ( $action == "Delete Workshop" )
 {
-	$id = $_POST["id"];
+	$id = $_GET["id"];
 	$workshop = new Workshop();
+	$workshop->getWorkshop( $id );
 	
-	if( $user_type < 5 )
+	if( $user_type < 5 && $user->getProgramID() == $workshop->getProgramID() )
 	{
 		if( $workshop->deleteWorkshop($id))
 		{
@@ -112,7 +112,7 @@ elseif ( $action == "Delete Workshop" )
 		}
 	}
 	
-	//header("location: view.php");
+	header("location: index.php");
 }
 elseif ( isset($remove) )
 {
