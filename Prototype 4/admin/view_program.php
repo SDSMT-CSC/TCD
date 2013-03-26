@@ -4,14 +4,15 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 
 $id = $_GET["id"];
-$error = 0;
 $data = new Data();
 
-if( $user_type > 2 ) {
-  $error = 1;
-}
-else {
-  if( isset($id) ) {
+if(  $user_type > 2  ) 
+{ 
+?><p>You do not have access to this page.</p><? 
+} else { 
+
+  if( isset($id) ) 
+	{
   	$action = "Edit Program";
   	
     $mod_program = new Program();
@@ -52,12 +53,8 @@ else {
     $expunge = 0;
     $active = 1;
   }
-}
 ?>
 
-<? if( $error == 1 ) { ?>
-<p>You do not have access to this page.</p>
-<? } else { ?>
 <script>
 $(function () {
 	$( "#program-list" ).button().click(function() { window.location.href = 'programs.php'; });

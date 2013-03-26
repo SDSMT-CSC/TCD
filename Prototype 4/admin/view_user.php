@@ -4,15 +4,17 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 
 $id = $_GET["id"];
-$error = 0;
 $data = new Data();
 
-// make sure logged in user has access to edit this user
-if( $user_type > 3 || $user_programID != $program->getProgramID() ) {
-  $error = 1;
-}
-else {
-  if( isset($id) ) {
+// access check: make sure logged in user has access to edit this user
+// or if some user with type 3 and a different program tries to view it
+if( $user_type > 3 || $user_programID != $program->getProgramID() ) 
+{ 
+?><p>You do not have access to this page.</p><?
+} else {
+	
+  if( isset($id) ) 
+	{
   	$action = "Edit User";
   	
   	$mod_user = new User();
@@ -47,12 +49,8 @@ else {
   	$programID = 0;
   	$timezoneID = 1;
   }
-}
 ?>
 
-<? if( $error == 1 ) { ?>
-<p>You do not have access to this page.</p>
-<? } else { ?>
 <script>
 $(function () {
 	

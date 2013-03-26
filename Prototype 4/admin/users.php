@@ -1,6 +1,11 @@
 <?php
 $menuarea = "users";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
+
+if( $user_type > 3 ) 
+{
+?><p>You do not have access to this page.</p><? 
+} else { 
 ?>
 
 <script>
@@ -45,7 +50,8 @@ jQuery(function($)
 	</tbody>
 </table>
 
-
 <?php
+} // end error check
+
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");
 ?>
