@@ -15,7 +15,7 @@
 			<a id="volunteer" href="/volunteer/index.php">Volunteers</a>
 			<ul>
 				<li><a href="/volunteer/index.php">List Volunteers</a></li>	
-				<li><a href="/volunteer/new.php">New Volunteer</a></li>	
+				<li><a href="/volunteer/view.php">New Volunteer</a></li>	
 				<li><a href="/volunteer/hours.php">Enter Hours</a></li>	
 				<li><a href="/volunteer/search.php">Search Volunteers</a></li>
 			</ul>	

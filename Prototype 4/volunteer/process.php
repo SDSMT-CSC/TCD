@@ -7,57 +7,34 @@ if( $user_type == 1 )
 {
 	header("location: /main.php");
 }
-
-//get the action to be taken
+  //get the action to be taken
 $action = $_REQUEST["action"];
 
-if( $action == "Add Volunteer")
+if( $action == "Add Volunteer" || $action == "Edit Volunteer" )
 {
-	$new_volunteer = new Volunteer();
+	$mod_volunteer = new Volunteer(  $user->getProgramID() );
 	
-	$new_volunteer->setProgramID( $_POST["programID"] );
-	$new_volunteer->setFirstName( $_POST["firstName"] );
-	$new_volunteer->setLastName( $_POST["lastName"] );
-	$new_volunteer->setPhone( $_POST["phone"] );
-	$new_volunteer->setEmail( $_POST["email"] );
-	$new_volunteer->setPositions( $_POST["position"] );
-	
-	if( $new_volunteer->addVolunteer() )
-	{
-		//log if successful
-		$user->addEvent("Added Volunteer: " . $new_volunteer->getLastName(), $new_volunteer->getVolunteerID() );
-	}
+	if( $_POST["volunteerID"] > 0 ) { $mod_volunteer->setVolunteerID( $_POST["volunteerID"] ); }
+	$mod_volunteer->setFirstName( $_POST["firstName"] );
+	$mod_volunteer->setLastName( $_POST["lastName"] );
+	$mod_volunteer->setPhone( $_POST["phone"] );
+	$mod_volunteer->setEmail( $_POST["email"] );
+	$mod_volunteer->setPositions( $_POST["position"] );
+	$mod_volunteer->setActive( $_POST["active"] );
+
+	$mod_volunteer->updateVolunteer();
+
+	//log if successful	
+	if( $mod_volunteer->updateVolunteer() )
+		$user->addEvent($action, $mod_volunteer->getVolunteerID() );
 	
 	//redirect to edit page
-	header("location:view.php?id=".$new_volunteer->getVolunteerID() );
+	header("location:view.php?id=".$mod_volunteer->getVolunteerID() );
 }
-
-elseif( $action == "Edit Volunteer")
-{
-	$edit_volunteer = new Volunteer();
-	
-	$edit_volunteer->setVolunteerID( $_POST["volunteerID"]);
-	$edit_volunteer->setFirstName( $_POST["firstName"]);
-	$edit_volunteer->setLastName( $_POST["lastName"] );
-	$edit_volunteer->setPhone( $_POST["phone"] );
-	$edit_volunteer->setEmail( $_POST["email"] );
-	$edit_volunteer->setPositions( $_POST["position"] );
-	$edit_volunteer->setActive( $_POST["active"] );
-	
-	if( $edit_volunteer->editVolunteer() )
-	{
-		//log if successful
-		$user->addEvent("Edited Volunteer: " . $edit_volunteer->getLastName(), $edit_volunteer->getVolunteerID() );
-	}
-	
-	//redirect to edit page
-	header("location:view.php?id=".$edit_volunteer->getVolunteerID() );
-}
-
 elseif( $action == "Delete Volunteer" )
 {
 	$id = $_GET["id"];
-	$volunteer = new Volunteer();
+	$volunteer = new Volunteer( $user->getProgramID() );
 	$volunteer->getVolunteer( $id );
 	
 	if( $user_type < 5 && $user->getProgramID() == $volunteer->getProgramID() )
@@ -71,10 +48,9 @@ elseif( $action == "Delete Volunteer" )
 	
 	header("location:index.php");
 }
-
 else
 {
 	//should not be here, return to main
 	header("location:index.php");
 }
-?>
+  ?>

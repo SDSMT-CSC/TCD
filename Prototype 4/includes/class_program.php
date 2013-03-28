@@ -416,6 +416,35 @@ class Program {
 		return $statuteID;
 	}
 	
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
+  public function getProgramPositions()
+  {
+  	// database connection and sql query
+  	$core = Core::dbOpen();
+  	$sql = "SELECT c.position, c.positionID FROM court_position c WHERE c.programID = :id";
+  	$stmt = $core->dbh->prepare($sql);
+  	$stmt->bindParam(':id', $this->programID );
+  	Core::dbClose();
+  	
+  	try
+  	{
+  		if( $stmt->execute() )
+  		{
+  			//returns position as key and ID as value
+  			$positions = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+  			return $positions;
+  		}
+  	}
+  	catch ( PDOException $e )
+  	{
+  		echo "Get court positions failed";
+  	}
+  	
+  	return false;
+  }
+	
   // public function removeProgram() { }  --- set deleted flag
 	
 	// getters
