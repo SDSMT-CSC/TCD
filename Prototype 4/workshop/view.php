@@ -62,31 +62,27 @@ jQuery(function($) {
 	$("#update-workshop" ).button().click(function() {	$("#editWorkshop").submit(); });
 	$("#workshop-list").button().click(function() {	window.location.href = "index.php";	});
 
-	$("#courtLocation-dialog").dialog({
+	$("#workshop-location-dialog").dialog({
 		resizable: false,
 		autoOpen:false,
 		modal: true,
 		width:550,
-		height:450,
 		buttons: {
 			Cancel: function() {
+				resetDataTable( workshopLocationTable );
 				$(this).dialog('close');
 			}
 		}
 	});
 	
-	$("#programLocation-dialog").dialog({
+	$("#program-location-dialog").dialog({
 		resizable: false,
 		autoOpen:false,
 		modal: true,
 		width:550,
-		height:450,
 		buttons: {
-			'Add Location': function() {
-				$(this).dialog('close');
-					$("#courtLocation-form").submit();
-				},
 			Cancel: function() {
+				resetDataTable( locTable );
 				$(this).dialog('close');
 			}
 		}
@@ -97,7 +93,6 @@ jQuery(function($) {
 		autoOpen:false,
 		modal: true,
 		width:500,
-		height:400,
 		buttons: {
 			Cancel: function() {
 				$(this).dialog('close');
@@ -105,14 +100,14 @@ jQuery(function($) {
 		}
 	});
 	
-	var courtLocationTable = $("#courtLocation-table").dataTable( { 
+	var workshopLocationTable = $("#workshop-location-table").dataTable( { 
 				"aaSorting": [],
 				"sPaginationType": "full_numbers",
 				"bProcessing": false,
 				"sAjaxSource": '/data/workshop_location.php'
 	});
 	
-	var locTable = $("#programLocation-table").dataTable( { 
+	var locTable = $("#program-location-table").dataTable( { 
 				"aaSorting": [],
 				"sPaginationType": "full_numbers",
 				"bProcessing": false,
@@ -136,8 +131,8 @@ jQuery(function($) {
 		}
 	});
 	
-	$('#courtLocation-table tbody tr').live('click', function (event) {        
-		var oData = courtLocationTable.fnGetData(this); // get datarow
+	$('#workshop-location-table tbody tr').live('click', function (event) {        
+		var oData = workshopLocationTable.fnGetData(this); // get datarow
 		if (oData != null)  // null if we clicked on title row
 		{
 			$("#workshop-name").val(oData[0]);
@@ -146,17 +141,18 @@ jQuery(function($) {
 			$("#workshop-state").val(oData[3]);
 			$("#workshop-zip").val(oData[4]);
 			$("#workshopLocationID").val(oData[5]);
-			$("#courtLocation-dialog").dialog('close');
+			$("#workshop-location-dialog").dialog('close');
 		}
 	});
 	
-	$('#programLocation-table tbody tr').live('click', function (event) {
+	$('#program-location-table tbody tr').live('click', function (event) {
 		var oData = locTable.fnGetData(this);
 		if (oData != null)
 		{
-			$("#location-city").val(oData[0]);
-			$("#location-state").val(oData[1]);
-			$("#location-zip").val(oData[2]);
+			$("#workshop-city").val(oData[0]);
+			$("#workshop-state").val(oData[1]);
+			$("#workshop-zip").val(oData[2]);
+			$('#program-location-dialog').dialog('close');
 		}
 	});
 	
@@ -168,8 +164,8 @@ jQuery(function($) {
 		return false;
 	});
 	
-	$('#court-location').click(function(){ $('#courtLocation-dialog').dialog('open'); });
-	$('#program-location').click(function(){ $('#programLocation-dialog').dialog('open'); });	
+	$('#workshop-location').button().click(function(){ $('#workshop-location-dialog').dialog('open'); });
+	$('#program-location').button().click(function(){ $('#program-location-dialog').dialog('open'); });	
 	$('#add-participant').click(function(){ $('#participant-dialog').dialog('open'); });
 	$("#date").datepicker( );
 	$("#time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: ''});
@@ -210,8 +206,8 @@ jQuery(function($) {
 	</form>
 </div>
 
-<div id="courtLocation-dialog" title="Select Location">
-	<table id="courtLocation-table">
+<div id="workshop-location-dialog" title="Select Existing Location">
+	<table id="workshop-location-table">
 		<thead>
 			<tr>
 				<th>Name</th>
@@ -225,51 +221,17 @@ jQuery(function($) {
 	</table>
 </div>
 
-<div id="programLocation-dialog" title="Add New Court Location">
-	<form id="courtLocation-form" action="process.php" method="post">
-		<input type="hidden" name="action" value="Add Location" />
-		<input type="hidden" name="locationID" value="<? echo $locationID; ?>" />
-		<input type="hidden" name="programID" value="<? echo $user->getProgramID(); ?>" />
-		
-		<? if ( isset($id) ) { ?>
-		<input type="hidden" name="return" value="view.php?id=<? echo $id ?>" />
-		<? } else { ?>
-		<input type="hidden" name="return" value="view.php" />
-		<? } ?>
-
-		<table>
-			<tr>
-				<td>Name</td>
-				<td><input type="text" name="location-name" id="location-name" size="30" /></td>
-			</tr>
-			<tr>
-				<td>Address:</td>
-				<td><input type="text" name="location-address" id="location-address" size="30" /></td>
-			</tr>
-			<tr>
-				<td>City:</td>
-				<td><input type="text" name="location-city" id="location-city" /></td>
-			</tr>
-			<tr>
-				<td>State:</td>
-				<td><input type="text" name="location-state" id="location-state" /></td>
-			</tr>
-			<tr>
-				<td>Zip:</td>
-				<td><input type="text" name="location-zip" id="location-zip" /></td>
-			</tr>
-		</table>
-		<table id="programLocation-table">
-	    <thead>
-	        <tr>
-	          <th>City</th>
-	          <th>State</th>
-	          <th>Zip</th>
-	        </tr>
-	    </thead>
-	    <tbody></tbody>
-	  </table>
-	</form>
+<div id="program-location-dialog" title="Select Existing Location">
+  <table id="program-location-table">
+    <thead>
+        <tr>
+          <th>City</th>
+          <th>State</th>
+          <th>Zip</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
 </div>
 
 <div id="control-header">
@@ -299,69 +261,86 @@ jQuery(function($) {
 <fieldset>
 	<legend>Workshop Information</legend>
   <table>
-    <tr>
-      <td width="50%" valign="top">
-      	<table width="100%">
-      		<tr>
-			      <td width="125">Date:</td>
-			      <td><input type="text" name="date" id="date" value="<? echo $date ?>"/></td>
-			    </tr>
-			    <tr>
-			      <td>Title:</td>
-			      <td><input type="text" name="title" id="title" value="<? echo $title ?>" /></td>
-			    </tr>
-			    <tr>
-			      <td>Officer:</td>
-			      <td>
-			        <select name="officer" id="officer" />
-			        <option></option>
-			        <? echo $program->fetchOfficerDropdown( $officerID )?>
-			        </select>
-			      </td>
-			    </tr>
-      	</table>
+  	<tr>
+    	<td colspan="2">
+      	<table>
+          <tr>
+            <td width="75">Title:</td>
+            <td><input type="text" name="title" id="title" style="width: 350px" value="<? echo $title ?>" /></td>
+          </tr>
+        </table>
       </td>
-      <td width="50%" valign="top">
-      	<table width="100%">
-			    <tr>
-			      <td width="125">Time:</td>
-			      <td><input type="text" name="time" id="time" value="<? echo $time ?>"/></td>
-			    </tr>
-			    <tr>
-			      <td>Instructor:</td>
-			      <td><input type="text" name="instructor" id="instructor" value="<? echo $instructor ?>"/></td>
-			    </tr>
-			    <tr>
-			      <td>Description:</td>
-			      <td><textarea rows="3" col="100" name="description" id="description" /><? echo $description ?></textarea></td>
-			    </tr>
-			  </table>
-			</td>
-		</tr>
-	</table>
+    </tr>
+  	<tr>
+    	<td valign="top" width="50%">
+      	<table>
+          <tr>
+            <td>Date:</td>
+            <td><input type="text" name="date" id="date" value="<? echo $date ?>"/></td>
+          </tr>
+          <tr>
+            <td>Time:</td>
+            <td><input type="text" name="time" id="time" value="<? echo $time ?>"/></td>
+          </tr>
+          <tr>
+            <td width="75">Instructor:</td>
+            <td><input type="text" name="instructor" id="instructor" value="<? echo $instructor ?>"/></td>
+          </tr>
+          <tr>
+            <td>Officer:</td>
+            <td>
+              <select name="officer" id="officer" />
+              <option></option>
+              <? echo $program->fetchOfficerDropdown( $officerID )?>
+              </select>
+            </td>
+          </tr>
+        </table>
+      </td>
+    	<td valign="top" width="50%">
+      	<table>
+          <tr>
+            <td valign="top">Description:</td>
+            <td><textarea style="width: 250px; height: 120px; font-size: 12px;" name="description" id="description" /><? echo $description ?></textarea></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>   
 </fieldset>
 
 <fieldset>
 	<legend>Workshop Location</legend>
 	<table>
-		<tr>
-			<td>Name:</td>
-			<td><input type="text" name="locationName" id="workshop-name" value="<? echo $locationName ?>"/></td>
-			<td>Address:</td>
-			<td><input type="text" name="address" id="workshop-address" value="<? echo $locationAddress ?>"/></td>
-		</tr>
-		<tr>
-			<td>City:</td>
-			<td><input type="text" name="city" id="workshop-city" value="<? echo $locationCity ?>"/></td>
-			<td>State:</td>
-			<td><input type="text" name="state" id="workshop-state" value="<? echo $locationState ?>"/></td>
-			<td>Zip:</td>
-			<td><input type="text" name="zip" id="workshop-zip" value="<? echo $locationZip ?>"/></td>
-		</tr>
-	</table>
-	<input type="button" class="add" id="court-location" value="List Locations" />
-	<input type="button" class="add" id="program-location" value="Add Location" />
+    <tr>
+      <td width="75">Name:</td>
+      <td>
+        <input type="text" name="locationName" id="workshop-name" style="width: 250px;" value="<? echo $locationName ?>"/>
+        
+        <a class="select-item ui-state-default ui-corner-all"  id="workshop-location" title="Select Existing Location">
+          <span class="ui-icon ui-icon-newwin"></span>
+        </a>        
+      </td>
+    </tr>
+    <tr>
+      <td>Address:</td>
+      <td><input type="text" name="address" id="workshop-address" style="width: 250px;" value="<? echo $locationAddress ?>"/></td>
+    </tr>
+    <tr>
+      <td>City:</td>
+      <td>     
+        <input type="text" name="workshop-city" id="workshop-city" value="<? echo $locationCity ?>" />
+        State: <input type="text" name="workshop-state" id="workshop-state" size="2" value="<? echo $locationState ?>" />
+        Zip: <input type="text" name="workshop-zip" id="workshop-zip" size="7" value="<? echo $locationZip ?>" />
+        
+        <a class="select-item ui-state-default ui-corner-all"  id="program-location" title="Select Existing Location">
+          <span class="ui-icon ui-icon-newwin"></span>
+        </a>
+      </td>
+    </tr>
+  </table>
 </fieldset>
+
 
 <? if ($action == "Edit Workshop") { ?>
 <fieldset>
