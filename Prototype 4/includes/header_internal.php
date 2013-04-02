@@ -52,10 +52,20 @@ jQuery(function($)
 
 // function to reset the datatables
 function resetDataTable( dTable ) {
+
+	// reset search filter
 	dTable.fnFilter('');
+
+	// reset sort
+  dTable.fnSort( [ [0,'asc'] ] );
+  dTable.fnSort( [ ] );
+
+	// reset record size
 	var tLength = $("#"+dTable.attr("id")+"_length option:eq(0)");
 	tLength.prop('selected', true);
+
 	dTable.fnSettings()._iDisplayLength = tLength.val();
+	dTable.fnSettings()._iDisplayStart = 0;
 	dTable.fnDraw();
 }
 

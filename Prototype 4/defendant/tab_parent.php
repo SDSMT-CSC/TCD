@@ -64,7 +64,10 @@
                         <input type="text" name="guardian-physical-city" id="guardian-physical-city" />
                         State: <input type="text" name="guardian-physical-state" id="guardian-physical-state" size="2" />
                         Zip: <input type="text" name="guardian-physical-zip" id="guardian-physical-zip" size="7" />
-                        <a class="select-location" id="guardian-plocation" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+                        
+                        <a class="select-item ui-state-default ui-corner-all"  id="guardian-plocation" title="Select Existing Location">
+                          <span class="ui-icon ui-icon-newwin"></span>
+                        </a>
                       </td>
                     </tr>							
                   </table>
@@ -86,7 +89,10 @@
                         <input type="text" name="guardian-mailing-city" id="guardian-mailing-city" />
                         State: <input type="text" name="guardian-mailing-state" id="guardian-mailing-state" size="2" />
                         Zip: <input type="text" name="guardian-mailing-zip" id="guardian-mailing-zip" size="7" />
-                        <a class="select-location" id="guardian-mlocation" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+                        
+                        <a class="select-item ui-state-default ui-corner-all"  id="guardian-mlocation" title="Select Existing Location">
+                          <span class="ui-icon ui-icon-newwin"></span>
+                        </a>
                       </td>
                     </tr>			
                   </table>
@@ -119,9 +125,11 @@ $gList =  $defendant->getGuardianList();
 if( sizeof( $gList ) == 0 )
 	echo "<p>No parent or guardian information has been entered.</p>";
 else
+	$gCount = 0;
 	foreach( $gList as $gID )
 	{
 	$guardian->getFromID( $gID );
+	$gCount++;
 	?>
   <form id="update-guardian-form-<? echo $gID ?>" action="process.php" method="post">
   <input type="hidden" name="defendantID" value="<? echo $id ?>" />
@@ -187,21 +195,22 @@ else
                       <tr>
                         <td>Address:</td>
                         <td>
-                          <input type="text" name="guardian-physical-address" id="guardian-physical-address-<? echo $gID ?>"  
+                          <input type="text" name="guardian-physical-address" id="guardian-physical-address-<? echo $gCount ?>"  
                                  value="<? echo $guardian->pAddress ?>" size="40"/>
                         </td>
                       </tr>
                       <tr>
                         <td>City:</td>
                         <td>
-                          <input type="text" name="guardian-physical-city" id="guardian-physical-city-<? echo $gID ?>" 
+                          <input type="text" name="guardian-physical-city" id="guardian-physical-city-<? echo $gCount ?>" 
                                  value="<? echo $location->city ?>" />
-                          State: <input type="text" name="guardian-physical-state" id="guardian-physical-state-<? echo $gID ?>" 
+                          State: <input type="text" name="guardian-physical-state" id="guardian-physical-state-<? echo $gCount ?>" 
                                         size="2" value="<? echo $location->state ?>" />
-                          Zip: <input type="text" name="guardian-physical-zip" id="guardian-physical-zip-<? echo $gID ?>" size="7" 
+                          Zip: <input type="text" name="guardian-physical-zip" id="guardian-physical-zip-<? echo $gCount ?>" size="7" 
                                       value="<? echo $location->zip ?>" />
-                          <a class="select-location" id="guardian-plocation-<? echo $gID ?>" style="cursor:pointer;">
-                          <img src="/images/add.png" border="0" align="absmiddle" />
+                         
+                          <a class="select-item ui-state-default ui-corner-all"  id="guardian-plocation-<? echo $gCount ?>" title="Select Existing Location">
+                            <span class="ui-icon ui-icon-newwin"></span>
                           </a>
                         </td>
                       </tr>							
@@ -218,7 +227,7 @@ else
                       <tr>
                         <td>Address:</td>
                         <td>
-                          <input type="text" name="guardian-mailing-address" id="guardian-mailing-address-<? echo $gID ?>" 
+                          <input type="text" name="guardian-mailing-address" id="guardian-mailing-address-<? echo $gCount ?>" 
                                  value="<? echo $guardian->mAddress ?>" size="40"  />
                         </td>
                       </tr>
@@ -227,12 +236,13 @@ else
                         <td>
                           <input type="text" name="guardian-mailing-city" 
                           				id="guardian-mailing-city-<? echo $gID ?>" value="<? echo $location->city ?>" />
-                          State: <input type="text" name="guardian-mailing-state" id="guardian-mailing-state-<? echo $gID ?>" 
+                          State: <input type="text" name="guardian-mailing-state" id="guardian-mailing-state-<? echo $gCount ?>" 
                           							size="2" value="<? echo $location->state ?>" />
-                          Zip: <input type="text" name="guardian-mailing-zip" id="guardian-mailing-zip-<? echo $gID ?>" 
+                          Zip: <input type="text" name="guardian-mailing-zip" id="guardian-mailing-zip-<? echo $gCount ?>" 
                           						size="7" value="<? echo $location->zip ?>" />
-                          <a class="select-location" id="guardian-mlocation-<? echo $gID ?>" style="cursor:pointer;">
-                          <img src="/images/add.png" border="0" align="absmiddle" />
+                          
+                          <a class="select-item ui-state-default ui-corner-all"  id="guardian-mlocation-<? echo $gCount ?>" title="Select Existing Location">
+                            <span class="ui-icon ui-icon-newwin"></span>
                           </a>
                         </td>
                       </tr>

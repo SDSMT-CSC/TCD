@@ -77,7 +77,7 @@ else {
 	<div class="right">
 		<div id="control" class="ui-state-error">
 			<button id="court-list">Back to List</button>
-			<? if( $action == "Add Defendant") { ?>
+			<? if( $action == "Add Court") { ?>
 			<button id="add-court">Add Court</button>
       <? } else { ?>
 			<button id="delete-court">Delete Court</button>

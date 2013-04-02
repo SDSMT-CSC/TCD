@@ -134,7 +134,7 @@ if( $action == "Update Citation")
 	$citation->mirandized = $_POST["miranda"];
 	$citation->address = $_POST["citation-address"];
 	$citation->drugsOrAlcohol = $_POST["drugs-alcohol"];
-	$citation->commonLocationID = $_POST["common-location"];
+	$citation->commonLocationID = $program->addCommonLocation( $_POST["common-location"] );
 
 	$location = new Location( $user_programID );
 	$citation->locationID = $location->addLocation( $_POST["citation-city"], $_POST["citation-state"], $_POST["citation-zip"] );

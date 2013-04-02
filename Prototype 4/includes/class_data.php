@@ -542,5 +542,38 @@ class Data {
 		}
 		return '{"aaData":[]}';
 	}
+	
+			
+	/*************************************************************************************************
+	
+	*************************************************************************************************/
+	public function fetchProgramCommonLocations( $user_programID )
+	{
+	  $data = NULL; 
+    
+		//database connection and SQL query
+		$core = Core::dbOpen();
+		$sql = "SELECT commonPlace FROM program_common_location 
+						WHERE programID = :programID ORDER BY commonPlace";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $user_programID );
+    Core::dbClose();
+		
+		try {
+			if($stmt->execute() && $stmt->rowCount() > 0) {
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					$row = array();
+					$row[] = $aRow["commonPlace"];
+					$output['aaData'][] = $row;
+				}
+				return json_encode($output);
+			}
+		} catch ( PDOException $e ) {
+			echo "Common location read failed!";
+		}
+		return '{"aaData":[]}';
+	}
+	
+	
 } // end class
 ?>

@@ -26,12 +26,15 @@ $citation = new Citation( $defendant->getDefendantID() );
   </form>
 </div>
 
-<div id="common-location-dialog" title="Add New Common Location">
-  <form id="common-location-form">
-    <input type="hidden" name="action" value="Add Common Location" />
-    <label>Common Location</label>
-    <input type="text" name="common-location-name" id="common-location-name" style="width: 275px;" />
-  </form>
+<div id="common-location-dialog" title="Add Common Location">
+  <table id="common-location-table">
+    <thead>
+        <tr>
+          <th>Location</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+  </table> 
 </div>
 
 <div id="offense-existing-dialog" title="Add Existing Offense">
@@ -144,6 +147,7 @@ $citationTime = ( $citation->citationDate ) ? date("h:i A", $citation->citationD
           	<option></option>
             <? echo $program->fetchOfficerDropdown( $citation->officerID )?>
           </select>
+          
           <a id="add-officer" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
         </td>
       </tr>
@@ -172,11 +176,14 @@ $citationTime = ( $citation->citationDate ) ? date("h:i A", $citation->citationD
       <tr>
         <td>Common Place:</td>
         <td>
-          <select style="width: 310px;" name="common-location" id="common-location">
-            <option></option>
-            <? echo $program->fetchCommonLocationDropdown( $citation->commonLocationID )?>
-          </select>
-          <a id="add-common-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+        	
+          <input type="text" name="common-location" id="common-location" 
+          			 value="<? echo $program->getCommonLocation( $citation->commonLocationID ) ?>" style="width: 300px;" />
+          
+          <a class="ui-state-default ui-corner-all"  id="add-common-location" title="Select Existing Location">
+            <span class="ui-icon ui-icon-newwin"></span>
+          </a>
+          
         </td>
       </tr>
       <tr>
@@ -189,7 +196,10 @@ $citationTime = ( $citation->citationDate ) ? date("h:i A", $citation->citationD
           <input type="text" name="citation-city" id="citation-city" value="<? echo $location->city ?>" />
           State: <input type="text" name="citation-state" id="citation-state" size="2" value="<? echo $location->state ?>" />
           Zip: <input type="text" name="citation-zip" id="citation-zip" size="7" value="<? echo $location->zip ?>" />
-          <a class="select-location" id="citation-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+         
+          <a class="select-item ui-state-default ui-corner-all"  id="citation-location" title="Select Existing Location">
+            <span class="ui-icon ui-icon-newwin"></span>
+          </a>
           <?
           unset($location);
           ?>

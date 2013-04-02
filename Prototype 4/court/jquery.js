@@ -4,10 +4,11 @@ jQuery(function($)
 	$("#tabs").show(); 
 	
 	$("#court-list").button().click(function() { window.location.href = 'index.php' });
-	$("#close-court").button();
+	$("#add-court").button();
 	$("#delete-court").button();
 	$("#update-court").button();
 	$("#court-date").datepicker();
+	$("#court-time").timepicker();
 	
 	$("#location-dialog").dialog({
 		resizable: false,

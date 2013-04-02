@@ -24,7 +24,7 @@ jQuery(function($) {
 	// TAB3: Citation items
 	$("#citation-submit").button().click(function() { $("#citation").submit(); });
 	$("#add-officer").click(function(){ $('#officer-dialog').dialog('open'); });
-	$("#add-common-location").click(function(){ $('#common-location-dialog').dialog('open'); });
+	$("#add-common-location").button().click(function(){ $('#common-location-dialog').dialog('open'); });
 	$("#add-existing-offense").button().click(function(){ $('#offense-existing-dialog').dialog('open'); });
 	$("#add-new-statute").button().click(function(){ $('#offense-new-statute').dialog('open'); });
 	$("#add-item").button().click(function(){ $('#item-dialog').dialog('open'); });
@@ -162,6 +162,7 @@ jQuery(function($) {
 			width:500,
 			buttons: {
 				'Cancel': function() {
+					resetDataTable( locTable );
 					$(this).dialog('close');
 				}
 			}	
@@ -216,22 +217,9 @@ jQuery(function($) {
 			modal: true,
 			width:450,
 			buttons: {
-				'Add Location': function() {
-					$.post('process.php', $("#common-location-form").serialize(), function(data) {
-						if( data > 0 )
-						{
-							// add the newly entered location to the dropdown and make is selected
-							$("#common-location").append($("<option selected></option>").attr("value",data).text($("#common-location-name").val())); 					
-							
-							// close dialog and clear form
-							$("#common-location-dialog").dialog('close');	
-							$("#common-location-name")[0].reset();
-						}
-					});					
-				},
-				'Cancel': function() { 
+				'Cancel': function() { 					
+					resetDataTable( commonLocationTable );
 					$(this).dialog('close');
-					$("#common-location-name")[0].reset();				
 				}
 			}
 		});
@@ -273,12 +261,12 @@ jQuery(function($) {
 			}
 	});
 	
-	$('#select-school-location').click(function(){
+	$('#school-location').button().click(function(){
 			$('#school-dialog').dialog('open');
 			$('.ui-dialog :button').blur();
 	});
 	
-	$('.select-location').click(function(){
+	$('.select-item').button().click(function(){
 			address = $(this).attr('id');
 			$('#location-dialog').dialog('open');
 			$('.ui-dialog :button').blur();
@@ -312,6 +300,14 @@ jQuery(function($) {
 				"sPaginationType": "full_numbers",
 				"bProcessing": false,
 				"sAjaxSource": '/data/program_schools.php'
+	});
+	
+	var commonLocationTable = $("#common-location-table").dataTable( { 
+				"aaSorting": [],
+				"aoColumns": [ { sClass: "alignLeft" } ],
+				"sPaginationType": "full_numbers",
+				"bProcessing": false,
+				"sAjaxSource": '/data/program_common_locations.php'
 	});
 	
 	var statuteTable = $("#statute-table").dataTable( { 
@@ -388,7 +384,7 @@ jQuery(function($) {
 			}
 			
 			for( i = 1; i <= $("#totalGuardians").val(); i++ )
-			{
+			{				
 				if( address == 'guardian-plocation-'+i )
 				{
 					 $("#guardian-physical-city-"+i).val(oData[0]);
@@ -423,7 +419,20 @@ jQuery(function($) {
 			$("#school-dialog").dialog('close');
 		}
 	});
+	
+	
+	// Common Location dialog table
+	$('#common-location-table tbody tr').live('click', function (event) {        
+		var oData = commonLocationTable.fnGetData(this); // get datarow
+		if (oData != null)  // null if we clicked on title row
+		{
+				$("#common-location").val(oData[0]);
 			
+			// close the window
+			$("#common-location-dialog").dialog('close');
+		}
+	});
+	
 	// Offense dialog table
 	$('#statute-table tbody tr').live('click', function (event) {
 		var oData = statuteTable.fnGetData(this); // get datarow

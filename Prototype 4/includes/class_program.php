@@ -18,7 +18,6 @@ class Program {
 	public $timezoneID;	
   public $active; 
 
-
   /*************************************************************************************************
     function: __construct()
     purpose: class constructor, sets default values when object is created
@@ -211,6 +210,7 @@ class Program {
         if( $stmt->execute()) {
           
           // if it's a new program, get the last insertId
+					// and add default court positions (stored procedure)
           if( $this->programID == 0 )
           {
             $this->programID = $core->dbh->lastInsertId(); 
@@ -224,15 +224,21 @@ class Program {
             $stmt->bindParam(':city', $this->phys_city);
             $stmt->bindParam(':state', $this->phys_state);
             $stmt->bindParam(':zip', $this->phys_zip);
-            Core::dbClose();
-            
+
             try
             {
               $stmt->execute();
             } catch ( PDOException $e ) {
               echo "Set Program Location Failed!";
               return false;
-            }            
+            }
+						
+						// add default court positions
+						$stmt = $core->dbh->prepare("CALL addCourtPositions(:id)");
+						$stmt->bindParam(':id', $this->programID); 
+						$stmt->execute();
+
+            Core::dbClose();
           }
           return true;
         }
@@ -300,64 +306,84 @@ class Program {
 		return $data;
 	}
 	
-	/*************************************************************************************************
-	
-	*************************************************************************************************/
-	public function fetchCommonLocationDropdown( $commonLocationID )
-	{
-		$data = NULL; 
-		    
-		//database connection and SQL query
-		$core = Core::dbOpen();
-		$sql = "SELECT commonPlaceID, commonPlace FROM program_common_location WHERE programID = :programID ORDER BY commonPlace";
-		$stmt = $core->dbh->prepare($sql);
-		$stmt->bindParam(':programID', $this->programID );
-    Core::dbClose();
-		
-		try {
-			if( $stmt->execute() ) {
-				$data = "";
-				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
-					( $commonLocationID == $aRow["commonPlaceID"] ) ? $selected = " selected" : $selected = "";
-					$data .= '<option value="'.$aRow["commonPlaceID"].'"'.$selected.'>'.$aRow["commonPlace"].'</option>';
-				}
-			}
-		} catch ( PDOException $e ) {
-			echo "Common location dropdown failed!";
-		}
-		return $data;
-	}
-	
 	 /*************************************************************************************************
 	 
 	 *************************************************************************************************/
 		public function addCommonLocation( $location )
 		{
 			$commonID = NULL;
-			
-			if( $location )
-			{
-				$core = Core::dbOpen();
-				$sql = "INSERT INTO program_common_location (programID, commonPlace) VALUES(:programID, :location)";
-				$stmt = $core->dbh->prepare($sql);
-				$stmt->bindParam(':programID', $this->programID);
-				$stmt->bindParam(':location', $location);
-				Core::dbClose();
 				
-				try
+			$core = Core::dbOpen();
+			$sql = "SELECT commonPlaceID FROM program_common_location WHERE programID = :programID AND commonPlace = :location";
+			$stmt = $core->dbh->prepare($sql);
+			$stmt->bindParam(':programID', $this->programID);
+			$stmt->bindParam(':location', $location);
+			
+			try
+			{
+				if( $stmt->execute() )
 				{
-					if( $stmt->execute() )
-							$commonID = $core->dbh->lastInsertId(); 
-				} catch ( PDOException $e ) {
-					echo "Add common location Failed!";
-				}         
+						if( $stmt->rowCount() == 0 ) // if it doesn't exist, then add it
+						{
+							$sql = "INSERT INTO program_common_location (programID, commonPlace) VALUES(:programID, :location)";
+							$stmt = $core->dbh->prepare($sql);
+							$stmt->bindParam(':programID', $this->programID);
+							$stmt->bindParam(':location', $location);
+							
+							try
+							{
+								if( $stmt->execute() )
+										$commonID = $core->dbh->lastInsertId(); 
+							} catch ( PDOException $e ) {
+								echo "Add common location Failed!";
+							}
+							
+						} 
+						else // look it up
+						{
+							$row = $stmt->fetch(PDO::FETCH_ASSOC);
+							$commonID = $row["commonPlaceID"];	 
+						}					
+				}
+				
+			} catch ( PDOException $e ) {
+					echo "Lookup common location failed!";
 			}
+			
+			Core::dbClose();
 			return $commonID;
 		}
-			 
-	 /*************************************************************************************************
+		
+	  /*************************************************************************************************
 	 
-	 *************************************************************************************************/
+	  *************************************************************************************************/
+		public function getCommonLocation( $commonLocationID )
+		{
+			$commonPlaceName = NULL;
+				
+			$core = Core::dbOpen();
+			$sql = "SELECT commonPlace FROM program_common_location WHERE programID = :programID AND commonPlaceID = :commonPlaceID";
+			$stmt = $core->dbh->prepare($sql);
+			$stmt->bindParam(':programID', $this->programID);
+			$stmt->bindParam(':commonPlaceID', $commonLocationID );
+			
+			try
+			{
+				if( $stmt->execute() )
+				{
+					$row = $stmt->fetch(PDO::FETCH_ASSOC);
+					$commonPlaceName = $row["commonPlace"];
+				}
+			} catch ( PDOException $e ) {
+				echo "GEt common location Failed!";
+			}
+			
+			return $commonPlaceName;
+		}
+		
+	  /*************************************************************************************************
+	 
+	  *************************************************************************************************/
 		public function addOfficer( $firstname, $lastname, $idNumber, $phone )
 		{
 			$officerID = NULL;

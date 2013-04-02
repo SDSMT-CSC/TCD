@@ -21,7 +21,10 @@
               <input type="text" name="physical-city" id="physical-city" value="<? echo $location->city ?>" />
               State: <input type="text" name="physical-state" id="physical-state" size="2" value="<? echo $location->state ?>" />
               Zip: <input type="text" name="physical-zip" id="physical-zip" size="7" value="<? echo $location->zip ?>" />
-              <a class="select-location" id="physical-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+              
+              <a class="select-item ui-state-default ui-corner-all"  id="physical-location" title="Select Existing Location">
+              	<span class="ui-icon ui-icon-newwin"></span>
+              </a>
             </td>
           </tr>
         </table>
@@ -44,7 +47,10 @@
               <input type="text" name="mailing-city" id="mailing-city" value="<? echo $location->city ?>" />
               State: <input type="text" name="mailing-state" id="mailing-state" size="2" value="<? echo $location->state ?>" />
               Zip: <input type="text" name="mailing-zip" id="mailing-zip" size="7" value="<? echo $location->zip ?>" />
-              <a class="select-location" id="mailing-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+              
+              <a class="select-item ui-state-default ui-corner-all"  id="mailing-location" title="Select Existing Location">
+              	<span class="ui-icon ui-icon-newwin"></span>
+              </a>
             </td>
           </tr>
         </table>
@@ -75,7 +81,11 @@
               <input type="text" name="school-city" id="school-city" value="<? echo $school->city ?>" />
               State: <input type="text" name="school-state" id="school-state" size="2" value="<? echo $school->state ?>" />
               Zip: <input type="text" name="school-zip" id="school-zip" size="7" value="<? echo $school->zip ?>" />
-              <a id="select-school-location" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+              
+              <a class="ui-state-default ui-corner-all"  id="school-location" title="Select Existing Location">
+              	<span class="ui-icon ui-icon-newwin"></span>
+              </a>
+              
             </td>
           </tr>
           <tr>

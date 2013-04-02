@@ -4,38 +4,32 @@ class Court {
 
 	private $programID;
 	private $courtID;
-	private $date;
-	private $time;
-	private $type;
-	private $location;
-	private $judge;
-	private $defenseAttorney;
-	private $prosecutingAttorney;
-	private $bailiff;
-	private $courtClerk;
-	private $exitInterviewer;
-	private $advisor;
-	private $juryMembers;
-	private $contractSigned;
-	private $parentPresent;
+	public $date;
+	public $type;
+	public $locationID;
+	public $contractSigned;
 	
-	public function __construct()
+	public function __construct( $programID )
 	{
-		
+		$this->programID = $programID;
+		$this->courtID = 0;
+		$this->date = NULL;
+		$this->type = NULL;
+		$this->locationID = NULL;
+		$this->contractSigned = NULL;
 	}
 	
-	/*
-	private function setTrialStaff();
-	private function setJuryPool();
-	private function printTrialInformation();
-	private function printJurySummons();
+	public function updateCourt()
+	{
+			
+			
+			
+			
+			
+	}
 
-	private function getFromID();
-	private function addCourt();
-	private function updateCourt();
-	private function removeCourt();
-	private function printActivityReport();
-	*/
+
+
 }
 
 ?>
