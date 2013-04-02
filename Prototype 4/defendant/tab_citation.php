@@ -148,7 +148,10 @@ $citationTime = ( $citation->citationDate ) ? date("h:i A", $citation->citationD
             <? echo $program->fetchOfficerDropdown( $citation->officerID )?>
           </select>
           
-          <a id="add-officer" style="cursor:pointer;"><img src="/images/add.png" border="0" align="absmiddle" /></a>
+          <a class="ui-state-default ui-corner-all"  id="add-officer" title="Add New Officer">
+            <span class="ui-icon ui-icon-plus"></span>
+          </a>
+          
         </td>
       </tr>
       <tr>

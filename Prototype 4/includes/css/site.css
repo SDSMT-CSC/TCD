@@ -74,8 +74,8 @@ div.error{
 
 .belowListing { margin-top:10px; }
 
-.select-item, #school-location, #add-common-location { vertical-align: middle; margin-bottom: 4px; }
-.select-item span:first-child, #school-location span:first-child, #add-common-location span:first-child { padding: 2px 0 0 2px; }
+.select-item, #school-location, #add-common-location, #add-officer  { vertical-align: middle; margin-bottom: 4px; }
+.select-item span:first-child, #school-location span:first-child, #add-common-location span:first-child, #add-officer span:first-child { padding: 2px 0 0 2px; }
 
 .ui-dialog input { margin: 2px 0; padding: 3px; background-color: #faf9f5; font-size: 1.0em; border: solid 1px #bbbaab; }
 .ui-accordion input, select, textarea { margin: 2px 0; padding: 3px; background-color: #faf9f5; font-size: 1.0em; border: solid 1px #bbbaab; }

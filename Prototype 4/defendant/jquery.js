@@ -23,7 +23,7 @@ jQuery(function($) {
 	
 	// TAB3: Citation items
 	$("#citation-submit").button().click(function() { $("#citation").submit(); });
-	$("#add-officer").click(function(){ $('#officer-dialog').dialog('open'); });
+	$("#add-officer").button().click(function(){ $('#officer-dialog').dialog('open'); });
 	$("#add-common-location").button().click(function(){ $('#common-location-dialog').dialog('open'); });
 	$("#add-existing-offense").button().click(function(){ $('#offense-existing-dialog').dialog('open'); });
 	$("#add-new-statute").button().click(function(){ $('#offense-new-statute').dialog('open'); });
