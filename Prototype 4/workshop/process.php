@@ -1,5 +1,6 @@
 <?
 include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop_location.php");
 
@@ -17,55 +18,45 @@ $remove = $_GET["remove"];
 $completed = $_GET["completed"];
 $add = $_POST["add"];
 
-if( $action == "Add Workshop" ) {
-	$workshop = new Workshop();
+if( $action == "Add Workshop" || $action == "Edit Workshop"  ) {
+
+	// set workshop information
+	$workshop = new Workshop( $user_programID );
 	
-	//need to ask Andrew on how the validation works, this will break if given in any other format
-	$storeDate = $_POST["date"] . " " . $_POST["time"];
+	if( $_POST["workshopID"] > 0 ) { $workshop->setWorkshopID( $_POST["workshopID"] ); }
 	
-	$workshop->setProgramID( $_POST["programID"] );
-	$workshop->setDate( $storeDate );
+	$workshop->setDate( $_POST["date"] . " " . $_POST["time"] );
 	$workshop->setTitle( $_POST["title"] );
 	$workshop->setDescription( $_POST["description"] );
-	$workshop->getDescription();
 	$workshop->setInstructor( $_POST["instructor"] );
 	$workshop->setOfficerID( $_POST["officer"] );
-	$workshop->setworkshopLocationID( $_POST["workshopLocationID"] );
 	
-	if( $workshop->addWorkshop() )
-	{
-		//log if successful
+	// check workshop location
+	$workshopLocation = new workshopLocation( $user_programID );
+	$workshopLocation->name = $_POST["locationName"];
+	$workshopLocation->address = $_POST["address"];
+	$workshopLocation->city = $_POST["workshop-city"];
+	$workshopLocation->state = $_POST["workshop-state"];
+	$workshopLocation->zip = $_POST["workshop-zip"];
+	
+	// add/get program location id
+	$location = new Location( $user_programID );
+	$workshopLocation->locationID = $location->addLocation( $_POST["workshop-city"], $_POST["workshop-state"], $_POST["workshop-zip"] );
+  
+	// update the workshop location and get id
+	$workshopLocation->updateWorkshopLocation();
+	$workshop->setworkshopLocationID( $workshopLocation->getWorkshopLocationID() );
+		
+	//log if successful
+	if( $workshop->updateWorkshop() )
 		$user->addEvent( "Added Workshop: " . $workshop->getTitle() );
-	}
-	
-	//redirect to edit page
-	header("location:view.php?id=" . $workshop->getWorkshopID());
-} elseif( $action == "Edit Workshop" ) {
-	$workshop = new Workshop();
-	
-	//need to ask Andrew on how the validation works, this will break if given in any other format
-	$storeDate = $_POST["date"] . " " . $_POST["time"];
-	
-	$workshop->setWorkshopID( $_POST["workshopID"] );
-	$workshop->setDate( $storeDate );
-	$workshop->setTitle( $_POST["title"] );
-	$workshop->setDescription( $_POST["description"] );
-	$workshop->setInstructor( $_POST["instructor"] );
-	$workshop->setOfficerID( $_POST["officer"] );
-	$workshop->setworkshopLocationID( $_POST["workshopLocationID"] );
-	
-	if( $workshop->editWorkshop() )
-	{
-		//log if successful
-		$user->addEvent( "Edited Workshop: " . $workshop->getTitle() );
-	}
 	
 	//redirect to edit page
 	header("location:view.php?id=" . $workshop->getWorkshopID());
 } 
 elseif ( $action == "Add Participant" )
 {
-	$workshop = new Workshop();
+	$workshop = new Workshop( $user_programID );
 	$workshop->getWorkshop( $workshopIDP );
 	
 	if( $workshop->addWorkshopParticipant( $workshopIDP, $add ))
@@ -77,26 +68,6 @@ elseif ( $action == "Add Participant" )
 	//redirect to edit page
 	header("location:view.php?id=" . $workshop->getWorkshopID());
 } 
-elseif ( $action == "Add Location" )
-{
-	$location = new courtLocation();
-	$location->setProgramID( $_POST["programID"] );
-	$location->setName( $_POST["location-name"] );
-	$location->setAddress( $_POST["location-address"] );
-	$location->setCity( $_POST["location-city"] );
-	$location->setState( $_POST["location-state"] );
-	$location->setZip( $_POST["location-zip"] );
-	
-	if( $location->addCourtLocation() )
-	{
-		//log if successful
-		$user->addEvent( "Added Court Location: " . $location->getName() , $location->getName());
-	}
-	
-	//redirect based on return variable
-	$return = $_POST["return"];
-	header("location:" . $return );
-}
 elseif ( $action == "Delete Workshop" )
 {
 	$id = $_GET["id"];
@@ -116,7 +87,7 @@ elseif ( $action == "Delete Workshop" )
 }
 elseif ( isset($remove) )
 {
-	$workshop = new Workshop();
+	$workshop = new Workshop( $user_programID );
 	$workshop->getWorkshop( $workshopIDG );
 	
 	if( $workshop->removeWorkshopParticipant( $workshopIDG , $remove ))
@@ -130,7 +101,7 @@ elseif ( isset($remove) )
 }
 elseif( isset($completed) )
 {
-	$workshop = new Workshop();
+	$workshop = new Workshop( $user_programID );
 	$workshop->getWorkshop( $workshopIDG );
 	
 	if( $workshop->completedWorkshopParticipant( $workshopIDG, $completed ))

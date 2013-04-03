@@ -1,20 +1,21 @@
 <?php
 
-class courtLocation {
-	private $workshopLocationID;
-	private $locationID;
-	private $programID;
-	private $name;
-	private $address;
-	private $city;
-	private $state;
-	private $zip;
+class workshopLocation {
 	
-	public function __construct()
+	private $workshopLocationID;
+	private $programID;
+	public $locationID;
+	public $name;
+	public $address;
+	public $city;
+	public $state;
+	public $zip;
+	
+	public function __construct( $user_programID )
 	{
 		$this->workshopLocationID = 0;
-		$this->locationID = 0;
-		$this->programID = 0;
+		$this->programID = $user_programID;
+		$this->locationID = NULL;
 		$this->name = NULL;
 		$this->address = NULL;
 		$this->city = NULL;
@@ -22,77 +23,62 @@ class courtLocation {
 		$this->zip = NULL;
 	}
 	
-	public function addCourtLocation()
+	public function updateWorkshopLocation()
 	{
-		//get locationID to insert
-		$core = Core::dbOpen();
-		$sql = "SELECT locationID FROM program_locations WHERE programID = :programID AND
-		        city = :city AND state = :state AND zip = :zip";
-		$stmt = $core->dbh->prepare($sql);
-		$stmt->bindParam(':programID', $this->programID);
-		$stmt->bindParam(':city', $this->city);
-		$stmt->bindParam(':state', $this->state);
-		$stmt->bindParam(':zip', $this->zip);
-		
-		Core::dbClose();
-		
-		try {
-			if ( $stmt->execute() ) {
-				$row = $stmt->fetch();
-				$this->locationID = $row["locationID"];
-			}
-		} catch ( PDOException $e ) {
-			echo "Get LocationID Failed";
-		}
 		
 		$core = Core::dbOpen();
-		$sql = "INSERT INTO workshop_location (programID,name,address,locationID)
-		        VALUES (:programID, :name, :address, :locationID)";
+		
+		//  get workshopLocationID if exists
+		$sql = "SELECT workshopLocationID, locationID FROM workshop_location 
+						WHERE programID	= :programID AND name	= :name AND address = :address";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $this->programID);
 		$stmt->bindParam(':name', $this->name);
 		$stmt->bindParam(':address', $this->address);
-		$stmt->bindParam(':locationID', $this->locationID);
-		
-		Core::dbClose();
 		
 		try {
-			if ( $stmt->execute() ) {
-				$this->workshopLocationID = $core->dbh->lastInsertId();
+			if ( $stmt->execute() && $stmt->RowCount() > 0 ) // location exists
+			{
+				$row = $stmt->fetch();
+				$this->workshopLocationID = $row["workshopLocationID"];
+				
+				// if the current location ID differs than what is in the location, update it
+				if( $this->locationID != $row["locationID"] ) {				
+						$sql = "UPDATE workshop_location SET locationID = :locationID WHERE workshopLocationID = :id";
+						$stmt = $core->dbh->prepare($sql);
+						$stmt->bindParam(':locationID', $this->locationID);
+						$stmt->bindParam(':id', $this->workshopLocationID);
+						$stmt->execute();
+				}
+				
 				return true;
 			}
+			else // add it
+			{
+				$sql = "INSERT INTO workshop_location (programID,name,address,locationID)
+		    	   	  VALUES (:programID, :name, :address, :locationID)";
+				$stmt = $core->dbh->prepare($sql);
+				$stmt->bindParam(':programID', $this->programID);
+				$stmt->bindParam(':locationID', $this->locationID);
+				$stmt->bindParam(':name', $this->name);
+				$stmt->bindParam(':address', $this->address);
+				Core::dbClose();
+				
+				try {
+					if ( $stmt->execute() )
+						$this->workshopLocationID = $core->dbh->lastInsertId(); 		
+					return true;				
+				} catch ( PDOException $e ) {
+					echo "Add Workshop Location Failed";
+				}
+			}
 		} catch ( PDOException $e ) {
-			echo "Add Workshop Location Failed";
+			echo "Get Workshop Location ID Failed";
 		}
-		
 		return false;
 	}
-	
-	public function editCourtLocation()
-	{
-		$core = Core::dbOpen();
-		$sql = "UPDATE workshop_location SET name = :name, address = :address, locationID = :locationID WHERE workshopLocationID = :workshopLocationID";
-		$stmt = $core->dbh->prepare($sql);
-		$stmt->bindParam(':name', $this->name );
-		$stmt->bindParam(':address', $this->address );
-		$stmt->bindParam(':locationID', $this->locationID );
-		$stmt->bindParam(':workshopLocationID', $this->workshopLocationID );
-		
-		try{
-			if( $stmt->execute() )
-				return true;
-		} catch ( PDOException $e ) {
-			echo "Edit Workshop Location Failed!";
-		}
-		return false;
-	}
-	
-	public function deleteCourtLocation()
-	{
-		
-	}
-	
-	public function getCourtLocation( $workshopLocID )
+
+	public function getWorkshopLocation( $workshopLocID )
 	{
 		$core = Core::dbOpen();
 		$sql = "SELECT wl.name, wl.address, l.city, l.state, l.zip, l.locationID FROM workshop_location wl
@@ -113,27 +99,17 @@ class courtLocation {
 					$this->locationID = $row["locationID"];
 			}
 		} catch ( PDOException $e ) {
-			echo "Get Court Location Failed!";
+			echo "Get Workshop Location Failed!";
 		}
 	}
 	
 	//getters
-	public function getLocationID() { return $this->locationID; }
+	public function getWorkshopLocationID() { return $this->workshopLocationID; }
 	public function getProgramID() { return $this->programID; }
-	public function getName() { return $this->name;}
-	public function getAddress() { return $this->address; }
-	public function getCity() { return $this->city; }
-	public function getState() { return $this->state; }
-	public function getZip() { return $this->zip; }
 	
 	//settters
-	public function setLocationID( $val ) { $this->locationID = $val; }
+	public function setWorkshopLocationID( $val ) { $this->workshopLocationID = $val; }
 	public function setProgramID( $val ) { $this->programID = $val; }
-	public function setName( $val ) { $this->name = $val; }
-	public function setAddress( $val ) { $this->address = $val; }
-	public function setCity( $val ) { $this->city = $val; }
-	public function setState( $val ) { $this->state = $val; }
-	public function setZip( $val ) { $this->zip = $val; }
 }
 
 ?>

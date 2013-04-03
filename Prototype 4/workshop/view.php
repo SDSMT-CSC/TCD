@@ -6,7 +6,7 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 
 $id = $_GET["id"];
-$workshop = new Workshop();
+$workshop = new Workshop( $user_programID );
 $data = new Data();
 	
 if( isset($id) )
@@ -14,26 +14,24 @@ if( isset($id) )
 	$action = "Edit Workshop";
 	
 	$workshop->getWorkshop($id);
-	$date = $workshop->getDate();
-	//break down date and time
-	$splitDate = explode(" ", $date);
-	$date = $splitDate[0];
-	$time = $splitDate[1] . " " . $splitDate[2];
+		
+	$date =  date("m/d/Y", $workshop->getDate() );
+	$time = date("h:i A", $workshop->getDate() );
 	$title = $workshop->getTitle();
 	$instructor = $workshop->getInstructor();
 	$description = $workshop->getDescription();
 	$officerID = $workshop->getOfficerID();
 	$workshopLocationID = $workshop->getworkshopLocationID();
 	
-	$courtLocation = new courtLocation();
-	$courtLocation->getCourtLocation( $workshopLocationID );
+	$courtLocation = new WorkshopLocation( $user_programID );
+	$courtLocation->getWorkshopLocation( $workshopLocationID );
 	
-	$locationID = $courtLocation->getLocationID();
-	$locationName = $courtLocation->getName();
-	$locationAddress = $courtLocation->getAddress();
-	$locationCity = $courtLocation->getCity();
-	$locationState = $courtLocation->getState();
-	$locationZip = $courtLocation->getZip();
+	$locationID = $courtLocation->locationID;
+	$locationName = $courtLocation->name;
+	$locationAddress = $courtLocation->address;
+	$locationCity = $courtLocation->city;
+	$locationState = $courtLocation->state;
+	$locationZip = $courtLocation->zip;
 }
 else
 {
@@ -250,12 +248,9 @@ jQuery(function($) {
 </div>
 
 <form name="editWorkshop" id="editWorkshop" method="post" action="process.php">
-<input type="hidden" name="workshopLocationID" id="workshopLocationID" value="<? echo $workshopLocationID ?>" />
 <input type="hidden" name="action" value="<? echo $action ?>" />
 <? if ( $action == "Edit Workshop" ) { ?>
 <input type="hidden" name="workshopID" value="<? echo $workshop->getWorkshopID() ?>" />
-<? } else if ( $action == "Add Workshop" ) { ?>
-<input type="hidden" name="programID" value="<? echo $user->getProgramID() ?>" />
 <? } ?>
 
 <fieldset>

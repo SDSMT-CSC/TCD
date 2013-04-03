@@ -1,93 +1,76 @@
 <?php
 class Workshop {
-	private $workshopID;
-	private $programID;
+  private $workshopID;
+  private $programID;
 	private $date;
 	private $title;
 	private $description;
 	private $instructor;
 	private $officerID;
-	private $courtLocationID;
+	private $workshopLocationID;
 	
-	public function __construct()
+	public function __construct( $user_programID )
 	{
 		$this->workshopID = 0;
-		$this->programID = 0;
+		$this->programID = $user_programID;
 		$this->date = NULL;
 		$this->title = NULL;
 		$this->description = NULL;
 		$this->instructor = NULL;
 		$this->officerID = 0;
-		$this->courtLocationID = 0;
+		$this->workshopLocationID = 0;
 	}
 	
-	public function addWorkshop()
+	/*************************************************************************************************
+		function: updateWorkshop
+		purpose: 
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function updateWorkshop()
 	{
 		//open connection and build sql string
 		$core = Core::dbOpen();
-		$sql = "INSERT INTO workshop (programID,date,title,description,instructor,officerID,courtLocationID)
-		        VALUES (:programID, :date, :title, :description, :instructor, :officerID, :courtLocationID)";
-		$stmt = $core->dbh->prepare($sql);
 		
+		if( $this->workshopID == 0 ) {
+			$sql = "INSERT INTO workshop (programID,date,title,description,instructor,officerID,workshopLocationID)
+		        	VALUES (:programID, :date, :title, :description, :instructor, :officerID, :workshopLocationID)";
+		} else {
+			$sql = "UPDATE workshop SET programID = :programID, date = :date, title = :title, description = :description, 
+							instructor = :instructor, officerID = :officerID, workshopLocationID = :workshopLocationID WHERE workshopID = :id";
+		}
+
 		//bind values
+		$stmt = $core->dbh->prepare($sql);
+		if( $this->workshopID > 0 ) { $stmt->bindParam(':id', $this->workshopID); }
 		$stmt->bindParam(':programID', $this->programID);
 		$stmt->bindParam(':date', $core->convertToServerDate( $this->date, $_SESSION["timezone"] ));
 		$stmt->bindParam(':title', $this->title);
 		$stmt->bindParam(':description', $this->description);
 		$stmt->bindParam(':instructor', $this->instructor);
 		$stmt->bindParam(':officerID', $this->officerID);
-		$stmt->bindParam(':courtLocationID', $this->courtLocationID);
-		
+		$stmt->bindParam(':workshopLocationID', $this->workshopLocationID);
 		Core::dbClose();
-		
-		try
-		{
-			if( $stmt->execute() )
-			{
-				$this->workshopID = $core->dbh->lastInsertId(); 
+				
+		try {
+			if( $stmt->execute() ) {
+				if( $this->workshopID == 0 )
+					$this->workshopID = $core->dbh->lastInsertId(); 
+										
 				return true;
 			}
-		} 
-		catch ( PDOException $e )
-		{
-			echo "Add Workshop Failed!";
+		} catch ( PDOException $e ) {
+			echo "Update Workshop Failed!";
 		}
 		return false;
 	}
 	
-	public function editWorkshop()
-	{
-		//open connection and build sql string
-		$core = Core::dbOpen();
-		$sql = "UPDATE workshop SET date = :date, title = :title, description = :description, instructor = :instructor, 
-		        officerID = :officerID, courtLocationID = :courtLocationID WHERE workshopID = :id";
-		$stmt = $core->dbh->prepare($sql);
-		
-		//bind values
-		$stmt->bindParam(':date', $core->convertToServerDate( $this->date, $_SESSION["timezone"] ));
-		$stmt->bindParam(':title', $this->title);
-		$stmt->bindParam(':description', $this->description);
-		$stmt->bindParam(':instructor', $this->instructor);
-		$stmt->bindParam(':officerID', $this->officerID);
-		$stmt->bindParam(':id', $this->workshopID);
-		$stmt->bindParam(':courtLocationID', $this->courtLocationID);
-		
-		Core::dbClose();
-		
-		try
-		{
-			if( $stmt->execute() )
-			{
-				return true;
-			}
-		} 
-		catch ( PDOException $e )
-		{
-			echo "Edit Workshop Failed!";
-		}
-		return false;
-	}
-	
+	/*************************************************************************************************
+		function: deleteWorkshop
+		purpose: 
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
 	public function deleteWorkshop()
 	{
 		//remove participants first
@@ -99,9 +82,8 @@ class Workshop {
 		
 		try
 		{
-			if ( $stmt->execute() ) {
-				
-			}
+			$stmt->execute();
+			
 		} catch ( PDOException $e ) {
 			echo "Delete Workshop Participants Failed!";
 			return false;
@@ -116,20 +98,20 @@ class Workshop {
 		
 		try
 		{
-			if ( $stmt->execute() ) {
+			if ( $stmt->execute() )
 				return true;
-			}
 		} catch ( PDOException $e ) {
 			echo "Delete Workshop Failed!";
-			return false;
 		}
+		return false;
 	}
 	
-	private function printWorkshopInformation()
-	{
-		
-	}
-	
+	/*************************************************************************************************
+		function: getWorkshop
+		purpose: 
+		input: id of workshop
+  	output: boolean true/false
+	*************************************************************************************************/
 	public function getWorkshop( $id )
 	{
 		//database connection and sql query
@@ -147,20 +129,29 @@ class Workshop {
 				
 				$this->workshopID = $id;
 				$this->programID = $row["programID"];
-				$this->date = date("m/d/Y h:i A", $row["date"]);
+				$this->date = $row["date"];
 				$this->title = $row["title"];
 				$this->description = $row["description"];
 				$this->instructor = $row["instructor"];
 				$this->officerID = $row["officerID"];
-				$this->courtLocationID = $row["courtLocationID"];
+				$this->workshopLocationID = $row["workshopLocationID"];
+				
+				return true;
 			}
 		}
 		catch ( PDOException $e )
 		{
 			echo "Get Workshop Failed!";
 		}
+		return false;
 	}
 	
+	/*************************************************************************************************
+		function: addWorkshopParticipant
+		purpose: 
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
 	public function addWorkshopParticipant( $workshopID, $defendantID )
 	{
 		$core = Core::dbOpen();
@@ -170,19 +161,21 @@ class Workshop {
 		$stmt->bindParam(':defendantID', $defendantID);
 		Core::dbClose();
 		
-		try
-		{
+		try {
 			if( $stmt->execute() )
-			{
 				return true;
-			}
-		}
-		catch ( PDOException $e )
-		{
+		} catch ( PDOException $e ) {
 			echo "Add Workshop Participant Failed!";
 		}
+		return false;
 	}
 	
+	/*************************************************************************************************
+		function: removeWorkshopParticipant
+		purpose: 
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
 	public function removeWorkshopParticipant( $workshopID, $defendantID )
 	{
 		$core = Core::dbOpen();
@@ -192,19 +185,21 @@ class Workshop {
 		$stmt->bindParam(':defendantID', $defendantID);
 		Core::dbClose();
 		
-		try
-		{
+		try {
 			if( $stmt->execute() )
-			{
 				return true;
-			}
-		}
-		catch ( PDOException $e )
-		{
+		} catch ( PDOException $e ) {
 			echo "Remove Workshop Participant Failed!";
 		}
+		return false;
 	}
 	
+	/*************************************************************************************************
+		function: completedWorkshopParticipant
+		purpose: 
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
 	public function completedWorkshopParticipant( $workshopID, $defendantID )
 	{
 		$core = Core::dbOpen();
@@ -215,19 +210,21 @@ class Workshop {
 		$stmt->bindParam(':defendantID', $defendantID);
 		Core::dbClose();
 		
-		try
-		{
+		try  {
 			if( $stmt->execute() )
-			{
 				return true;
-			}
-		}
-		catch ( PDOException $e )
-		{
+		} catch ( PDOException $e ) {
 			echo "Workshop Participant Completed Failed!";
 		}
+		return false;
 	}
 	
+	/*************************************************************************************************
+		function: listWorkshopParticipants
+		purpose: 
+		input: none
+  	output: data string
+	*************************************************************************************************/
 	public function listWorkshopParticipants( $id )
 	{
 		$core = Core::dbOpen();
@@ -271,7 +268,7 @@ class Workshop {
 	public function getDescription() { return $this->description; }
 	public function getInstructor() { return $this->instructor; }
 	public function getOfficerID() { return $this->officerID; }
-	public function getcourtLocationID() { return $this->courtLocationID; }
+	public function getworkshopLocationID() { return $this->workshopLocationID; }
 	
 	//setters
 	public function setWorkshopID( $val ) { $this->workshopID = $val; }
@@ -281,7 +278,7 @@ class Workshop {
 	public function setDescription( $val ) { $this->description = $val; }
 	public function setInstructor( $val ) { $this->instructor = $val; }
 	public function setOfficerID( $val ) { $this->officerID = $val; }
-	public function setcourtLocationID( $val ) { $this->courtLocationID = $val; }
+	public function setworkshopLocationID( $val ) { $this->workshopLocationID = $val; }
 	
 	public function display()
 	{
@@ -292,6 +289,7 @@ class Workshop {
 		echo "Description: " . $this->description . "<br>";
 		echo "Instructor: " . $this->instructor . "<br>";
 		echo "OfficerID: " . $this->officerID . "<br>";
+		echo "WorkshopLocationID: " . $this->workshopLocationID . "<br>";
 	}
 }
 ?>
