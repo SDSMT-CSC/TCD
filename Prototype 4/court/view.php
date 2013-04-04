@@ -24,35 +24,34 @@ else {
 
 <script type="text/javascript" src="jquery.js"></script>
 
-<div id="location-dialog" title="Add New Location">
-	<form>
-		<table>
+<div id="court-location-dialog" title="Select Existing Location">
+	<table id="workshop-location-table">
+		<thead>
 			<tr>
-				<td>Location Name</td>
-				<td><input type="text" name="location-name" size="30" /></td>
+				<th>Name</th>
+				<th>Address</th>
+				<th>City</th>
+				<th>State</th>
+				<th>Zip</th>
 			</tr>
-			<tr>
-				<td>Address:</td>
-				<td><input type="text" name="location-address" size="30" /></td>
-			</tr>
-			<tr>
-				<td>City:</td>
-				<td>
-					<input type="text" name="location-city" /> State: 
-					<select name="location-state">
-						<option>ND</option>
-						<option selected="selected">SD</option>
-						<option>WY</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Zip:</td>
-				<td><input type="text" name="location-zip" /></td>
-			</tr>
-		</table>		
-	</form>
+		</thead>
+		<tbody></tbody>
+	</table>
 </div>
+
+<div id="program-location-dialog" title="Select Existing Location">
+  <table id="program-location-table">
+    <thead>
+        <tr>
+          <th>City</th>
+          <th>State</th>
+          <th>Zip</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
 
 
 <div id="jury-member-dialog" title="Add New Jury Member">

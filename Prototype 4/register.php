@@ -65,7 +65,7 @@ var RecaptchaOptions = {
  }
 </script>
 
-<div style="padding: .5em; font-style: italic;">Due to sensetive data contained in this website, it is advised you do not use a frequent password. 
+<div style="padding: .5em; font-style: italic;">Due to sensitive data contained in this website, it is advised you do not use a frequent password. 
 Passwords should contain a combination of letters (both upper and lower case) and numbers along with special characters.</div>
 
 <form id="registerForm" name="registerForm" method="post" action="#">
@@ -98,7 +98,7 @@ Passwords should contain a combination of letters (both upper and lower case) an
 			<td><input type="password" name="password2" id="password2" class="wide" /></td>
 		</tr>
 		<tr>
-			<td align="right" valign="top" style="padding-bottom:3px;">Prove you are a real person!<br /> the characters from the picture</td>			
+			<td align="right" valign="top" style="padding-bottom:3px;">Prove you are a real person!<br /> Enter the characters from the picture.</td>			
 			<td>
         <div id="recaptcha_widget" style="display:none">
 

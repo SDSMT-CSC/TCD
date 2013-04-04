@@ -9,6 +9,3 @@
 
 </body>
 </html>
-<?
-include($_SERVER['DOCUMENT_ROOT']."/includes/db_close.php");
-?>
