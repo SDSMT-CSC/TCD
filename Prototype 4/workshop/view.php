@@ -351,7 +351,12 @@ jQuery(function($) {
 			</tr>
 		</thead>
 		<tbody>
-    <? echo $workshop->listWorkshopParticipants( $id ) ?>
+    <? 
+		$data = $workshop->listWorkshopParticipants( $id ) ;
+		if( !$data ) {		
+		?>
+    <tr><td align="center" colspan="5">No Participants</td></tr>
+    <? } else {  echo $data;	}	?>
 	  </tbody>
 	</table>
 	<input type="button" class="add" id="add-participant" value="Add Participant" />

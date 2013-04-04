@@ -57,12 +57,11 @@ jQuery(function($) {
 <table id="data-table">
 	<thead>
 			<tr>
-				<th width="50">Volunteer#</th>
-				<th width="75">First Name</th>
-				<th width="75">Last Name</th>
-				<th width="125">Phone#</th>
-				<th width="150">Email</th>
-				<th width="125">Modify</th>
+				<th width="150">Date</th>
+				<th width="150">Topic</th>
+				<th width="125">Instructor</th>
+				<th width="125">Officer</th>
+				<th width="50">Modify</th>
 			</tr>
 	</thead>
 	<tbody></tbody>
