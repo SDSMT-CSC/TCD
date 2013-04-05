@@ -1,8 +1,9 @@
 <?php
+session_start();
+include($_SERVER['DOCUMENT_ROOT']."/includes/analytics.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_core.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_user.php");
 
-session_start();
 
 if($_POST["submit"] == "Enter")
 {
