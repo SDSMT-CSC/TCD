@@ -13,6 +13,7 @@ jQuery(function($)
 	
 	$("#data-table").dataTable( { 
 				"aaSorting": [],
+				"aoColumnDefs" : [ { "aTargets": [0], "bVisible": false, "bSearchable": false }  ],
         "sPaginationType": "full_numbers",
 				"bProcessing": false,
         "sAjaxSource": '/data/defendants_current.php'
@@ -26,6 +27,7 @@ jQuery(function($)
 <table id="data-table">
 	<thead>
 			<tr>
+				<th width="10">ID</th>
 				<th width="75">Court Case#</th>
 				<th width="75">Last Name</th>
 				<th width="75">First Name</th>

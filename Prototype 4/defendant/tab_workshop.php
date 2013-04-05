@@ -17,7 +17,7 @@ if( $workArr ) {
       </thead>
       <tbody>
 			<?
-        $workshop = new Workshop();
+        $workshop = new Workshop( $user_programID );
         
         foreach( $workArr as $row )
         {	
@@ -25,7 +25,7 @@ if( $workArr ) {
           echo "<tr>";
           echo "<td>" . $workshop->getTitle() . "</td>";
           echo "<td>" . $workshop->getDate() . "</td>";
-          echo "<td>" . $workshop->getInstructor . "</td>";
+          echo "<td>" . $workshop->getInstructor() . "</td>";
           echo "<td>" . $row["completed"] . "</td>";
           echo '<td><a href="/workshop/view.php?id=' . $row["workshopID"] . '">View</a></td>';
           echo "</tr>";

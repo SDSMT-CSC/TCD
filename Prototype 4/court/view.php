@@ -1,6 +1,9 @@
 <?
 $menuarea = "court";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_location.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_court.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_court_location.php");
 
 $id = $_GET["id"];
 $error = 0;
@@ -10,6 +13,8 @@ $error = 0;
 if( isset($id) ) {
 	$action = "Edit Court";
 	
+	$court = new Court( $user_programID );
+	$court->getFromID( $id );
 	
 } 
 else {	
@@ -18,14 +23,27 @@ else {
 }
 ?>
 
-<? if( $error == 1 ) { ?>
-<p>You do not have access to this page.</p>
-<? } else { ?>
-
 <script type="text/javascript" src="jquery.js"></script>
 
+<div id="court-defendant-dialog" title="Select Defendant">
+	<table id="court-defendant-table">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Court Case#</th>
+				<th>Last Name</th>
+				<th>First Name</th>
+				<th>Location</th>
+				<th>Added</th>
+				<th>View</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+</div>
+
 <div id="court-location-dialog" title="Select Existing Location">
-	<table id="workshop-location-table">
+	<table id="court-location-table">
 		<thead>
 			<tr>
 				<th>Name</th>
@@ -39,8 +57,8 @@ else {
 	</table>
 </div>
 
-<div id="program-location-dialog" title="Select Existing Location">
-  <table id="program-location-table">
+<div id="location-dialog" title="Select Existing Location">
+  <table id="location-table">
     <thead>
         <tr>
           <th>City</th>
@@ -52,15 +70,13 @@ else {
   </table>
 </div>
 
-
-
 <div id="jury-member-dialog" title="Add New Jury Member">
 	<form>
 		<table>
 			<tr>
 				<td>Available Jury Members:
 				<td>			
-					<select id="court-defendant" name="court-defendant">
+					<select id="jury-members" name="jury-members">
 						<option>Gorney, Brandon (Volunteer)</option>
 						<option>Drew, Leonard (Volunteer)</option>
 						<option>Doe, John (Defendant)</option>
@@ -86,19 +102,23 @@ else {
 	</div>
 </div>
 
-<form name="updateCourt" id="updateCourt" >
+<form name="court-primary" id="court-primary" method="post" action="process.php">
+	<input type="hidden" name="action" value="<? echo $action ?>" />
   <fieldset>
     <legend>Court Information</legend>
     <table>
       <tr>
-        <td>
+        <td width="70%">
           <table>		
             <tr>
-              <td>Defendant: </td>
+              <td width="100">Defendant: </td>
               <td>
-                <select id="court-defendant" name="court-defendant">
-                	<option></option>
-                </select>
+              	<input type="hidden" id="court-defendantID" name="court-defendantID" />
+                <input type="text" id="court-defendant" name="court-defendant" style="width: 200px;" value="" readonly="readonly" >
+                
+                <a class="select-item ui-state-default ui-corner-all"  id="court-defendant-select" title="Select Defendant">
+                  <span class="ui-icon ui-icon-newwin"></span>
+                </a>        
               </td>
             </tr>
             <tr>
@@ -111,10 +131,10 @@ else {
             </tr>
           </table>
         </td>
-        <td>
+        <td width="30%" valign="top">
           <table>
             <tr>
-              <td>Court Type: </td>
+              <td width="125">Court Type: </td>
               <td>
                 <select id="court-type" name="court-type">
                   <option>Trial</option>
@@ -132,19 +152,15 @@ else {
               </td>
             </tr>
             <tr>
-              <td>Court Location: </td>
-              <td>
-                <select id="court-location" name="court-location">
-                
-                </select>
-                <a id="add-location" style="cursor:pointer;">+</a>
-              </td>
+            	<td>Closed: </td>
+              <td><input type="checkbox" name="court-closed" value="yes" /></td>
             </tr>
           </table>
         </td>
       </tr>
     </table>
   </fieldset>
+
 </form>
 
 <?
@@ -154,10 +170,14 @@ if( $id ) {
 
 <div id="tabs">
 	<ul>
+		<li><a href="#tabs-location">Court Location</a></li>
 		<li><a href="#tabs-members">Court Members</a></li>
 		<li><a href="#tabs-jury">Jury Members</a></li>
 		<li><a href="#tabs-guardians">Parents/Guardians</a></li>
 	</ul>
+	<div id="tabs-location">
+		<? include("tab_location.php"); ?>	
+	</div>
 	<div id="tabs-members">
 		<? include("tab_members.php"); ?>	
 	</div>
@@ -172,7 +192,5 @@ if( $id ) {
 <? } ?>
 
 <?php
-} // end error check
-
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");
 ?>

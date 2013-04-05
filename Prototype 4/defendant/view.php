@@ -37,10 +37,6 @@ else {
 }
 ?>
 
-<? if( $error == 1 ) { ?>
-<p>You do not have access to this page.</p>
-<? } else { ?>
-
 <? if( $user_type == 5 ) { ?>
 <script type="text/javascript">
 jQuery(function($) {	
@@ -224,7 +220,5 @@ if( isset($id) ) {
 <? } ?>
 
 <?php 
-} // end error check
-
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");
 ?>

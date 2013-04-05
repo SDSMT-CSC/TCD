@@ -375,6 +375,7 @@ class Data {
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
 						
+						$row[] = $aRow["defendantID"];
 						$row[] = $aRow["courtCaseNumber"];
 						$row[] = $aRow["lastName"];
 						$row[] = $aRow["firstName"];
