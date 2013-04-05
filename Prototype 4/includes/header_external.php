@@ -1,7 +1,4 @@
-<?php 
-session_start(); 
-include($_SERVER['DOCUMENT_ROOT']."/includes/analytics.php");
-?>
+<?php  session_start();  ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xml:lang="en" lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -13,8 +10,8 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/analytics.php");
   <meta http-equiv="Cache-Control" content="no-cache" />
   <meta http-equiv="Cache-Control" content="private" />
   <meta http-equiv="Pragma" content="no-cache" />
-  
-  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
 	<style type="text/css" media="screen">
 		@import "/includes/css/site.css";
 		@import "/includes/css/jquery-ui-teencourt.css";

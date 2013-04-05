@@ -1,0 +1,10 @@
+Options +SymLinksIfOwnerMatch
+RewriteEngine On
+RewriteCond %{SERVER_PORT} !=443
+RewriteRule ^ https://teencourtdb.com%{REQUEST_URI} [R,L]
+# Google Analytics Integration - Added by cPanel.
+<IfModule mod_substitute.c>
+AddOutputFilterByType SUBSTITUTE text/html
+Substitute "s|(<script src='/google_analytics_auto.js'></script>)?</head>|<script src='/google_analytics_auto.js'></script></head>|i"
+</IfModule>
+# END Google Analytics Integration

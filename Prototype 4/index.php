@@ -36,7 +36,6 @@ if($_POST["submit"] == "Enter")
 	}
 	
 }
-include($_SERVER['DOCUMENT_ROOT']."/includes/analytics.php");
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -51,7 +50,8 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/analytics.php");
 	<meta http-equiv="Cache-Control" content="private" />
 	<meta http-equiv="Pragma" content="no-cache" />
 	
-	<link rel="shortcut icon" href="/favicon.ico" />
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
 	<style type="text/css" media="screen">
 		@import "/includes/css/site.css";
 		@import "/includes/css/jquery-ui-teencourt.css";
