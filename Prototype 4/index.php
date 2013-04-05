@@ -1,9 +1,7 @@
 <?php
 session_start();
-include($_SERVER['DOCUMENT_ROOT']."/includes/analytics.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_core.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_user.php");
-
 
 if($_POST["submit"] == "Enter")
 {
@@ -38,7 +36,7 @@ if($_POST["submit"] == "Enter")
 	}
 	
 }
-
+include($_SERVER['DOCUMENT_ROOT']."/includes/analytics.php");
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
