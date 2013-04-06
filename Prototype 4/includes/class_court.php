@@ -34,10 +34,10 @@ class Court {
 			
 		// add new defendant or update existing record
 		if( $this->courtID == 0 ) {
-			$sql = "INSERT INTO court (programID, defendantID, locationID, type, contract, date, closed)
-							VALUES (:programID, :defendantID, :locationID, :type, :contract, :date, :closed )";
+			$sql = "INSERT INTO court (programID, defendantID, courtLocationID, type, contract, date, closed)
+							VALUES (:programID, :defendantID, :courtLocationID, :type, :contract, :date, :closed )";
 		} else {
-			$sql = "UPDATE court SET programID = :programID, defendantID = :defendantID, locationID = :locationID, 
+			$sql = "UPDATE court SET programID = :programID, defendantID = :defendantID, courtLocationID = :courtLocationID, 
 							type = :type,	contract = :contract, date = :date, closed = :closed
 							WHERE courtID = :courtID";
 		}
@@ -48,13 +48,13 @@ class Court {
 		if( $this->courtID > 0 ) { $stmt->bindParam(':courtID', $this->courtID); }
 		$stmt->bindParam(':programID', $this->programID);
 		$stmt->bindParam(':defendantID', $this->defendantID);
-		$stmt->bindParam(':locationID', $this->locationID);
+		$stmt->bindParam(':courtLocationID', $this->courtLocationID);
 		$stmt->bindParam(':type', $this->type);
 		$stmt->bindParam(':contract', $this->contractSigned);
 		$stmt->bindParam(':date', $core->convertToServerDate( $this->courtDate, $_SESSION["timezone"] ));
 		$stmt->bindParam(':closed', $this->closed);
 		Core::dbClose();
-		
+				
 		try
 		{
 			if( $stmt->execute()) {
@@ -93,11 +93,12 @@ class Court {
         $row = $stmt->fetch();
         $this->courtID = $id;
         $this->programID = $row["programID"];
-				$this->courtDate =  date("n/j/y h:i a", $row["date"]);
-				$this->type = NULL;
-				$this->contractSigned = NULL;
-				$this->closed = ( $row["closed"] ) ? date("n/j/y h:i a", $row["closed"]) : NULL;
-				$this->courtLocationID =  $row["closed"];
+        $this->defendantID = $row["defendantID"];
+				$this->courtDate =  $row["date"];
+				$this->type = $row["type"];
+				$this->contractSigned = ($row["contract"] == 1) ? "Yes": "No";
+				$this->closed = ( $row["closed"] ) ? date("n/j/y h:i A", $row["closed"]) : NULL;
+				$this->courtLocationID =  $row["courtLocationID"];
 				
 			}
 		} catch ( PDOException $e ) {
@@ -108,6 +109,7 @@ class Court {
 
 	// setters
 	public function setDefendantID( $val ) { $this->defendantID = $val; }
+	public function setCourtID( $val ) { $this->courtID = $val; }
 
 	// getters
 	public function getDefendantID() { return $this->defendantID; }

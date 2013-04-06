@@ -288,11 +288,12 @@ class Data {
 	public function fetchCourtListing(  $user_programID ) {
 		//database connection and SQL query
 		$core = Core::dbOpen();
-		$sql = "SELECT d.courtCaseNumber, d.firstName, d.lastName, c.date, l.name
+		$sql = "SELECT c.courtID, d.courtCaseNumber, d.firstName, d.lastName, c.date, cl.name, l.city, l.state
 						FROM court c
-						JOIN defendant d ON c.defendantID = d.defendantID
-						JOIN court_location l ON c.locationID = l.locationID
-						JOIN program p ON c.programID = p.programID WHERE programID = :programID";
+						LEFT JOIN defendant d ON c.defendantID = d.defendantID 
+						LEFT JOIN court_location cl ON c.locationID = cl.locationID
+						LEFT JOIN program_locations l ON cl.locationID = l.locationID
+						WHERE c.closed is NULL AND c.programID = :programID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();
@@ -305,9 +306,10 @@ class Data {
 						$row[] = $aRow["courtCaseNumber"];
 						$row[] = $aRow["firstName"];
 						$row[] = $aRow["lastName"];
-						$row[] = $aRow["date"];
+						$row[] = date("n/j/y h:i a",$aRow["date"]);
 						$row[] = $aRow["name"];
-						$row[] = '<a href="/court/view_court.php?id='. $aRow["courtID"] .'">View</a>';				
+						$row[] = ($aRow["city"]) ? $aRow["city"] . ", " . $aRow["state"] : NULL;
+						$row[] = '<a href="/court/view.php?id='. $aRow["courtID"] .'">View</a>';				
 						
 						$output['aaData'][] = $row;
 				}

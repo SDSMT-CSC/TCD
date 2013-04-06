@@ -47,7 +47,7 @@ div.message{
     padding-left: 5px;
 }
 
-div.message-login { position: absolute; }
+div.message-login { position: absolute; left: 330px; top: 4px; }
 
 div.error{
 		background: #97c4d9 url(images/ui-bg_highlight-soft_75_97c4d9_1x100.png) 50% 50% repeat-x;

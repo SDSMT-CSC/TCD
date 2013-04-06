@@ -25,6 +25,7 @@ jQuery(function($)
 				<th width="75">Last Name</th>
 				<th width="75">First Name</th>
 				<th width="125">Date</th>
+				<th width="150">Place</th>
 				<th width="150">Location</th>
 				<th width="50"></th>
 			</tr>
