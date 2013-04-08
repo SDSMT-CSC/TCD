@@ -75,7 +75,7 @@ $(function () {
 			<button id="add-volunteer">Add Volunteer</button>
       <? } else { ?>
 			<button id="update-volunteer">Update Volunteer</button>
-			<button class="delete-volunteer" id="delete-volunteer" value="process.php?action=Delete%20Volunteer&id=<? echo $id; ?>" \>Delete Workshop</button>
+			<button class="delete-volunteer" id="delete-volunteer" value="process.php?action=Delete%20Volunteer&id=<? echo $id; ?>" \>Delete Volunteer</button>
       <? } ?>
 		</div>
 	</div>

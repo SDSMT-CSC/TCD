@@ -290,10 +290,11 @@ class Data {
 		$core = Core::dbOpen();
 		$sql = "SELECT c.courtID, d.courtCaseNumber, d.firstName, d.lastName, c.date, cl.name, l.city, l.state
 						FROM court c
-						LEFT JOIN defendant d ON c.defendantID = d.defendantID 
-						LEFT JOIN court_location cl ON c.locationID = cl.locationID
-						LEFT JOIN program_locations l ON cl.locationID = l.locationID
-						WHERE c.closed is NULL AND c.programID = :programID";
+						LEFT JOIN defendant d ON c.defendantID = d.defendantID
+						LEFT JOIN court_location cl ON c.courtLocationID = cl.courtLocationID
+						LEFT JOIN program_locations l ON l.locationID = cl.locationID
+						WHERE c.closed IS NULL 
+						AND c.programID = :programID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();
