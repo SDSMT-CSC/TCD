@@ -84,7 +84,7 @@ $(function () {
 			firstname: {
 				required: true
 			}
-			<? if( $action == "Add") { ?>
+			<? if( $action == "Add User") { ?>
 			, password: {
 				required: true
 			}
@@ -167,6 +167,9 @@ $(function () {
           <? 
           if( $user_type > 2 ) { 
               echo $program->getName();
+		  ?>
+			  <input type="hidden" name="programID" value="<? echo $program->getProgramID(); ?>" />
+		  <?
           } else {
           ?>
           <select name="programID">
