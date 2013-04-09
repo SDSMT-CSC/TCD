@@ -20,7 +20,7 @@ jQuery(function($) {
 	$('#court-defendant-select').button().click(function(){ $('#court-defendant-dialog').dialog('open'); });	
 	$('#court-location').button().click(function(){ $('#court-location-dialog').dialog('open'); });
 	$('#program-location').button().click(function(){ $('#location-dialog').dialog('open'); });	
-	
+	$('#update-court-members').button().click(function() { $("#court-members").submit(); });
 	
 	/**************************************************************************************************
 		FORM VALIDATION

@@ -1,65 +1,46 @@
+<form name="court-members" id="court-members" method="post" action="process.php">	
+<input type="hidden" name="courtID" value="<? echo $id ?>" />
+<input type="hidden" name="action" value="Update Court Members" />
 <table style="width: 400px">
-			<tr>
-				<td>Judge: </td>
-				<td>
-					<select id="judge" name="judge">
-						<option selected="selected">Mason, James</option>
-						<option>Baxter, Mary</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Defense Attorney: </td>
-				<td>
-					<select id="defense-attorney" name="defense-attorney">
-						<option selected="selected">Baxter, Mary</option>
-						<option>Smith, Allen</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Prosecuting Attorney: </td>
-				<td>
-					<select id="prosecuting-attorney" name="prosecuting-attorney">
-						<option>Baxter, Mary</option>
-						<option selected="selected">Smith, Allen</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Bailiff: </td>
-				<td>
-					<select id="defense-attorney" name="defense-attorney">
-						<option selected="selected">Jones, Cheryl</option>
-						<option>Smith, Allen</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Court Clerk: </td>
-				<td>
-					<select id="defense-attorney" name="defense-attorney">
-						<option selected="selected">Adams, Henry</option>
-						<option>Smith, Allen</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Exit Interviewer: </td>
-				<td>
-					<select id="defense-attorney" name="defense-attorney">
-						<option selected="selected">Sanders, Cindy</option>
-						<option>Jones, Cheryl</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<td>Advisor: </td>
-				<td>
-					<select id="defense-attorney" name="defense-attorney">
-						<option>Baxter, Mary</option>
-						<option selected="selected">Sanders, Cindy</option>
-					</select>
-				</td>
-			</tr>
-		</table>
+<?
+
+// get programs court positions and available members
+$positions = $court->getCourtMembers();
+
+// array for existing members
+$existing = $court->existingCourtMembers();
+
+foreach( $positions as $row )
+{
+ ?>
+  <tr>
+    <td><? echo $row['position'] ?>: </td>
+    <td>
+    	<select name="positionID-<? echo $row['id'] ?>" style="width: 175px">
+      	<option></option>
+				<?
+        if( sizeof( $row['members'] ) > 0 )
+        {
+          foreach( $row['members'] as $id => $volunteer ) 
+          {
+						if( array_key_exists( $row['id'], $existing ) )
+						{
+							$selected = ( $existing[$row['id']] == $id ) ? " selected" : "";
+						}
+						?>
+						<option value="<? echo $id ?>"<? echo $selected ?>><? echo $volunteer ?></option>
+						<?
+          }
+        }
+        ?>
+      </select>
+    </td>
+  </tr>  
+  <?
+}
+?>
+</table>
+
+   
+ </form>
+<button id="update-court-members">Update Court Members</button>

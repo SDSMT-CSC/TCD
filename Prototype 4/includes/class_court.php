@@ -107,6 +107,164 @@ class Court {
     return false;
 	}
 
+	/*************************************************************************************************
+		function: getCourtMembers
+		purpose: 
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function getCourtMembers()
+	{
+		
+		$data = array();
+		
+		 // database connection and sql query
+    $sql1 = "SELECT cp.positionID, cp.position
+						FROM court_position cp
+						WHERE cp.programID = :programID AND position != 'Jury'
+						ORDER BY position";
+    $core = Core::dbOpen();
+    $stmt1= $core->dbh->prepare($sql1);
+    $stmt1->bindParam(':programID', $this->programID);
+		
+		try
+    {
+      if( $stmt1->execute())
+      {
+					$index = 0;
+					
+					// loop through each of the programs court positions
+					while ($cpRow = $stmt1->fetch(PDO::FETCH_ASSOC)) {
+						$row = array();
+						
+						// and get members for each positions to build the return array
+						$sql2 = "SELECT vp.volunteerID, v.firstName, v.lastName
+										FROM volunteer_position vp
+										LEFT JOIN volunteer v ON v.volunteerID = vp.volunteerID
+										WHERE vp.positionID = :positionID
+										ORDER BY lastName, firstName";
+						$stmt2 = $core->dbh->prepare($sql2);
+						$stmt2->bindParam(':positionID', $cpRow["positionID"]);
+						
+						// write out members to the array
+						if( $stmt2->execute() ) {
+
+							while ($vRow = $stmt2->fetch(PDO::FETCH_ASSOC)) {
+								$row[$vRow["volunteerID"]] = $vRow["lastName"] . ", " . $vRow["firstName"];
+							}
+							
+							$data[$index]['id'] = $cpRow["positionID"];
+							$data[$index]['position'] = $cpRow["position"];
+							$data[$index]['members'] = $row;
+							$index++;
+						}
+					}
+			}
+		} catch ( PDOException $e ) {
+      echo "Get court members failed!";
+    }
+    Core::dbClose();
+    return $data;
+	}
+	
+	/*************************************************************************************************
+		function: updateCourtMembers
+		purpose: 
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function updateCourtMembers( $members )
+	{		
+		// only run if this is an existing court
+		if( $this->courtID > 0 ) 
+		{
+			$core = Core::dbOpen();
+			
+			// loop through each position, checking if it exists
+			foreach( $members as $posID => $volID ) 
+			{				
+				$sql = "SELECT volunteerID FROM court_member WHERE courtID = :courtID AND positionID = :positionID";
+				$stmt = $core->dbh->prepare($sql);
+				$stmt->bindParam(':courtID', $this->courtID);
+				$stmt->bindParam(':positionID', $posID);
+				$stmt->execute();
+								
+				// if a record exists, check position and update if necessary
+				// if it doesn't, add it to the table				
+				if(  $stmt->rowCount() > 0 )
+				{
+						$row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+					  // volunteer was changed, update and reset hours to null
+						if( $row["volunteerID"] != $volID )
+						{
+							
+							if( $volID == NULL ) { 
+								$sql = "DELETE FROM court_member WHERE courtID = :courtID AND positionID = :positionID"; 
+							}
+							else { 
+								$sql = "UPDATE court_member SET volunteerID = :volunteerID, hours = NULL WHERE courtID = :courtID AND positionID = :positionID";  
+							}
+
+							$stmtU = $core->dbh->prepare($sql);
+							if( $volID != NULL ) { $stmtU->bindParam(':volunteerID', $volID); }
+							$stmtU->bindParam(':courtID', $this->courtID);
+							$stmtU->bindParam(':positionID', $posID);													
+							$stmtU->execute();
+						}
+				}
+				else // add it
+				{
+						$sql = "INSERT INTO court_member ( courtID, volunteerID, positionID ) 
+										VALUES ( :courtID, :volunteerID, :positionID )";
+						$stmtA = $core->dbh->prepare($sql);
+						$stmtA->bindParam(':courtID', $this->courtID);
+						$stmtA->bindParam(':volunteerID', $volID);
+						$stmtA->bindParam(':positionID', $posID);
+						$stmtA->execute();
+				}
+			}
+			Core::dbClose();
+			return true;
+		}
+		Core::dbClose();	
+    return false;
+	}
+	
+	/*************************************************************************************************
+		function: existingCourtMembers
+		purpose: Gets a list of exsting court members for a particular court, used to make volunteer
+						 active in the court member dropdown lists
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function existingCourtMembers()
+	{		
+		$data = array();
+		
+		 // database connection and sql query
+    $sql = "SELECT positionID, volunteerID FROM court_member WHERE courtID = :courtID";
+    $core = Core::dbOpen();
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':courtID', $this->courtID);
+    Core::dbClose();
+    
+    try
+    {
+      if( $stmt->execute())
+      {
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        	$data[$row["positionID"]] = $row["volunteerID"];
+				}
+			}
+		} catch ( PDOException $e ) {
+      echo "Get existing court member array failed!";
+    }
+		
+		return $data;
+	}
+
 	// setters
 	public function setDefendantID( $val ) { $this->defendantID = $val; }
 	public function setCourtID( $val ) { $this->courtID = $val; }

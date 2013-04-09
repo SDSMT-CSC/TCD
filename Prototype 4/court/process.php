@@ -44,7 +44,35 @@ if( $action == "Add Court" || $action == "Edit Court" )
 		
 	// redirect to court page
 	header("location: view.php?id=".$court->getCourtID() );
+}
 
+if( $action == "Update Court Members" )
+{
+	$court = new Court( $user_programID );
+	$court->getFromID( $_POST["courtID"] );
+	
+	$members = array();
+	
+	foreach ( $_POST as $posID => $volID )
+	{
+		if( $posID != "courtID" && $posID != "action"  )
+		{
+		  $positionID = str_replace( "positionID-" , "", $posID );
+			$members[$positionID] = $volID;
+		}
+	}
+		
+	// update the court members and add	log the event
+	if( $court->updateCourtMembers( $members ) )
+		$user->addEvent( "Court: " . $action, $court->getCourtID() );
+		
+	// redirect to court page
+	header("location: view.php?id=".$court->getCourtID() );	
 }
 
 ?>
+
+
+
+
+
