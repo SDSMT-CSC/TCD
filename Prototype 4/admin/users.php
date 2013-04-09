@@ -15,6 +15,9 @@ jQuery(function($)
 	
 	$("#data-table").dataTable( { 
 				"aaSorting": [],
+				<? if( $user_type == 3 ) { // hide court code if program admin ?>
+				"aoColumnDefs": [{ "bVisible": false, "aTargets": [0] }],
+				<? } ?>				
         "sPaginationType": "full_numbers",
 				"bProcessing": false,
         "sAjaxSource": '/data/users.php'

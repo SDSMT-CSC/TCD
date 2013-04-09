@@ -2,7 +2,6 @@
 $menuarea = "program";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 
-
 // access check: make sure logged in user has access to edit this program
 // or if some user with type 3 and a different program tries to view it
 if( $user_type != 3 || $user_programID != $program->getProgramID() ) 
@@ -11,15 +10,21 @@ if( $user_type != 3 || $user_programID != $program->getProgramID() )
 } else { 
 ?>
 
-<p>Areas to allow program admins to modify:</p>
+<h1>Program Data</h1>
 
- common location<br />
- locations<br />
- officers<br />
- statutes<br />
- schools<br />
- court positions<br />
- court locations
+<p><strong>Show Information:</strong></p>
+Court Code<br />
+
+<p><strong>Areas to allow program admins to modify:</strong></p>
+
+Primary Program Information ( address, phone number )<br />
+Common Location<br />
+Locations<br />
+Officers<br />
+Statutes<br />
+Schools<br />
+Court Positions<br />
+Court Locations
 
 <?php
 } // end error check

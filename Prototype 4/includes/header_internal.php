@@ -111,7 +111,7 @@ function popupDialog( dTitle, dMsg, dHref )
 			<? echo $program->phone ?> | <a href="/contact.php">Contact Administrator</a>
 		</div>
 		<div class="right">		
-			<div class="identity">605-555-5555 | <a href="/help.php">Help</a> | <a href="/contact.php">Support</a></div>
+			<div class="identity">605-722-8889 | <a href="/help.php">Help</a> | <a href="/contact.php">Support</a></div>
 			<div class="user">Logged in as: <a href="/profile.php"><? echo $user->getName(); ?></a> | <a href="/index.php?logout">Logout</a></div>
 		</div>		 
 	</div>
