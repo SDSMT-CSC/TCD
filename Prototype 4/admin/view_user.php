@@ -54,7 +54,7 @@ if( $user_type > 3 || $user_programID != $program->getProgramID() )
 <script>
 $(function () {
 	
-	$("#tabs").tabs();
+	$("#tabs").tabs({ cookie: { expires: 5 } });
   $("#tabs").show(); 
 	
 	$( "#user-list" ).button().click(function() {	window.location.href = "users.php";	});	

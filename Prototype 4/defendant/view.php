@@ -10,7 +10,6 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_citation.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop.php");
 
 $id = $_GET["id"];
-$error = 0;
 $defendant = new Defendant();
 
 if( isset($id) ) {

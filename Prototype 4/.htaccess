@@ -2,6 +2,9 @@ Options +SymLinksIfOwnerMatch
 RewriteEngine On
 RewriteCond %{SERVER_PORT} !=443
 RewriteRule ^ https://teencourtdb.com%{REQUEST_URI} [R,L]
+
+ErrorDocument 404 /404.php
+
 # Google Analytics Integration - Added by cPanel.
 <IfModule mod_substitute.c>
 AddOutputFilterByType SUBSTITUTE text/html

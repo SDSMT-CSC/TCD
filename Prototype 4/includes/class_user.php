@@ -420,7 +420,7 @@ class User {
 	{
 		// database connection and sql query
     $core = Core::dbOpen();
-    $sql = "SELECT UNIX_TIMESTAMP(date) as date, action, ip_address FROM user_log WHERE userID = :userID ORDER BY date";
+    $sql = "SELECT UNIX_TIMESTAMP(date) as date, action, ip_address FROM user_log WHERE userID = :userID ORDER BY date DESC";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':userID', $id);
     Core::dbClose();
