@@ -476,7 +476,7 @@ class Program {
   {
   	// database connection and sql query
   	$core = Core::dbOpen();
-  	$sql = "SELECT c.position, c.positionID FROM court_position c WHERE c.programID = :id";
+  	$sql = "SELECT c.position, c.positionID FROM court_position c WHERE c.programID = :id ORDER BY c.position";
   	$stmt = $core->dbh->prepare($sql);
   	$stmt->bindParam(':id', $this->programID );
   	Core::dbClose();
