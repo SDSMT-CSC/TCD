@@ -2,20 +2,33 @@
 $menuarea = "court";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 ?>
-
+<script src="/includes/js/dataTables.ajaxReload.js"></script>
 <script>
 jQuery(function($)
 {
 	// if tab cookie is set, reset it to 0
 	$.removeCookie('ui-tabs-1');
 	
-	$("#data-table").dataTable( { 
+	var oTable = $("#data-table").dataTable( { 
 		"aaSorting": [],
     "sPaginationType": "full_numbers",
 		"bProcessing": false,
-    "sAjaxSource": '/data/courts.php'
-	} );
+    "sAjaxSource": '/data/courts.php',
+			"fnServerData": function ( sSource, aoData, fnCallback ) {
+					// use ajax to get the source data
+					$.ajax( {
+							"dataType": 'json',
+							"type": "GET",
+							"url": sSource,
+							"cache": false,
+							"data": aoData,
+							"success": fnCallback
+			});
+		}
+	});
 
+	// refresh the dataTable every 10 seconds
+	var newtimer = setInterval( function () { oTable.fnReloadAjax(); }, 10000 );
 });
 </script>
 

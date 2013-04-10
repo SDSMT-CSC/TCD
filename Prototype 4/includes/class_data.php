@@ -317,7 +317,7 @@ class Data {
 	{
 		//database connection and SQL query
 		$core = Core::dbOpen();
-		$sql = "SELECT c.courtID, d.courtCaseNumber, d.firstName, d.lastName, c.date, cl.name, l.city, l.state
+		$sql = "SELECT c.courtID, d.courtCaseNumber, d.firstName, d.lastName, UNIX_TIMESTAMP(c.date) as date, cl.name, l.city, l.state
 						FROM court c
 						LEFT JOIN defendant d ON c.defendantID = d.defendantID
 						LEFT JOIN court_location cl ON c.courtLocationID = cl.courtLocationID
