@@ -123,6 +123,20 @@ if( $action == "Update Court Guardians" )
 	header("location: view.php?id=".$court->getCourtID() );	
 }
 
+/*********************************************************************************************
+	Update Court Guardians
+*********************************************************************************************/
+if( $action == "Delete Court" )
+{
+	$court = new Court( $user_programID );
+	$court->getFromID( $_GET["id"] );
+
+	$court->deleteCourt();
+	$user->addEvent( "Court: " . $action, $_GET["id"] );
+		
+	// redirect to court page
+	header("location: index.php");		
+}
 ?>
 
 

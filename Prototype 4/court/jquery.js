@@ -12,7 +12,6 @@ jQuery(function($) {
 	$("#court-list").button().click(function() { window.location.href = 'index.php' });
 	$("#add-court").button().click(function() { $("#court-primary").submit(); });
 	$("#update-court").button().click(function() { $("#court-primary").submit(); });
-	$("#delete-court").button();
 	
 	// other buttons	
 	$('#court-defendant-select').button().click(function(){ $('#court-defendant-dialog').dialog('open'); });	
@@ -201,6 +200,18 @@ jQuery(function($) {
 			$(this).removeClass('row_selected_'+mode);
 		else
 			$(this).addClass('row_selected_'+mode);
+	});
+	
+	/**************************************************************************************************
+		DELETE FUNCTIONALITY
+	**************************************************************************************************/
+	// Delete the court
+	$("#delete-court").button().click(function() {
+		dTitle = 'Delete Court';
+		dMsg = 'Are you sure you want to delete this court?';
+		dHref = $(this).val();
+		popupDialog( dTitle, dMsg, dHref );
+		return false;
 	});
 	
 	// Delete an juror

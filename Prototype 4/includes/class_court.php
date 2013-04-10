@@ -108,6 +108,45 @@ class Court {
 	}
 
 	/*************************************************************************************************
+		function: deleteCourt
+		purpose: removes everything from this court
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function deleteCourt()
+	{
+    $core = Core::dbOpen();
+
+	  // database connection and sql queries		
+    $sql = "DELETE FROM court_guardian WHERE courtID = :courtID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':courtID', $this->courtID);
+		$stmt->execute();
+		
+    $sql = "DELETE FROM court_jury_defendant WHERE courtID = :courtID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':courtID', $this->courtID);
+		$stmt->execute();
+		
+    $sql = "DELETE FROM court_jury_volunteer WHERE courtID = :courtID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':courtID', $this->courtID);
+		$stmt->execute();
+
+    $sql = "DELETE FROM court_member WHERE courtID = :courtID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':courtID', $this->courtID);
+		$stmt->execute();
+		
+    $sql = "DELETE FROM court WHERE courtID = :courtID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':courtID', $this->courtID);
+		$stmt->execute();
+		
+		Core::dbClose();
+	}
+	
+	/*************************************************************************************************
 		function: getCourtMembers
 		purpose: get court members for this program
 		input: none
