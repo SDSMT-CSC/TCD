@@ -25,7 +25,7 @@ class Court {
 	
 	/*************************************************************************************************
 		function: updateCourt
-		purpose: 
+		purpose: adds court if courtID is 0, otherwise updates court
 		input: none
   	output: boolean true/false
 	*************************************************************************************************/
@@ -71,7 +71,7 @@ class Court {
 	
 	/*************************************************************************************************
 		function: getFromID
-		purpose: 
+		purpose: gets court information from courtID
 		input: none
   	output: boolean true/false
 	*************************************************************************************************/
@@ -109,7 +109,7 @@ class Court {
 
 	/*************************************************************************************************
 		function: getCourtMembers
-		purpose: 
+		purpose: get court members for this program
 		input: none
   	output: boolean true/false
 	*************************************************************************************************/
@@ -169,8 +169,8 @@ class Court {
 	
 	/*************************************************************************************************
 		function: updateCourtMembers
-		purpose: 
-		input: none
+		purpose: update all assigned court members
+		input: $members = array of positionIDs as key and volunteer IDs as value
   	output: boolean true/false
 	*************************************************************************************************/
 	public function updateCourtMembers( $members )
@@ -306,11 +306,10 @@ class Court {
 	}
 	
 	/*************************************************************************************************
-		function: existingCourtMembers
-		purpose: Gets a list of exsting court members for a particular court, used to make volunteer
-						 active in the court member dropdown lists
-		input: none
-  	output: boolean true/false
+		function: updateJuryMembers
+		purpose: update all assigned jury members
+		input: $members = array of jury members
+  	output: none
 	*************************************************************************************************/
 	public function updateJuryMembers( $members )
 	{		
@@ -337,10 +336,10 @@ class Court {
 	}
 	
 	/*************************************************************************************************
-		function: existingCourtMembers
-		purpose: Gets a list of exsting court members for a particular court, used to make volunteer
-						 active in the court member dropdown lists
-		input: none
+		function: deleteJuryMember
+		purpose: deletes a jury member from the assigned jury pool
+		input: $id = assigned jury member id
+           $type = string to mark if member is volunteer or defendant
   	output: boolean true/false
 	*************************************************************************************************/
 	public function deleteJuryMember( $id, $type )

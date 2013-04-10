@@ -40,7 +40,7 @@ class Program {
 			$this->timezoneID = NULL;	
       $this->active = 1; 
 	}	
-	
+  
   /*************************************************************************************************
    function: programExists
 	 purpose: checks the database to see if an email address exists for a user
@@ -250,8 +250,11 @@ class Program {
   }
   	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: fetchUserDropdown
+   purpose: returns dropdown options of users in the program. Will return with a user selected if userID matches
+   input: $userID = user to preselect
+   output: Dropdown options
+  *************************************************************************************************/
 	public function fetchUserDropdown( $userID  )
 	{
 		$data = NULL;
@@ -278,8 +281,11 @@ class Program {
 	}
 	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: fetchOfficerDropdown
+   purpose: returns dropdown options of officers in the program. Will return with an officer selected if officerID matches
+   input: $officerID = officer to preselect
+   output: Dropdown options
+  *************************************************************************************************/
 	public function fetchOfficerDropdown( $officerID )
 	{
 	  $data = NULL; 
@@ -307,8 +313,11 @@ class Program {
 	}
 	
 	 /*************************************************************************************************
-	 
-	 *************************************************************************************************/
+   function: fetchCommonLocation
+   purpose: inserts a new common place if location is new and returns the commonplaceID, otherwise just returns the commonplaceID
+   input: $location = name for the common location
+   output: common location ID
+  *************************************************************************************************/
 		public function addCommonLocation( $location )
 		{
 			$commonID = NULL;
@@ -354,9 +363,12 @@ class Program {
 			return $commonID;
 		}
 		
-	  /*************************************************************************************************
-	 
-	  *************************************************************************************************/
+	 /*************************************************************************************************
+   function: getCommonLocation
+   purpose: returns the common place name
+   input: $commonLocationID = location to retrieve
+   output: Location name string
+  *************************************************************************************************/
 		public function getCommonLocation( $commonLocationID )
 		{
 			$commonPlaceName = NULL;
@@ -382,8 +394,14 @@ class Program {
 		}
 		
 	  /*************************************************************************************************
-	 
-	  *************************************************************************************************/
+   function: addOfficer
+   purpose: inserts the officer into the database
+   input: $firstname = officer's first name
+          $lastname = officer's last name
+          $idNumber = officer's ID number
+          $phone = phone number to contact officer
+   output: ID of added officer
+  *************************************************************************************************/
 		public function addOfficer( $firstname, $lastname, $idNumber, $phone )
 		{
 			$officerID = NULL;
@@ -413,8 +431,14 @@ class Program {
 		}
 		
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: addStatute
+   purpose: inserts the statute into the database
+   input: $programID = unused variable, uses object's programID
+          $code = statute code
+          $title = title of statute
+          $description = details of the statute
+   output: ID of added statute
+  *************************************************************************************************/
 	public function addStatute( $programID,	$code,	$title, $description )
 	{
 		$statuteID = NULL;
@@ -443,13 +467,16 @@ class Program {
 	}
 	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: getProgramPositions
+   purpose: returns key and ID of court positions
+   input: none
+   output: array of positions as key and ID as value
+  *************************************************************************************************/
   public function getProgramPositions()
   {
   	// database connection and sql query
   	$core = Core::dbOpen();
-  	$sql = "SELECT c.position, c.positionID FROM court_position c WHERE c.programID = :id ORDER BY c.position";
+  	$sql = "SELECT c.position, c.positionID FROM court_position c WHERE c.programID = :id";
   	$stmt = $core->dbh->prepare($sql);
   	$stmt->bindParam(':id', $this->programID );
   	Core::dbClose();
