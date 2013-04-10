@@ -8,7 +8,7 @@ $action = $_REQUEST["action"];
 
 
 /*********************************************************************************************
-	PRIMARY INFORMATION
+	Update Court
 *********************************************************************************************/
 if( $action == "Add Court" || $action == "Edit Court" )
 {
@@ -46,6 +46,9 @@ if( $action == "Add Court" || $action == "Edit Court" )
 	header("location: view.php?id=".$court->getCourtID() );
 }
 
+/*********************************************************************************************
+	Update Court Members
+*********************************************************************************************/
 if( $action == "Update Court Members" )
 {
 	$court = new Court( $user_programID );
@@ -64,6 +67,40 @@ if( $action == "Update Court Members" )
 		
 	// update the court members and add	log the event
 	if( $court->updateCourtMembers( $members ) )
+		$user->addEvent( "Court: " . $action, $court->getCourtID() );
+		
+	// redirect to court page
+	header("location: view.php?id=".$court->getCourtID() );	
+}
+
+/*********************************************************************************************
+	Add Jury Members
+*********************************************************************************************/
+if( $action == "Add Jury Members" )
+{
+	$court = new Court( $user_programID );
+	$court->getFromID( $_POST["courtID"] );
+	
+	$members = split(",",$_POST["members"]);
+		
+	// update the court members and add	log the event
+	if( $court->updateJuryMembers( $members ) )
+		$user->addEvent( "Court: " . $action, $court->getCourtID() );
+		
+	// redirect to court page
+	header("location: view.php?id=".$court->getCourtID() );	
+}
+
+/*********************************************************************************************
+	Delete Jury Member
+*********************************************************************************************/
+if( $action == "Delete Jury Member" )
+{
+	$court = new Court( $user_programID );
+	$court->getFromID( $_GET["courtID"] );
+			
+	// update the court members and add	log the event
+	if( $court->deleteJuryMember( $_GET["id"], $_GET["type"] ) )
 		$user->addEvent( "Court: " . $action, $court->getCourtID() );
 		
 	// redirect to court page

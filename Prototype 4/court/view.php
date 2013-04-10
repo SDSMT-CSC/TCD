@@ -106,23 +106,6 @@ else {
   </table>
 </div>
 
-<div id="jury-member-dialog" title="Add New Jury Member">
-	<form>
-		<table>
-			<tr>
-				<td>Available Jury Members:
-				<td>			
-					<select id="jury-members" name="jury-members">
-						<option>Gorney, Brandon (Volunteer)</option>
-						<option>Drew, Leonard (Volunteer)</option>
-						<option>Doe, John (Defendant)</option>
-					</select>
-				</td>
-			</tr>
-		</table>		
-	</form>
-</div>
-
 <div id="control-header">
 	<div class="left"><h1><? echo $action ?></h1></div>	
 	<div class="right">
@@ -141,7 +124,7 @@ else {
 <form name="court-primary" id="court-primary" method="post" action="process.php">
 	<input type="hidden" name="action" value="<? echo $action ?>" />
   <? if( isset($id) ) { ?>
-  <input type="hidden" name="courtID" value="<? echo $id ?>" />
+  <input type="hidden" name="courtID" id="courtID" value="<? echo $id ?>" />
   <? } ?>
   <fieldset>
     <legend>Court Information</legend>

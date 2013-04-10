@@ -2,8 +2,12 @@
 class Data {
 	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: fetchUserListing
+   purpose: fetches all users or only users in the program depending on user type into JSON encoding
+   input: $user_programID = used to pull only members from that programID
+          $user_type = to determine if you pull everyone or only a specific program
+   output: JSON object
+  *************************************************************************************************/
 	public function fetchUserListing(  $user_programID, $user_type ) 
 	{
 		//database connection and SQL query
@@ -56,8 +60,11 @@ class Data {
 	}
 
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: fetchProgramlisting
+   purpose: fetches all programs into JSON encoding
+   input: none
+   output: JSON object
+  *************************************************************************************************/
 	public function fetchProgramListing() 
 	{
 		//database connection and SQL query
@@ -94,8 +101,11 @@ class Data {
 	}
 	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: fetchProgramLocations
+   purpose: fetches locations for the given program into a JSON object
+   input: $user_programID = program to fetch locations for
+   output: JSON object
+  *************************************************************************************************/
 	public function fetchProgramLocations( $user_programID ) 
 	{
 		 // database connection and sql query
@@ -128,8 +138,11 @@ class Data {
 	}
 	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: fetchProgramSchools
+   purpose: fetches schools for the given program into a JSON object
+   input: $user_programID = program to fetch schools for
+   output: JSON object
+  *************************************************************************************************/
 	public function fetchProgramSchools( $user_programID ) 
 	{
 		 // database connection and sql query
@@ -163,8 +176,11 @@ class Data {
 	}
 	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: fetchProgramStatutes
+   purpose: fetches statutes for the given program into a JSON object
+   input: $user_programID = program to fetch statutes for
+   output: JSON object
+  *************************************************************************************************/
 	public function fetchProgramStatutes( $user_programID ) 
 	{
 		 // database connection and sql query
@@ -195,7 +211,9 @@ class Data {
 	
 	/*************************************************************************************************
 		function: fetchProgramDropdown
-		generates a dropdown list of programs that are active
+		purpose: generates a dropdown list of programs that are active
+    input: $id = program to default as selected
+    output: Dropdown options
 	*************************************************************************************************/
 	public function fetchProgramDropdown( $id )
 	{
@@ -224,8 +242,12 @@ class Data {
 	}
 			
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: fetchUserTypeDropdown
+   purpose: fetches the possible user types that a user could be assigned into a JSON object
+   input: $id = type to default to
+          $utype = user's current type
+   output: Dropdown options
+  *************************************************************************************************/
 	public function fetchUserTypeDropdown( $id, $utype )
 	{
 	  $data = NULL;
@@ -254,8 +276,11 @@ class Data {
 	}
 	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: fetchTimezoneDropdown
+   purpose: generates a dropdown list of possible timezones
+   input: $id = timezone to default to
+   output: Dropdown options
+  *************************************************************************************************/
 	public function fetchTimezoneDropdown( $id )
 	{
 	  $data = NULL;
@@ -283,9 +308,13 @@ class Data {
 	}
 
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
-	public function fetchCourtListing(  $user_programID ) {
+   function: fetchCourtListing
+   purpose: fetches all courts for the given program into a JSON object
+   input: $user_programID = program to fetch courts for
+   output: JSON object
+  *************************************************************************************************/
+	public function fetchCourtListing(  $user_programID ) 
+	{
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		$sql = "SELECT c.courtID, d.courtCaseNumber, d.firstName, d.lastName, c.date, cl.name, l.city, l.state
@@ -324,10 +353,13 @@ class Data {
 	}
 
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
-
-	public function fetchCourtLocation ( $user_programID ) {
+   function: fetchCourtLocation
+   purpose: fetches court locations for the given program into a JSON object
+   input: $user_programID = program to fetch court locations for
+   output: JSON object
+  *************************************************************************************************/
+	public function fetchCourtLocation ( $user_programID ) 
+	{
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		$sql = "SELECT cl.name, cl.address, l.city, l.state, l.zip, cl.courtLocationID FROM court_location cl
@@ -358,9 +390,94 @@ class Data {
 	}
 
 	/*************************************************************************************************
+   function: fetchCourtJuryPool
+   purpose: fetches possible jury pool members for the given program into a JSON object
+   input: $user_programID = program to fetch jury pool for
+   output: JSON object
+  *************************************************************************************************/
+	public function fetchCourtJuryPool( $user_programID, $courtID )
+	{
+		//database connection and SQL query
+		$core = Core::dbOpen();
+		$sql = "( SELECT vp.volunteerID as id, 'Volunteer' as type, v.lastName, v.firstName
+						FROM volunteer_position vp
+						LEFT JOIN volunteer v ON v.volunteerID = vp.volunteerID
+						LEFT JOIN court_position cp ON cp.positionID = vp.positionID
+						WHERE cp.position = 'Jury' AND v.programID = :programID )
+						UNION
+						( SELECT defendantID as id, 'Defendant' as type, lastName, firstName FROM defendant 
+						WHERE programID = :programID )";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':programID', $user_programID );
+		
+		try {
+			if($stmt->execute() && $stmt->rowCount() > 0) {
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+					
+					// check if the jury person is available
+					if( $this->checkJuror( $courtID, $aRow["id"], $aRow["type"] ) )
+					{
+						$row = array();
+						
+						$row[] = $aRow["id"];
+						$row[] = $aRow["type"];
+						$row[] = $aRow["lastName"];
+						$row[] = $aRow["firstName"];
+						
+						$output['aaData'][] = $row;
+					}
+				}
+				return json_encode($output);
+			}
+		} catch ( PDOException $e ) {
+			echo "Court Jury Pool Read Failed!";
+		}
+		return '{"aaData":[]}';
+	}
 	
-	*************************************************************************************************/
-	public function fetchDefendantListing(  $user_programID ) {
+	/*************************************************************************************************
+   function: checkJuror
+   purpose: checks a juror to see if they are available for the court listing or not
+   input: $courtID = id of court
+	 			  $jurorID = id of juror to lookup
+					$type = type of juror
+   output: boolean true = juror is ok for listing
+	         boolean false = juror already belongs to the court
+	 todo: could check time on court and make sure the juror isn't already listed in another court
+	       at the same time
+  *************************************************************************************************/
+	private function checkJuror( $courtID, $jurorID, $type )
+	{
+		//database connection and SQL query
+		$core = Core::dbOpen();
+		
+		// see if they are already listed - or if defendant, it isn't their court
+		if( $type == 'Volunteer' )
+			$sql = "( SELECT volunteerID FROM court_jury_volunteer WHERE courtID = :courtID AND volunteerID = :jurorID )
+							UNION ( SELECT volunteerID FROM court_member WHERE courtID = :courtID AND volunteerID = :jurorID )";
+		else
+			$sql = "( SELECT defendantID FROM court_jury_defendant WHERE courtID = :courtID AND defendantID = :jurorID )
+		 					UNION ( SELECT defendantID FROM court WHERE courtID = :courtID AND defendantID = :jurorID )";
+		
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':courtID', $courtID );
+		$stmt->bindParam(':jurorID', $jurorID );
+		
+		if( $stmt->execute() && $stmt->rowCount() > 0 ) 
+			return false;
+
+		
+		return true;
+	}
+
+	/*************************************************************************************************
+   function: fetchDefendantListing
+   purpose: fetches defendants for the given program who are still going through the Teen Court program into a JSON object
+   input: $user_programID = program to fetch defendants for
+   output: JSON object
+  *************************************************************************************************/
+	public function fetchDefendantListing(  $user_programID ) 
+	{
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
@@ -404,9 +521,13 @@ class Data {
 	}
 
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
-	public function fetchVolunteerListing(  $user_programID ) {
+   function: fetchVolunteerListing
+   purpose: fetches active volunteers for the given program into a JSON object
+   input: $user_programID = program to fetch volunteers for
+   output: JSON object
+  *************************************************************************************************/
+	public function fetchVolunteerListing(  $user_programID ) 
+	{
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
@@ -444,9 +565,13 @@ class Data {
 	}
 
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
-	public function fetchWorkshopListing(  $user_programID ) {
+   function: fetchWorkshopListing
+   purpose: fetches workshops for the given program into a JSON object
+   input: $user_programID = program to fetch workshops for
+   output: JSON object
+  *************************************************************************************************/
+	public function fetchWorkshopListing(  $user_programID ) 
+	{
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
@@ -483,9 +608,13 @@ class Data {
 	}
 	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
-	public function fetchWorkshopDefendantsListing( $user_programID ) {
+   function: fetchWorkshopDefendantsListing
+   purpose: fetches defendants from the given program to be workshop participants into a JSON object
+   input: $user_programID = program to fetch defendants for
+   output: JSON object
+  *************************************************************************************************/
+	public function fetchWorkshopDefendantsListing( $user_programID ) 
+	{
 		$core = Core::dbOpen();
 		$sql = "SELECT d.firstName, d.lastName, d.defendantID FROM defendant d WHERE d.programID = :programID";
 		$stmt = $core->dbh->prepare($sql);
@@ -514,10 +643,13 @@ class Data {
 	}
 	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
-
-	public function fetchWorkshopLocation ( $user_programID ) {
+   function: fetchWorkshopLocation
+   purpose: , fetches workshop locations for the given program into a JSON object
+   input: $user_programID = program to fetch workshop locations for
+   output: JSON object
+  *************************************************************************************************/
+	public function fetchWorkshopLocation ( $user_programID ) 
+	{
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		$sql = "SELECT wl.name, wl.address, l.city, l.state, l.zip, wl.workshopLocationID FROM workshop_location wl
@@ -549,8 +681,11 @@ class Data {
 	
 			
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: fetchProgramCommonLocations
+   purpose: fetches common places for the given program into a JSON object
+   input: $user_programID = program to fetch common places for
+   output: JSON object
+  *************************************************************************************************/
 	public function fetchProgramCommonLocations( $user_programID )
 	{
 	  $data = NULL; 

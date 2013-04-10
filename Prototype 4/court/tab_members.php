@@ -21,14 +21,14 @@ foreach( $positions as $row )
 				<?
         if( sizeof( $row['members'] ) > 0 )
         {
-          foreach( $row['members'] as $id => $volunteer ) 
+          foreach( $row['members'] as $volID => $volunteer ) 
           {
 						if( array_key_exists( $row['id'], $existing ) )
 						{
-							$selected = ( $existing[$row['id']] == $id ) ? " selected" : "";
+							$selected = ( $existing[$row['id']] == $volID ) ? " selected" : "";
 						}
 						?>
-						<option value="<? echo $id ?>"<? echo $selected ?>><? echo $volunteer ?></option>
+						<option value="<? echo $volID ?>"<? echo $selected ?>><? echo $volunteer ?></option>
 						<?
           }
         }
@@ -40,7 +40,5 @@ foreach( $positions as $row )
 }
 ?>
 </table>
-
-   
- </form>
+</form>
 <button id="update-court-members">Update Court Members</button>

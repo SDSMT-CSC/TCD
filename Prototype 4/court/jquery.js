@@ -3,7 +3,7 @@ jQuery(function($) {
 	/**************************************************************************************************
 		BUTTON AND MAIN TAB SETUP
 	**************************************************************************************************/
-	$("#tabs").tabs();
+	$("#tabs").tabs({ cookie: { expires: 5 } });
 	$("#tabs").show(); 
 	$("#court-date").datepicker();
 	$("#court-time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: ''});
@@ -14,13 +14,12 @@ jQuery(function($) {
 	$("#update-court").button().click(function() { $("#court-primary").submit(); });
 	$("#delete-court").button();
 	
-	$('#add-location').click(function(){ $('#location-dialog').dialog('open'); });
-	$('#add-jury-member').click(function(){ $('#jury-member-dialog').dialog('open'); });
-	
+	// other buttons	
 	$('#court-defendant-select').button().click(function(){ $('#court-defendant-dialog').dialog('open'); });	
 	$('#court-location').button().click(function(){ $('#court-location-dialog').dialog('open'); });
 	$('#program-location').button().click(function(){ $('#location-dialog').dialog('open'); });	
 	$('#update-court-members').button().click(function() { $("#court-members").submit(); });
+	$('#add-jury-members').button().click(function(){ $('#jury-member-dialog').dialog('open'); });
 	
 	/**************************************************************************************************
 		FORM VALIDATION
@@ -88,7 +87,29 @@ jQuery(function($) {
 		modal: true,
 		width:450,
 		buttons: {
+			'Add Jury': function() {
+					var members = new Array();
+					var aTrs = courtJuryTable.fnGetNodes();
+					var id, type;
+					
+					// build array with selected items in the table
+					for ( var i=0 ; i<aTrs.length ; i++ )
+					{
+						if ( $(aTrs[i]).hasClass('row_selected_odd') || $(aTrs[i]).hasClass('row_selected_even') )
+						{
+							id = aTrs[i].cells[0].innerText;
+							type = aTrs[i].cells[1].innerText;
+							
+							members.push( id + ':' + type );
+						}
+					}					
+				
+					// set the form element to this string and submit it
+					$("#members").val(members);
+					$("#jury").submit();
+			},
 			Cancel: function() {
+				resetDataTable( courtJuryTable );
 				$(this).dialog('close');
 			}
 		}
@@ -109,18 +130,25 @@ jQuery(function($) {
 				"sAjaxSource": '/data/defendants_current.php'
 	});
 	
-	var locTable = $("#location-table").dataTable( { 
+	var locTable = $("#location-table").dataTable({ 
 				"aaSorting": [],
 				"sPaginationType": "full_numbers",
 				"bProcessing": false,
 				"sAjaxSource": '/data/program_locations.php'
 	});
 	
-	var courtLocationTable = $("#court-location-table").dataTable( { 
+	var courtLocationTable = $("#court-location-table").dataTable({ 
 				"aaSorting": [],
 				"sPaginationType": "full_numbers",
 				"bProcessing": false,
 				"sAjaxSource": '/data/court_location.php'
+	});
+	
+	var courtJuryTable = $("#court-jury-table").dataTable({
+		"aaSorting": [],
+		"sPaginationType": "full_numbers",
+		"bProcessing": false,
+		"sAjaxSource": '/data/court_jurypool.php?id=' + $("#courtID").val()
 	});
 	
 	/**************************************************************************************************
@@ -160,5 +188,18 @@ jQuery(function($) {
 		}
 	});
 	
+	$('#court-jury-table tr').live('click', function (event) {
+		var mode;
+		
+		if( $(this).hasClass('odd') )
+			mode = 'odd';
+		else
+			mode = 'even';
+		
+		if ( $(this).hasClass('row_selected_'+mode) )
+			$(this).removeClass('row_selected_'+mode);
+		else
+			$(this).addClass('row_selected_'+mode);
+	});
 	
 });

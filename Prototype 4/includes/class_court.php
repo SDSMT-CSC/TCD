@@ -264,6 +264,113 @@ class Court {
 		
 		return $data;
 	}
+	
+	/*************************************************************************************************
+		function: getJuryMembers
+		purpose: Gets a list of exsting court members for a particular court, used to make volunteer
+						 active in the court member dropdown lists
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function getJuryMembers()
+	{
+		$data = array();
+		
+		 // database connection and sql query
+    $sql = "( SELECT cv.volunteerID as id, 'Volunteer' as type, v.lastName, v.firstName 
+						FROM court_jury_volunteer cv
+						JOIN volunteer v ON v.volunteerID = cv.volunteerID
+						WHERE cv.courtID = :courtID )
+						UNION
+						( SELECT cd.defendantID as id, 'Defendant' as type, d.lastName, d.firstName 
+						FROM court_jury_defendant cd
+						JOIN defendant d ON d.defendantID= cd.defendantID
+						WHERE cd.courtID = :courtID )";
+    $core = Core::dbOpen();
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':courtID', $this->courtID);
+    Core::dbClose();
+    
+    try
+    {
+      if( $stmt->execute())
+      {
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+					$data[] = $row;
+			}
+		} catch ( PDOException $e ) {
+      echo "Get existing jury member array failed!";
+    }
+		
+		return $data;
+	}
+	
+	/*************************************************************************************************
+		function: existingCourtMembers
+		purpose: Gets a list of exsting court members for a particular court, used to make volunteer
+						 active in the court member dropdown lists
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function updateJuryMembers( $members )
+	{		
+    $core = Core::dbOpen();
+		
+		// insert jury member into database
+		foreach( $members as $juror )
+		{
+			$parts = split( ":", $juror );
+			
+		  // database connection and sql query			
+			if( $parts[1] == 'Volunteer' )
+				$sql = "INSERT INTO court_jury_volunteer ( courtID, volunteerID ) VALUES ( :courtID, :jurorID )";
+			else
+				$sql = "INSERT INTO court_jury_defendant ( courtID, defendantID ) VALUES ( :courtID, :jurorID )";
+						
+			$stmt = $core->dbh->prepare($sql);
+			$stmt->bindParam(':courtID', $this->courtID);
+			$stmt->bindParam(':jurorID', $parts[0]);
+			$stmt->execute();
+		}
+		
+    Core::dbClose();
+	}
+	
+	/*************************************************************************************************
+		function: existingCourtMembers
+		purpose: Gets a list of exsting court members for a particular court, used to make volunteer
+						 active in the court member dropdown lists
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function deleteJuryMember( $id, $type )
+	{		
+    $core = Core::dbOpen();
+		
+		// database connection and sql query			
+		if( $type == 'Volunteer' )
+			$sql = "DELETE FROM court_jury_volunteer WHERE courtID = :courtID AND volunteerID = :jurorID";
+		else
+			$sql = "DELETE FROM court_jury_defendant WHERE courtID = :courtID AND defendantID = :jurorID";
+						
+			$stmt = $core->dbh->prepare($sql);
+			$stmt->bindParam(':courtID', $this->courtID);
+			$stmt->bindParam(':jurorID', $id);
+    	Core::dbClose();
+		
+		try
+		{
+      if( $stmt->execute())
+     		return true;
+				
+			print_r( $stmt->errorInfo() );
+		} catch ( PDOException $e ) {
+      echo "Get existing jury member array failed!";
+    }
+		
+		return false;
+	}
+
 
 	// setters
 	public function setDefendantID( $val ) { $this->defendantID = $val; }

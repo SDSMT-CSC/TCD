@@ -14,7 +14,7 @@ $out_time->modify("+1 hour");
 if( ($cur_time > $out_time) || (!isset($_SESSION["valid"]) && !$_SESSION["valid"]) )
 {
 		session_unset(); 
-        session_destroy(); 
+    session_destroy(); 
 		header("location: /index.php");
 		die();
 }

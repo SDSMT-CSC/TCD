@@ -89,58 +89,62 @@ $(function () {
 <input type="hidden" name="volunteerID" value="<? echo $id ?>" />
 <? } ?>
 
-<table>
-	<tr>
-		<td style="width:65%;vertical-align:top">
-			<fieldset>
-				<legend>Volunteer Information</legend>
-				<table>
-					<tr>
-						<td>Active?</td>
-						<td>
-							<select name="active">
-								<option value="1" <? if($active == 1) echo 'selected="true"' ?> >Yes</option>
-								<option value="0" <? if($active == 0) echo 'selected="true"' ?>>No</option>
-							</select>
-						</td>
-					</tr>
-					<tr>
-						<td width="100">First Name:</td>
-						<td><input type="text" name="firstName" value="<? echo $firstName ?>"/></td>
-					</tr>
-					<tr>
-						<td>Last Name:</td>
-						<td><input type="text" name="lastName" value="<? echo $lastName ?>"/></td>
-					</tr>
-					<tr>
-						<td>Phone #:</td>
-						<td><input type="text" name="phone" value="<? echo $phone?>"/></td>
-					</tr>
-					<tr>
-						<td>Email:</td>
-						<td><input type="text" name ="email" value="<? echo $email ?>"/></td>
-					</tr>
-				</table>
-			</fieldset>
-		</td>
-		<td style="width:35%">
-			<fieldset>
-				<legend>Volunteer Positions</legend>
-				<table>
-					<? foreach( $programPositions as $key => $value) { ?>
-					<tr>
-						<td><? echo $key ?></td>
-						<td>
-            	<? $checked = in_array( $value, $volunteer->getPositions() ) ? " checked" : ""; ?>
-              <input type="checkbox" name="position[]" value="<? echo $value ?>"<? echo $checked ?> />
-           	</td>
+<fieldset>
+	<legend>Volunteer Information</legend>
+  <table>
+    <tr>
+      <td valign="top" width="50%">
+        <table>
+          <tr>
+            <td width="75">Active?</td>
+            <td>
+              <select name="active">
+                <option value="1" <? if($active == 1) echo 'selected="true"' ?> >Yes</option>
+                <option value="0" <? if($active == 0) echo 'selected="true"' ?>>No</option>
+              </select>
+            </td>
           </tr>
-					<? } ?>
-				</table>
-			</fieldset>
-		</td>
-	</tr>
-</table>
+          <tr>
+            <td width="100">First Name:</td>
+            <td><input type="text" name="firstName" value="<? echo $firstName ?>"/></td>
+          </tr>
+          <tr>
+            <td>Last Name:</td>
+            <td><input type="text" name="lastName" value="<? echo $lastName ?>"/></td>
+          </tr>
+        </table>
+      </td>
+      <td valign="top" width="50%">
+        <table>
+          <tr><td colspan="2"></td></tr>        
+          <tr>
+            <td width="75">Phone #:</td>
+            <td><input type="text" name="phone" value="<? echo $phone?>"/></td>
+          </tr>
+          <tr>
+            <td>Email:</td>
+            <td><input type="text" name ="email" value="<? echo $email ?>"/></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</fieldset>
+
+<fieldset>
+  <legend>Volunteer Positions</legend>
+  <table>
+    <? foreach( $programPositions as $key => $value) { ?>
+    <tr>
+      <td width="250"><? echo $key ?></td>
+      <td>
+        <? $checked = in_array( $value, $volunteer->getPositions() ) ? " checked" : ""; ?>
+        <input type="checkbox" name="position[]" value="<? echo $value ?>"<? echo $checked ?> />
+      </td>
+    </tr>
+    <? } ?>
+  </table>
+</fieldset>
 
 </form>
 

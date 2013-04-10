@@ -38,6 +38,8 @@ table.dataTable td.dataTables_empty {
 
 table.dataTable tr.odd { background-color: #eff4f6; cursor: pointer; }
 table.dataTable tr.even { background-color: white;  cursor: pointer; }
+table.dataTable tr.row_selected_odd { background-color: #fae5c6;  cursor: pointer; }
+table.dataTable tr.row_selected_even { background-color: #fbf0e1;  cursor: pointer; }
 
 table.dataTable tr.odd:hover { background-color: #fefcc5; }
 table.dataTable tr.even:hover { background-color: #fffee8; }
@@ -66,7 +68,6 @@ table.dataTable tr.even td.sorting_3 { background-color: #F9F9FF; }
 .dataTables_wrapper .ui-toolbar {
 	padding: 5px 2px;
 }
-
 
 /*
  * Page length menu
