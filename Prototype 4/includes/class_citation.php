@@ -14,9 +14,9 @@ class Citation {
 		
 	/*************************************************************************************************
     function: __construct
-    purpose:
-    input:
-    output: 
+    purpose: Loads citation information for the given defendantID into citation object, otherwise returns with an empty object
+    input: $defendantID = id to load
+    output: construct citation object
   ************************************************************************************************/
 	public function __construct( $defendantID )
 	{		
@@ -62,9 +62,10 @@ class Citation {
 		
 	/*************************************************************************************************
     function: updateCitation
-    purpose:
-    input:
-    output: 
+    purpose: Updates the citation information in the database if citationID is filled, otherwise it 
+	   creates a new row and inserts the information.
+    input: None
+    output: boolean true/false
   ************************************************************************************************/
 	public function updateCitation()
 	{
@@ -113,10 +114,11 @@ class Citation {
 	}
 	
 	/*************************************************************************************************
-    function: getStatuteList
-    purpose:
-    input:
-    output: 
+    function: getOffenseList
+    purpose: Gets the offenses for the defendant based off of defendantID and citationID. Option to 
+	  remove offense is visible depending on user type. 
+    input: $user_type = typeID, for granting access to edit option
+    output: JSON object
   ************************************************************************************************/
 	public function getOffenseList( $user_type )
 	{
@@ -158,9 +160,9 @@ class Citation {
 	
 	/*************************************************************************************************
     function: addOffense
-    purpose:
-    input:
-    output: 
+    purpose: Adds new offense to record.
+    input: $statuteID = statute to be added.
+    output: offenseID
   ************************************************************************************************/
 	public function addOffense( $statuteID )
 	{	
@@ -190,9 +192,9 @@ class Citation {
 	
 	/*************************************************************************************************
     function: removeOffense
-    purpose:
-    input:
-    output: 
+    purpose: Removes offense from record.
+    input: $offenseID = offense to be removed
+    output: boolean true/false
   ************************************************************************************************/
 	public function removeOffense( $offenseID )
 	{
@@ -216,9 +218,9 @@ class Citation {
 	
 	/*************************************************************************************************
     function: addStolenItem
-    purpose:
-    input:
-    output: 
+    purpose: Gets stolen items based off of citationID
+    input: None
+    output: array of items or empty array
   ************************************************************************************************/
 	public function getStolenItems()
 	{
@@ -255,9 +257,10 @@ class Citation {
 	
 	/*************************************************************************************************
     function: addStolenItem
-    purpose:
-    input:
-    output: 
+    purpose: Records the name and value of an item and adds to record.
+    input: $name = item name
+	       $value = item value
+    output: boolean true/false
   ************************************************************************************************/
 	public function addStolenItem( $name, $value )
 	{
@@ -280,10 +283,10 @@ class Citation {
 	
 	/*************************************************************************************************
     function: removeStolenItem
-    purpose:
-    input:
-    output: 
-  ************************************************************************************************/
+    purpose: Removes an item from record.
+    input: $itemID = item to be removed
+    output: boolean true/false
+    ************************************************************************************************/
 	public function removeStolenItem( $itemID )
 	{
 		 // database connection and sql query
@@ -304,9 +307,9 @@ class Citation {
 
 	/*************************************************************************************************
     function: getVehicles
-    purpose:
-    input:
-    output: 
+    purpose: Gets vehicles used in offense
+    input: None
+    output: array of vehicles or empty array
   ************************************************************************************************/
 	public function getVehicles()
 	{
@@ -343,9 +346,15 @@ class Citation {
 	}
 	/*************************************************************************************************
     function: addVehicle
-    purpose:
-    input:
-    output: 
+    purpose: Adds a vehicle to record.
+    input: $year = year of vehicle
+	       $make = make of vehicle
+	       $model = model of vehicle
+	       $color = color of vehicle
+	       $license = vehicle license
+	       $state = state vehicle license was issued from
+	       $comment = comment about vehicle
+    output: boolean true/false
   ************************************************************************************************/
 	public function addVehicle( $year, $make, $model, $color, $license, $state, $comment )
 	{
@@ -374,9 +383,9 @@ class Citation {
 	
 	/*************************************************************************************************
     function: removeVehicle
-    purpose:
-    input:
-    output: 
+    purpose: Removes a vehicle from record.
+    input: $vehicleID = vehicle to remove
+    output: boolean true/false
   ************************************************************************************************/
 	public function removeVehicle( $vehicleID )
 	{

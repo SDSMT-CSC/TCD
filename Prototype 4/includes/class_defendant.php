@@ -248,8 +248,12 @@ class Defendant {
 	
 	/*************************************************************************************************
 		function: updateIntake
-		purpose: 
-		input: none
+		purpose: updates the defendant’s intake information. This is done after initially adding a defendant to the database
+		input: $intake = date and time of intake interview
+	 		   $reschedule = date and time of rescheduled interview
+	 		   $interview = ID of person conducting interview
+	 		   $referred = date and time of when defendant was referred to juvenile system
+	 		   $dismissed = date and time of when defendant was dismissed from Teen Court system
   	output: boolean true/false
 	*************************************************************************************************/
 	public function updateIntake( $intake, $reschedule, $inteviewer, $referred, $dismissed )
@@ -313,9 +317,9 @@ class Defendant {
 	
 	/*************************************************************************************************
 		function: getGuardianList
-		purpose: 
+		purpose: returns an array of guardianIDs for the defendant
 		input: none
-  	output: boolean true/false
+  		output: array of guardian IDs
 	*************************************************************************************************/
 	public function getGuardianList()
 	{
@@ -341,9 +345,9 @@ class Defendant {
 	
 	/*************************************************************************************************
 		function: totalGuardians
-		purpose: 
+		purpose: returns a count of guardians for the defendant
 		input: none
-  	output: int count of guardians
+  		output: int count of guardians
 	*************************************************************************************************/
 	public function totalGuardians()
 	{
@@ -367,10 +371,10 @@ class Defendant {
 	}
 	
 	/*************************************************************************************************
-		function: totalGuardians
-		purpose: 
+		function: checkWorkshop
+		purpose: returns if the defendant is in a workshop and if they have completed it
 		input: none
-  	output: int count of guardians
+  	output: array of workshops and completion times
 	*************************************************************************************************/
 	public function checkWorkshop()
 	{

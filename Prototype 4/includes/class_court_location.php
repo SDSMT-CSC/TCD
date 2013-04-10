@@ -11,6 +11,12 @@ class courtLocation {
 	public $state;
 	public $zip;
 	
+  /*************************************************************************************************
+   function: __construct
+   purpose: class constructor
+   input: $user_programID = programID
+   output: empty courtLocation object
+  *************************************************************************************************/
 	public function __construct( $user_programID )
 	{
 		$this->courtLocationID = 0;
@@ -23,6 +29,12 @@ class courtLocation {
 		$this->zip = NULL;
 	}
 	
+  /*************************************************************************************************
+   function: updateCourtLocation
+   purpose: adds a new court location to database if it doesn’t exist in the database, otherwise updates the location if they don’t match
+   input: none
+   output: none
+  *************************************************************************************************/
 	public function updateCourtLocation()
 	{
 		
@@ -78,6 +90,12 @@ class courtLocation {
 		return false;
 	}
 
+	/*************************************************************************************************
+   function: getCourtLocation
+   purpose: loads court location object with data based on courtLocID
+   input: $workshopLocID
+   output: none
+  *************************************************************************************************/
 	public function getCourtLocation( $workshopLocID )
 	{
 		$core = Core::dbOpen();

@@ -23,7 +23,8 @@ class Workshop {
 	
 	/*************************************************************************************************
 		function: updateWorkshop
-		purpose: 
+		purpose: inserts a new workshop into the database if workshopID is empty, otherwise updates the 
+    information for that workshop
 		input: none
   	output: boolean true/false
 	*************************************************************************************************/
@@ -67,7 +68,7 @@ class Workshop {
 	
 	/*************************************************************************************************
 		function: deleteWorkshop
-		purpose: 
+		purpose: deletes workshop roster and workshop 
 		input: none
   	output: boolean true/false
 	*************************************************************************************************/
@@ -108,8 +109,8 @@ class Workshop {
 	
 	/*************************************************************************************************
 		function: getWorkshop
-		purpose: 
-		input: id of workshop
+		purpose: returns workshop information retrieved based on id
+		input: $id = id of workshop
   	output: boolean true/false
 	*************************************************************************************************/
 	public function getWorkshop( $id )
@@ -148,8 +149,9 @@ class Workshop {
 	
 	/*************************************************************************************************
 		function: addWorkshopParticipant
-		purpose: 
-		input: none
+		purpose: adds defendant and program to roster
+		input: $workshopID = workshop to add to
+           $defendantID = defendant to add
   	output: boolean true/false
 	*************************************************************************************************/
 	public function addWorkshopParticipant( $workshopID, $defendantID )
@@ -172,8 +174,9 @@ class Workshop {
 	
 	/*************************************************************************************************
 		function: removeWorkshopParticipant
-		purpose: 
-		input: none
+		purpose: deletes defendant from workshop
+		input: $workshopID = workshop to delete from
+           $defendantID = defendant to add
   	output: boolean true/false
 	*************************************************************************************************/
 	public function removeWorkshopParticipant( $workshopID, $defendantID )
@@ -196,8 +199,9 @@ class Workshop {
 	
 	/*************************************************************************************************
 		function: completedWorkshopParticipant
-		purpose: 
-		input: none
+		purpose: marks defendant as having completed the workshop at current time
+		input: $workshopID = workshop to add defendant to
+           $defendantID = defendant to add
   	output: boolean true/false
 	*************************************************************************************************/
 	public function completedWorkshopParticipant( $workshopID, $defendantID )
@@ -221,8 +225,8 @@ class Workshop {
 	
 	/*************************************************************************************************
 		function: listWorkshopParticipants
-		purpose: 
-		input: none
+		purpose: returns list of workshop participants for the given workshop
+		input: $id = workshop to get list from
   	output: data string
 	*************************************************************************************************/
 	public function listWorkshopParticipants( $id )

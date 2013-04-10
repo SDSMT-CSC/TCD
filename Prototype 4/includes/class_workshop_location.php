@@ -23,6 +23,12 @@ class workshopLocation {
 		$this->zip = NULL;
 	}
 	
+  /*************************************************************************************************
+   function: updateWorkshopLocation
+   purpose: adds a new workshop or edits an existing workshop depending on workshopLocationID
+   input: none
+   output: boolean true/false
+  *************************************************************************************************/
 	public function updateWorkshopLocation()
 	{
 		
@@ -78,6 +84,12 @@ class workshopLocation {
 		return false;
 	}
 
+	/*************************************************************************************************
+   function: getWorkshopLocation
+   purpose: loads workshop location object with data based on workshopLocID
+   input: $workshopLocID = workshop location to retrieve
+   output: none
+  *************************************************************************************************/
 	public function getWorkshopLocation( $workshopLocID )
 	{
 		$core = Core::dbOpen();

@@ -23,8 +23,11 @@ class Volunteer {
   }
 	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: getVolunteer
+   purpose: returns volunteer information based on id
+   input: $id = volunteer id to look up
+   output: boolean true/false
+  *************************************************************************************************/
   public function getVolunteer( $id )
   {		
 		// database connection and sql query
@@ -79,8 +82,12 @@ class Volunteer {
   }
 		
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: updateVolunteer
+   purpose: if volunteerID is empty, inserts volunteer into database. Otherwise updates volunteer information.
+   After insert/update, clears all positions the volunteer holds in the database and inserts new positions
+   input: none
+   output: boolean false
+  *************************************************************************************************/
   public function updateVolunteer()
   {
   	// database connection and sql query to update volunteer
@@ -150,8 +157,11 @@ class Volunteer {
   }
 	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: clearPositions
+   purpose: deletes all positions that the volunteer is currently assigned
+   input: none
+   output: boolean true/false
+  *************************************************************************************************/
 	 public function clearPositions()
   {
 		//delete old positions
@@ -174,8 +184,11 @@ class Volunteer {
 	}
 	
 	/*************************************************************************************************
-	
-	*************************************************************************************************/
+   function: deleteVolunteer
+   purpose: sets volunteer to inactive
+   input: none
+   output: boolean true/false
+  *************************************************************************************************/
   public function deleteVolunteer()
   {  	
   	// delete volunteer - actually flag them in the database
@@ -197,7 +210,20 @@ class Volunteer {
 		return false;
   }
 	
+  /*************************************************************************************************
+   function: editVolunteerHours
+   purpose: assign hours a volunteer has worked in court
+   input: 
+   output: 
+  *************************************************************************************************/
   public function editVolunteerHours() {}
+  
+  /*************************************************************************************************
+   function: printVolunteerHours
+   purpose: print listing of volunteer hours
+   input: 
+   output: 
+  *************************************************************************************************/
   public function printVolunteerHours() {}
   
   //getter

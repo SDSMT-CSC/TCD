@@ -34,6 +34,12 @@ class Guardian {
 		$this->liveswith = NULL;
 	}
 	
+  /*************************************************************************************************
+   function: getFromID
+   purpose: loads the guardian object with information based off the given ID
+   input: $id = guardianID
+   output: boolean true/false
+  *************************************************************************************************/
 	public function getFromID( $id )
 	{
 		 // database connection and sql query
@@ -69,6 +75,12 @@ class Guardian {
     return false;
 	}	
 	
+  /*************************************************************************************************
+   function: updateGuardian
+   purpose: inserts or updates the guardian object into the database depending on if guardianID is set
+   input: none
+   output: boolean true/false
+  *************************************************************************************************/
 	public function updateGuardian()
 	{
 		 // database connection and sql query
@@ -121,7 +133,12 @@ class Guardian {
     }
 		return false;		
 	}
-	
+	/*************************************************************************************************
+   function: removeGuardian
+   purpose: deletes guardian from database
+   input: none
+   output: boolean true/false
+  *************************************************************************************************/
 	public function removeGuardian()
 	{
 		 // database connection and sql query

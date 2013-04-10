@@ -86,10 +86,10 @@ class User {
   }
   
 	/*************************************************************************************************
-		function: getFromID
-		purpose: gets user information from a user id
+	function: getFromID
+	purpose: gets user information from a user id
     input: $id = user id
-		output: boolean true/false
+	output: boolean true/false
 	*************************************************************************************************/
   public function getFromID( $id )
   {
@@ -181,9 +181,9 @@ class User {
   }
   
 	/*************************************************************************************************
-		function: updateUser
-		purpose: adds the user if userid is 0, otherwise updates the user record
-		input: none
+	function: updateUser
+	purpose: adds the user if userid is 0, otherwise updates the user record
+	input: none
   	output: boolean true/false
 	*************************************************************************************************/
   public function updateUser()
@@ -236,10 +236,10 @@ class User {
   }
 	
 	/*************************************************************************************************
-		function: removeUser
-		purpose: marks the user as deleted and inactive in the database,
+	function: removeUser
+	purpose: marks the user as deleted and inactive in the database,
 						 doesn't actually remove the user
-		input: $id = user id
+	input: $id = user id
     output: boolean true/false
 	*************************************************************************************************/
   public function removeUser( $id )
@@ -262,9 +262,9 @@ class User {
   }
   
 	/*************************************************************************************************
-		function: emailExists
-	 	purpose: checks the database to see if an email address exists for a user
-		input: $email = email address to check
+	function: emailExists
+	purpose: checks the database to see if an email address exists for a user
+	input: $email = email address to check
     output: boolean true/false
 	*************************************************************************************************/
 	public function emailExists( $email )
@@ -291,9 +291,9 @@ class User {
 	}
 	
 	/*************************************************************************************************
-		function: fetchPhoneNumbers
-	 	purpose: gets the users phone numbers
-		input: none
+	function: fetchPhoneNumbers
+	purpose: gets the users phone numbers
+	input: none
     output: array of numbers or NULL if empty
 	*************************************************************************************************/
 	public function fetchPhoneNumbers()
@@ -327,12 +327,12 @@ class User {
 	}
 	
 	/*************************************************************************************************
-		function: addPhone
-		purpose: to add a phone number to the user
-		intput: $type = the type of phone number cell, work, home, etc
-						$number = the phone number
-						$ext = extension if any
-		output: boolean true/false
+	function: addPhone
+	purpose: to add a phone number to the user
+	intput: $type = the type of phone number cell, work, home, etc
+			$number = the phone number
+			$ext = extension if any
+	output: boolean true/false
 	*************************************************************************************************/
 	public function addPhone( $type, $number, $ext )
 	{
@@ -357,10 +357,10 @@ class User {
 	}
 	
 	/*************************************************************************************************
-		function: removePhone
-		purpose: to remove a phone number from the user
-		input: $id = phone number ID
-		output: boolean true/false
+	function: removePhone
+	purpose: to remove a phone number from the user
+	input: $id = phone number ID
+	output: boolean true/false
 	*************************************************************************************************/
 	public function removePhone( $id )
 	{
@@ -382,11 +382,11 @@ class User {
 	}
 	
 	/*************************************************************************************************
-		function: addEvent
-		purpose: logs a user action
-		input: $id = user's id
-		       $event = what the user did
-		output: boolean true/false
+	function: addEvent
+	purpose: logs a user action
+	input: $id = user's id
+	       $event = what the user did
+	output: boolean true/false
 	*************************************************************************************************/
 	public function addEvent( $event, $id = NULL )
 	{
@@ -411,10 +411,10 @@ class User {
 	}	
 	
 	/*************************************************************************************************
-		function: fetchHistory
-		purpose: gets a list of user's actions
-		input: $id = userID
-		output: boolean true/false
+	function: fetchHistory
+	purpose: gets a list of user's actions
+	input: $id = userID
+	output: boolean true/false
 	*************************************************************************************************/
 	public function fetchHistory( $id )
 	{

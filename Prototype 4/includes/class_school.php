@@ -23,9 +23,9 @@ class School {
 
 	/*************************************************************************************************
     function: getFromID
-    purpose:
-    input:
-    output: 
+    purpose: loads the school information that matches
+    input: $id = schoolID
+    output: boolean true/false
   ************************************************************************************************/
 	public function getFromID( $id )
 	{
@@ -57,8 +57,12 @@ class School {
 	
 	/*************************************************************************************************
     function: findSchool
-    purpose:
-    input:
+    purpose: return a school object that matches all fields
+    input: $name = name of the school
+           $address = address of the school
+           $city = city where school is located
+           $state = state where school is located
+           $zip = zip code of school
     output: 
   ************************************************************************************************/
 	public function findSchool( $name, $address, $city, $state, $zip )

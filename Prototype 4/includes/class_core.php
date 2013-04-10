@@ -10,7 +10,12 @@ class Core {
   public $dbh;
   private static $instance;
 
-	// construct the core class
+  /*************************************************************************************************
+    function: __construct
+    purpose: build PDO object for database access
+    input: none
+    output: construct core object
+  ************************************************************************************************/
   private function __construct() {
     	// building data source name
     	$dsn = 'mysql:host=' . $this->db_host . ';dbname=' . $this->db_name;
@@ -22,8 +27,13 @@ class Core {
 			die();
 		}
 	}
-	 
-	// create an instance to open db communication
+  
+  /*************************************************************************************************
+    function: dbOpen
+    purpose: create an instance to open db communication
+    input: none
+    output: instance object
+    ************************************************************************************************/
   public static function dbOpen() {
         if (!isset(self::$instance)) {
           $object = __CLASS__;
@@ -32,14 +42,25 @@ class Core {
     	return self::$instance;
     }
 
-	// close the db connection
+  /*************************************************************************************************
+    function: dbClose
+    purpose: close the db communication
+    input: none
+    output: none
+    ************************************************************************************************/
   public static function dbClose() {
 		if (!isset(self::$instance)) {
 			$this->dbh = null;
 		}
 	}
 	
-	// convert from the users timezone to central time (where server is located)
+  /*************************************************************************************************
+    function: convertToServerDate
+    purpose: convert from the users timezone to central time (where server is located)
+    input: $originalTS = timestamp to convert
+           $userTimeZone = user's timezone
+    output: timestamp converted to server timezone
+    ************************************************************************************************/
 	public function convertToServerDate( $originalTS, $userTimeZone )
 	{
 		$sqlDate = new DateTime( $originalTS, new DateTimeZone($userTimeZone) );

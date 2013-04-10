@@ -19,9 +19,9 @@ class Location {
 	
 	/*************************************************************************************************
     function: getFromID
-    purpose:
-    input:
-    output: 
+    purpose: load the location object with information based off the given ID
+    input: $id = locationID
+    output: boolean true/false
   ************************************************************************************************/
 	public function getFromID( $id )
 	{		
@@ -51,9 +51,11 @@ class Location {
 	
 	/*************************************************************************************************
     function: findLocation
-    purpose:
-    input:
-    output: 
+    purpose: return location object based off programID, city, state, and zip
+    input: $city = location city
+           $state = location state
+           $zip = location zip
+    output: boolean true/false
   ************************************************************************************************/
   public function findLocation( $city, $state, $zip )
 	{		 
@@ -87,9 +89,12 @@ class Location {
 	
 	/*************************************************************************************************
     function: addLocation
-    purpose:
-    input:
-    output: 
+    purpose: if the location city, state, and zip is not in the database, adds the location to the database.
+    Otherwise retrieves the locationID
+    input: $city = location city
+           $state = location state
+           $zip = location zip
+    output: locationID
   ************************************************************************************************/
   public function addLocation( $city, $state, $zip )
   {
