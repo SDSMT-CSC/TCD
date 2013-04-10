@@ -20,6 +20,7 @@ jQuery(function($) {
 	$('#program-location').button().click(function(){ $('#location-dialog').dialog('open'); });	
 	$('#update-court-members').button().click(function() { $("#court-members").submit(); });
 	$('#add-jury-members').button().click(function(){ $('#jury-member-dialog').dialog('open'); });
+	$('#update-court-guardians').button().click(function(){ $('#court-guardian').submit(); });
 	
 	/**************************************************************************************************
 		FORM VALIDATION
@@ -200,6 +201,15 @@ jQuery(function($) {
 			$(this).removeClass('row_selected_'+mode);
 		else
 			$(this).addClass('row_selected_'+mode);
+	});
+	
+	// Delete an juror
+	$("a.delete-juror").click(function() {
+		dTitle = 'Delete Juror';
+		dMsg = 'Are you sure you want to delete this juror?';
+		dHref = $(this).attr("href");
+		popupDialog( dTitle, dMsg, dHref );
+		return false;
 	});
 	
 });

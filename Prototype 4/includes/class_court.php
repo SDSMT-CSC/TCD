@@ -267,8 +267,7 @@ class Court {
 	
 	/*************************************************************************************************
 		function: getJuryMembers
-		purpose: Gets a list of exsting court members for a particular court, used to make volunteer
-						 active in the court member dropdown lists
+		purpose: Gets a list of exsting jury members for a particular court
 		input: none
   	output: boolean true/false
 	*************************************************************************************************/
@@ -370,6 +369,66 @@ class Court {
 		return false;
 	}
 
+	/*************************************************************************************************
+		function: updateCourtGuardians
+		purpose: updates guardians attending a particular court
+		input: $guardians = array of guardians
+  	output: none
+	*************************************************************************************************/
+	public function updateCourtGuardians( $guardians )
+	{
+		$core = Core::dbOpen();
+		
+		// delete existing
+		$sql = "DELETE FROM court_guardian WHERE courtID = :courtID";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':courtID', $this->courtID);
+		$stmt->execute();
+				
+		// insert jury member into database if attending
+		foreach( $guardians as $key => $attending )
+		{		
+			if( $attending == "Yes" )
+			{		
+				$sql = "INSERT INTO court_guardian ( courtID, guardianID ) VALUES ( :courtID, :guardianID )";
+				$stmt = $core->dbh->prepare($sql);
+				$stmt->bindParam(':courtID', $this->courtID);
+				$stmt->bindParam(':guardianID', $key);
+				$stmt->execute();
+			}
+		}
+		
+    Core::dbClose();
+	}
+	
+	/*************************************************************************************************
+		function: checkGuardianAttending
+		purpose: returns an array of guardians attending a particular court, used to check dropdowns
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function checkGuardianAttending()
+	{
+		$data = array();
+		
+		// delete existing
+		$core = Core::dbOpen();		
+		$sql = "SELECT guardianID FROM court_guardian WHERE courtID = :courtID";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':courtID', $this->courtID);
+		$stmt->execute();
+		
+		try {
+      if( $stmt->execute() ) {
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+					$data[] = $row["guardianID"];
+			}
+		} catch ( PDOException $e ) {
+      echo "Get existing guardians array failed!";
+    }
+		
+		return $data;
+	}
 
 	// setters
 	public function setDefendantID( $val ) { $this->defendantID = $val; }

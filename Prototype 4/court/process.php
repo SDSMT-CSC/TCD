@@ -107,6 +107,22 @@ if( $action == "Delete Jury Member" )
 	header("location: view.php?id=".$court->getCourtID() );	
 }
 
+/*********************************************************************************************
+	Update Court Guardians
+*********************************************************************************************/
+if( $action == "Update Court Guardians" )
+{
+	$court = new Court( $user_programID );
+	$court->getFromID( $_POST["courtID"] );
+	
+	// update the court members and add	log the event
+	$court->updateCourtGuardians( $_POST["guardians"] );
+	$user->addEvent( "Court: " . $action, $court->getCourtID() );
+		
+	// redirect to court page
+	header("location: view.php?id=".$court->getCourtID() );	
+}
+
 ?>
 
 

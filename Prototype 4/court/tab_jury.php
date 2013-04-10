@@ -32,20 +32,21 @@
 	$members = $court->getJuryMembers();
 	
 	if( sizeof( $members ) == 0 ) {
-  ?>
-  <tr><td align="center" colspan="4">No Jury Members Listed</td></tr>
-  <?
+		echo '<tr><td align="center" colspan="4">No Jury Members Listed</td></tr>';
 	} else {
-		
 		foreach( $members as $row ) {
-  	?>
-  <tr>
-  	<td><? echo $row["type"] ?></td>
-  	<td><? echo $row["lastName"] ?></td>
-  	<td><? echo $row["firstName"] ?></td>
-  	<td><a href="process.php?action=Delete+Jury+Member&courtID=<? echo $id ?>&id=<? echo $row["id"] ?>&type=<? echo $row["type"] ?>">Delete</a></td>
-  </tr>
-  	<? 
+  		echo '<tr>';
+				echo '<td>'.$row["type"].'</td>';
+				echo '<td>'.$row["lastName"].'</td>';
+				echo '<td>'.$row["firstName"].'</td>';
+				
+				echo '<td>';
+				if( $user_type != 5 )
+					echo '<a class="delete-juror" href="process.php?action=Delete+Jury+Member&courtID='.
+							 $id.'&id='.$row["id"].'&type='.$row["type"].'">Delete</a>';
+				
+				echo '</td>';
+  		echo '</tr>';
 		}
 	} 
 	?>

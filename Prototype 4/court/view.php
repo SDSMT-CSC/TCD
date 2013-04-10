@@ -5,11 +5,9 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_defendant.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_court.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_court_location.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_guardian.php");
 
 $id = $_GET["id"];
-$error = 0;
-
-// $court = new Court();
 
 if( isset($id) ) {
 	$action = "Edit Court";
@@ -29,7 +27,6 @@ if( isset($id) ) {
 	$defendant = new Defendant();
 	$defendant->getFromID( $defendantID );
 	$defendantName = $defendant->getLastName() . ", " . $defendant->getFirstName();
-	unset( $defendant );
 	
 	// location name
 	$courtLocation = new CourtLocation( $user_programID );
@@ -226,7 +223,7 @@ else {
 
 <?
 unset( $action );
-if( $id ) { 
+if( isset($id) ) { 
 ?>
 
 <div id="tabs">
@@ -246,8 +243,9 @@ if( $id ) {
 	</div> 
 </div>
 
-<? } ?>
+<? 
+	unset( $defendant );
+} 
 
-<?php
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");
 ?>
