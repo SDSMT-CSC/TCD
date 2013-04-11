@@ -64,6 +64,7 @@ if( $action == "Add Program" || $action == "Edit Program" )
   $mod_program->phone = $_POST["phone"];
   $mod_program->expunge = $_POST["expunge"];
   $mod_program->timezoneID = $_POST["timezoneID"];
+  $mod_program->active = $_POST["active"];
   
   // log the event on success
   if( $mod_program->updateProgram() )

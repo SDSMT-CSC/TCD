@@ -105,7 +105,8 @@ class Program {
   				$this->mail_state = $row["mState"];
   				$this->mail_zip = $row["mZip"];
 					$this->timezoneID = $row["timezoneID"];	
-  				$this->expunge = $row["expunge"];	
+  				$this->expunge = $row["expunge"];
+          $this->active = $row["active"];
   				return true;
         }
 			}
@@ -151,7 +152,8 @@ class Program {
   					$this->mail_zip = $row["mZip"];
   					$this->phone = $row["phone"];
   					$this->timezoneID = $row["timezoneID"];	
-  					$this->expunge = $row["expunge"];	
+  					$this->expunge = $row["expunge"];
+            $this->active = $row["active"];
   					return true;
          }
 			}
