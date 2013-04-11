@@ -93,7 +93,7 @@ class Court {
         $this->courtID = $id;
         $this->programID = $row["programID"];
         $this->defendantID = $row["defendantID"];
-				$this->courtDate =  $row["date"];
+				$this->courtDate =  $row["date"]; // keep as unix time for easier date seperation on form
 				$this->type = $row["type"];
 				$this->contractSigned = ($row["contract"] == 1) ? "Yes": "No";
 				$this->closed = ( $row["closed"] ) ? date("n/j/y h:i a", $row["closed"]) : NULL;

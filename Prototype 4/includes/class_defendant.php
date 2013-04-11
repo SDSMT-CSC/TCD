@@ -435,6 +435,38 @@ class Defendant {
 		return $courtID;
 	}
 	
+	/*************************************************************************************************
+		function: checkJury
+		purpose: returns if the defendant has been assigned to any courts as a jury member and hours
+						 assigned so far
+		input: none
+  	output: array of courts and hours as jury member
+	*************************************************************************************************/
+	public function checkJury()
+	{
+		$output = array();
+		
+		// database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT cjd.hours, cjd.courtID, UNIX_TIMESTAMP( c.date ) as date, UNIX_TIMESTAMP( c.closed) as closed, courtLocationID
+						FROM court_jury_defendant cjd, court c
+						WHERE cjd.defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    Core::dbClose();
+		
+		try {
+			if( $stmt->execute() && $stmt->rowCount() > 0 )
+			{
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+					$output[] = $row;				
+			}
+		} 
+		catch (PDOException $e) {
+      		echo "Jury check failed!";
+    }
+		return $output;
+	}
 	
 	// setters
 	public function setDefendantID( $str ) { $this->defendantID = $str; }
