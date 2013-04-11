@@ -53,7 +53,7 @@
 				<td colspan="2">&nbsp;</td>
 			</tr>
 			<tr>
-				<td>Referred to Juevenile - Not Qualified: </td>
+				<td>Referred to Juvenile - Not Qualified: </td>
 				<td><input type="checkbox" name="intake-referred" id="intake-referred"<? if( $defendant->referred ) echo " checked"; ?>/><? echo $referred_date ?></td>
 			</tr>
 			<tr>

@@ -143,7 +143,7 @@ else
 		
 		if (!$resp->is_valid) 
 		{
-			die("<p>ReCapthca was entered wrong, please go <a href=\"/register.php\">back</a> and fill out the form.</p>");
+			die("<p>ReCaptcha was entered wrong, please go <a href=\"/register.php\">back</a> and fill out the form.</p>");
 		} 
 		else 
 		{

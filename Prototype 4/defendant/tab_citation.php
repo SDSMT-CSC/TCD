@@ -167,7 +167,7 @@ $citationTime = ( $citation->citationDate ) ? date("h:i A", $citation->citationD
       </tr>
       <tr>
         <td>Address:</td>
-        <td><input type="text" name="citation-address" style="width: 300px;" value="<? echo $defendant->address ?>"/></td>
+        <td><input type="text" name="citation-address" style="width: 300px;" value="<? echo $citation->address ?>"/></td>
         <td>Drugs/Alcohol?</td>
         <td>
           <select name="drugs-alcohol">

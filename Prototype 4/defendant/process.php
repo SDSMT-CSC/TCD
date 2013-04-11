@@ -111,9 +111,11 @@ if( $action == "Delete Guardian" )
 {
 	$guardian = new Guardian( $_GET["id"] );
 	$guardian->getFromID( $_GET["gid"] );
+  $defendant = new Defendant();
+  $defendant->getFromID( $guardian->getDefendantID() );
 	
 	// check access
-	if( $user_type < 5 && $user->getProgramID() == $_GET["id"] )
+	if( $user_type < 5 && $user->getProgramID() == $defendant->getProgramID() )
 	{		
 		if( $guardian->removeGuardian() )
 			$user->addEvent("Defendant: ".$action, $guardian->getGuardianID() );
@@ -121,6 +123,10 @@ if( $action == "Delete Guardian" )
 		// redirect to the defendant page	
 		header("location: view.php?id=".$_GET["id"] );
 	}
+  else {
+    // redirect to the defendant page 
+    header("location: view.php?id=".$_GET["id"] );
+  }
 }
 
 /*********************************************************************************************
@@ -202,7 +208,7 @@ if( $action == "Add Stolen Item" )
 {
 	$citation = new Citation( $_POST["defendantID"] );
 	
-	if( $citation->addStolenItem( $_POST["item-name"], $_POST["item-name"] ) )
+	if( $citation->addStolenItem( $_POST["item-name"], $_POST["item-value"] ) )
 		$user->addEvent("Defendant: ".$action." (".$_POST["item-name"].")", $citation->getDefendantID() );
 	
  	// redirect to the defendant page	
