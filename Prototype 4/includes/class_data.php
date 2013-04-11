@@ -328,7 +328,7 @@ class Data {
 		// additional sql command if different type of data wanted
 		if( $type == 'upcoming' ) {  $sql .= " AND c.closed IS NULL AND c.date > now()"; }
 		if( $type == 'current' ) { $sql .= " AND c.closed IS NULL"; };
-		if( $type == 'time' ) { $sql .= " AND c.timeEntered == 0"; };
+		if( $type == 'time' ) { $sql .= " AND c.timeEntered = 0"; };
 								
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
@@ -345,7 +345,11 @@ class Data {
 						$row[] = date("n/j/y h:i a",$aRow["date"]);
 						$row[] = $aRow["name"];
 						$row[] = ($aRow["city"]) ? $aRow["city"] . ", " . $aRow["state"] : NULL;
-						$row[] = '<a href="/court/view.php?id='. $aRow["courtID"] .'">View</a>';				
+						
+						if( $type == 'time' ) // change the link to go to time entry
+							$row[] = '<a href="/court/hour_entry.php?id='. $aRow["courtID"] .'">View</a>';						
+						else
+							$row[] = '<a href="/court/view.php?id='. $aRow["courtID"] .'">View</a>';
 						
 						$output['aaData'][] = $row;
 				}

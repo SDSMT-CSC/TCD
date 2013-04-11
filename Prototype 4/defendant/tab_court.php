@@ -49,9 +49,6 @@
   <p>The defendant has not been assigned as a member of any jury.</p>
   <?   
   } else { 
-
-//	hours	courtID	date	closed	courtLocationID
-
   ?>
    <table class="listing" id="jury-listing">
     <thead>
@@ -78,7 +75,9 @@
         <td><? echo $courtloc->city . ", " . $courtloc->state ?></td>
         <td><? echo ( $row["closed"] ) ? date("n/j/y h:i a", $row["closed"] ) : NULL ?></td>
         <td><? echo $row["hours"] ?></td>
-        <td align="center"><a href="/volunteer/enter_hours.php?id=<? echo $row["courtID"] ?>">Hours</a></td>
+        <td align="center">
+					<? if( $row["timeEntered"] == 0 ) { ?> <a href="/court/hour_entry.php?id=<? echo $row["courtID"] ?>">Hours</a><? } ?>
+        </td>
         <td align="center"><a href="/court/view.php?id=<? echo $row["courtID"] ?>">View</a></td>
        </tr>
       <? 

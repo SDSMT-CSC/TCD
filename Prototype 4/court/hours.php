@@ -1,5 +1,5 @@
 <?php
-$menuarea = "volunteer";
+$menuarea = "court";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 ?>
 
@@ -33,7 +33,7 @@ jQuery(function($)
 });
 </script>
 
-<h1>Completed Courts</h1>
+<h1>Courts Needing Time Entered</h1>
 
 <table id="data-table">
 	<thead>

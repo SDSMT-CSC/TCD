@@ -118,7 +118,7 @@ class Defendant {
 				$this->phoneNumber = $row["homePhone"];
 				$this->dateOfBirth = $row["dob"];
 				$this->courtCaseNumber = $row["courtCaseNumber"];
-				$this->agencyCaseNumber = $row["agencyCaseNumber"];
+				$this->agencyNumber = $row["agencyCaseNumber"];
 				$this->expungeDate = $row["expungeDate"];
 				$this->closedate = $row["closedate"];
 				$this->pID = $row["pLocationID"];
@@ -182,7 +182,7 @@ class Defendant {
 		$stmt->bindParam(':homePhone', $this->phoneNumber);
 		$stmt->bindParam(':dob', $this->dateOfBirth);
 		$stmt->bindParam(':courtCaseNumber', $this->courtCaseNumber);
-		$stmt->bindParam(':agencyCaseNumber', $this->agencyCaseNumber);
+		$stmt->bindParam(':agencyCaseNumber', $this->agencyNumber);
 		Core::dbClose();
 		
 		try
@@ -448,7 +448,7 @@ class Defendant {
 		
 		// database connection and sql query
     $core = Core::dbOpen();
-    $sql = "SELECT cjd.hours, cjd.courtID, UNIX_TIMESTAMP( c.date ) as date, UNIX_TIMESTAMP( c.closed) as closed, courtLocationID
+    $sql = "SELECT cjd.hours, cjd.courtID, UNIX_TIMESTAMP( c.date ) as date, UNIX_TIMESTAMP( c.closed) as closed, courtLocationID, timeEntered
 						FROM court_jury_defendant cjd, court c
 						WHERE cjd.defendantID = :defendantID";
     $stmt = $core->dbh->prepare($sql);

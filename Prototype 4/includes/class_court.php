@@ -10,6 +10,7 @@ class Court {
 	public $contractSigned;
 	public $closed;
 	public $courtLocationID;
+	public $timeEntered;
 	
 	public function __construct( $user_programID )
 	{
@@ -20,6 +21,7 @@ class Court {
 		$this->contractSigned = NULL;
 		$this->closed = NULL;
 		$this->courtLocationID = NULL;
+		$this->timeEntered = NULL;
 	}
 	
 	/*************************************************************************************************
@@ -98,7 +100,7 @@ class Court {
 				$this->contractSigned = ($row["contract"] == 1) ? "Yes": "No";
 				$this->closed = ( $row["closed"] ) ? date("n/j/y h:i a", $row["closed"]) : NULL;
 				$this->courtLocationID =  $row["courtLocationID"];
-				
+				$this->timeEntered =  $row["timeEntered"];				
 			}
 		} catch ( PDOException $e ) {
       echo "Get court information failed!";
@@ -463,6 +465,40 @@ class Court {
 			}
 		} catch ( PDOException $e ) {
       echo "Get existing guardians array failed!";
+    }
+		
+		return $data;
+	}
+	
+	/*************************************************************************************************
+		function: getMembersForTime
+		purpose: returns an array of members for a particular court and their time spent
+		input: none
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function getMembersForTime()
+	{
+		$data = array();
+	
+		// delete existing
+		$core = Core::dbOpen();	
+		$sql = "SELECT cm.volunteerID, cm.positionID, position, firstName, lastName, hours
+						FROM court_member cm
+						JOIN volunteer v ON v.volunteerID = cm.volunteerID
+						JOIN court_position cp ON cp.positionID = cm.positionID 
+						WHERE cm.courtID = :courtID
+						ORDER BY position";
+		$stmt = $core->dbh->prepare($sql);
+		$stmt->bindParam(':courtID', $this->courtID);
+		$stmt->execute();
+		
+		try {
+      if( $stmt->execute() ) {
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+					$data[] = $row;
+			}
+		} catch ( PDOException $e ) {
+      echo "Get members for time entry failed!";
     }
 		
 		return $data;

@@ -16,7 +16,6 @@
 			<ul>
 				<li><a href="/volunteer/index.php">List Volunteers</a></li>	
 				<li><a href="/volunteer/view.php">New Volunteer</a></li>	
-				<li><a href="/volunteer/hours.php">Enter Hours</a></li>	
 				<li><a href="/volunteer/search.php">Search Volunteers</a></li>
 			</ul>	
 		</li>
@@ -25,6 +24,7 @@
 			<ul>
 				<li><a href="/court/index.php">List Courts</a></li>
 				<li><a href="/court/view.php">New Court</a></li>
+				<li><a href="/court/hours.php">Enter Hours</a></li>	
 				<li><a href="/court/search.php">Search Courts</a></li>
 			</ul>
 		</li>
