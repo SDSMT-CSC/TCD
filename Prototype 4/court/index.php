@@ -13,7 +13,7 @@ jQuery(function($)
 		"aaSorting": [],
     "sPaginationType": "full_numbers",
 		"bProcessing": false,
-    "sAjaxSource": '/data/courts.php',
+    "sAjaxSource": '/data/courts.php?type=current',
 			"fnServerData": function ( sSource, aoData, fnCallback ) {
 					// use ajax to get the source data
 					$.ajax( {

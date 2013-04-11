@@ -15,7 +15,7 @@ if( isset($id) ) {
 	$court = new Court( $user_programID );
 	$court->getFromID( $id );
 	
-	$courtDate = date("n/j/y", $court->courtDate );
+	$courtDate = date("m/j/Y", $court->courtDate );
 	$courtTime = date("h:i A", $court->courtDate );
 	$courtType = $court->type;
 	$contract = $court->contractSigned;

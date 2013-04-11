@@ -5,5 +5,5 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
 
 //pulls the data, and gets the table
 $data = new Data();
-echo $data->fetchCourtListing( $user_programID );
+echo $data->fetchCourtListing( $user_programID, $_GET["type"] );
 ?>

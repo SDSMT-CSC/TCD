@@ -34,11 +34,12 @@ jQuery(function($)
 <table id="data-table">
 	<thead>
 			<tr>
-				<th width="150">Date</th>
-				<th width="150">Topic</th>
-				<th width="125">Instructor</th>
-				<th width="125">Officer</th>
-				<th width="50">Modify</th>
+				<th width="15%">Date</th>
+				<th width="20%">Topic</th>
+				<th width="15%">Instructor</th>
+        <th width="25%">Venue</th>
+				<th width="20%">Location</th>
+				<th width="5%"></th>
 			</tr>
 	</thead>
 	<tbody></tbody>

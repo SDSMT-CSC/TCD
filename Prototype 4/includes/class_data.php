@@ -313,17 +313,23 @@ class Data {
    input: $user_programID = program to fetch courts for
    output: JSON object
   *************************************************************************************************/
-	public function fetchCourtListing(  $user_programID ) 
+	public function fetchCourtListing(  $user_programID, $type ) 
 	{
 		//database connection and SQL query
 		$core = Core::dbOpen();
+		
 		$sql = "SELECT c.courtID, d.courtCaseNumber, d.firstName, d.lastName, UNIX_TIMESTAMP(c.date) as date, cl.name, l.city, l.state
 						FROM court c
 						LEFT JOIN defendant d ON c.defendantID = d.defendantID
 						LEFT JOIN court_location cl ON c.courtLocationID = cl.courtLocationID
 						LEFT JOIN program_locations l ON l.locationID = cl.locationID
-						WHERE c.closed IS NULL 
-						AND c.programID = :programID";
+						WHERE c.programID = :programID";
+	
+		// additional sql command if different type of data wanted
+		if( $type == 'upcoming' ) {  $sql .= " AND c.closed IS NULL AND c.date > now()"; }
+		if( $type == 'current' ) { $sql .= " AND c.closed IS NULL"; };
+		if( $type == 'time' ) { $sql .= " AND c.timeEntered == 0"; };
+								
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();
@@ -499,12 +505,7 @@ class Data {
 						$row[] = $aRow["courtCaseNumber"];
 						$row[] = $aRow["lastName"];
 						$row[] = $aRow["firstName"];
-						
-						if( $aRow["pLocationID"] > 0 )
-							$row[] = $aRow["city"] . ", " . $aRow["state"];
-            else
-							$row[] = "";
-						
+						$row[] = ($aRow["city"]) ? $aRow["city"] . ", " . $aRow["state"] : NULL;					
 						$row[] = date("n/j/y h:i a",$aRow["added"]);					
 						$row[] = '<a href="/defendant/view.php?id='. $aRow["defendantID"] .'">View</a>';				
 						
@@ -575,10 +576,11 @@ class Data {
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
-		$sql = "SELECT w.workshopID, UNIX_TIMESTAMP(w.date) AS date, w.title, w.instructor, o.lastName 
-				FROM workshop w JOIN program_officers o ON w.officerID = o.officerID AND w.programID = :programID
-				UNION ALL SELECT w.workshopID, UNIX_TIMESTAMP(w.date) AS date, w.title, w.instructor, '' AS lastName
-				FROM workshop w WHERE w.officerID = 0 AND w.programID = :programID";
+		$sql = "SELECT w.workshopID, UNIX_TIMESTAMP(w.date) AS date, w.title, w.instructor, name, city, state
+						FROM workshop w
+						LEFT JOIN workshop_location wl ON wl.workshopLocationID = w.workshopLocationID
+						LEFT JOIN program_locations pl ON pl.locationID = wl.locationID
+						WHERE w.programID = :programID";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();
@@ -592,7 +594,8 @@ class Data {
 						$row[] = date("n/j/y h:i a", $aRow["date"]);
 						$row[] = $aRow["title"];
 						$row[] = $aRow["instructor"];
-						$row[] = $aRow["lastName"];
+						$row[] = $aRow["name"];
+						$row[] = ($aRow["city"]) ? $aRow["city"] . ", " . $aRow["state"] : NULL;
 						$row[] = '<a href="/workshop/view.php?id='. $aRow["workshopID"] .'">View</a>';				
 						
 						$output['aaData'][] = $row;

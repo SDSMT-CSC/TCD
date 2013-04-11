@@ -13,7 +13,7 @@ jQuery(function($)
 	var oTable = $('#data-table').dataTable( {
 		"aaSorting": [],
 		"sPaginationType": "full_numbers",
-		"sAjaxSource": '/data/courts_upcoming.php',
+		"sAjaxSource": '/data/courts.php?type=upcoming',
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
 				// use ajax to get the source data
 				$.ajax( {
