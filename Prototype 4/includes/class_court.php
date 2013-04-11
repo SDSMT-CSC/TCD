@@ -8,7 +8,6 @@ class Court {
 	public $courtDate;
 	public $type;
 	public $contractSigned;
-
 	public $closed;
 	public $courtLocationID;
 	
@@ -97,7 +96,7 @@ class Court {
 				$this->courtDate =  $row["date"];
 				$this->type = $row["type"];
 				$this->contractSigned = ($row["contract"] == 1) ? "Yes": "No";
-				$this->closed = ( $row["closed"] ) ? date("n/j/y h:i A", $row["closed"]) : NULL;
+				$this->closed = ( $row["closed"] ) ? date("n/j/y h:i a", $row["closed"]) : NULL;
 				$this->courtLocationID =  $row["courtLocationID"];
 				
 			}

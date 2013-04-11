@@ -44,6 +44,9 @@ jQuery(function($) {
 	// TAB7: Workshop
 	$("#create-workshop").button().click(function() {	window.location.href = "/workshop/view.php";	});	
 
+	// TAB8: Court
+	$("#create-court").button().click(function() {	window.location.href = "/court/view.php";	});		
+	
 	/**************************************************************************************************
 		FORM VALIDATION
 	**************************************************************************************************/

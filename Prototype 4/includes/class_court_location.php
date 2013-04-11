@@ -93,22 +93,22 @@ class courtLocation {
 	/*************************************************************************************************
    function: getCourtLocation
    purpose: loads court location object with data based on courtLocID
-   input: $workshopLocID
+   input: $courtLocID
    output: none
   *************************************************************************************************/
-	public function getCourtLocation( $workshopLocID )
+	public function getCourtLocation( $courtLocID )
 	{
 		$core = Core::dbOpen();
 		$sql = "SELECT cl.name, cl.address, l.city, l.state, l.zip, l.locationID FROM court_location cl
-		        JOIN program_locations l ON cl.courtLocationID = :workshopLocID AND cl.locationID = l.locationID";
+		        JOIN program_locations l ON cl.courtLocationID = :courtLocID AND cl.locationID = l.locationID";
 		$stmt = $core->dbh->prepare($sql);
-		$stmt->bindParam(':workshopLocID', $workshopLocID );
+		$stmt->bindParam(':courtLocID', $courtLocID );
 		
 		try{
 			if($stmt->execute()) {
 					$row = $stmt->fetch();
 					
-					$this->courtLocationID = $workshopLocID;
+					$this->courtLocationID = $courtLocID;
 					$this->name = $row["name"];
 					$this->address = $row["address"];
 					$this->city = $row["city"];

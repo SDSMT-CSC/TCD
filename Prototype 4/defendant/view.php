@@ -8,6 +8,9 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_school.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_guardian.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_citation.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop_location.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_court.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_court_location.php");
 
 $id = $_GET["id"];
 $defendant = new Defendant();

@@ -394,7 +394,7 @@ class Defendant {
 				{
 					$row = array();
 					$row["workshopID"] = $aRow["workshopID"];
-					$row["completed"] = $aRow["completed"];
+					$row["completed"] = ( $aRow["completed"] ) ?  date("n/j/y h:i a", $aRow["completed"] ) : NULL;
 					$output[] = $row;				
 				}
 			}
@@ -404,6 +404,37 @@ class Defendant {
     }
 		return $output;
 	}
+
+	/*************************************************************************************************
+		function: checkCourt
+		purpose: returns if the defendant has been assigned to a court and if they have completed it
+		input: none
+  	output: courtID if exists
+	*************************************************************************************************/
+	public function checkCourt()
+	{
+		$courtID;
+		
+		// database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT courtID FROM court WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    Core::dbClose();
+		
+		try {
+			if( $stmt->execute() && $stmt->rowCount() > 0 )
+			{
+				$row = $stmt->fetch(PDO::FETCH_ASSOC);
+				$courtID = $row["courtID"];
+			}
+		} 
+		catch (PDOException $e) {
+      		echo "Court check failed!";
+    }
+		return $courtID;
+	}
+	
 	
 	// setters
 	public function setDefendantID( $str ) { $this->defendantID = $str; }
