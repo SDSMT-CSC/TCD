@@ -8,12 +8,6 @@
   <button id="create-court">Create Court</button>
   <? 
   } else { 
-  
-    $court = new Court( $user_programID );
-    $court->getFromID( $courtID );
-    
-    $courtloc = new CourtLocation( $user_programID );
-    $courtloc->getCourtLocation( $court->courtLocationID );
   ?>
   <table class="listing" id="court-listing">
     <thead>
@@ -27,24 +21,33 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td><? echo date("n/j/y h:i a", $court->courtDate ) ?></td>
-        <td><? echo $court->type ?></td>
-        <td><? echo $courtloc->name ?></td>
-        <td><? echo $courtloc->city . ", " . $courtloc->state ?></td>
-        <td><? echo ( $court->closed ) ? date("n/j/y h:i a", $court->closed ) : NULL ?></td>
-        <td align="center"><a href="/court/view.php?id=<? echo $courtID ?>">View</a></td>
-       </tr>
+    <?
+    foreach( $courtID as $key => $row)
+    {
+      $court = new Court( $user_programID );
+      $court->getFromID( $row["courtID"] );
+      
+      $courtloc = new CourtLocation( $user_programID );
+      $courtloc->getCourtLocation( $court->courtLocationID );
+      ?>
+        <tr>
+          <td><? echo date("n/j/y h:i a", $court->courtDate ) ?></td>
+          <td><? echo $court->type ?></td>
+          <td><? echo $courtloc->name ?></td>
+          <td><? echo $courtloc->city . ", " . $courtloc->state ?></td>
+          <td><? echo ( $court->closed ) ? date("n/j/y h:i a", $court->closed ) : NULL ?></td>
+          <td align="center"><a href="/court/view.php?id=<? echo $courtID ?>">View</a></td>
+         </tr>
+    <? } } ?>
     </tbody>
   </table>
-	<? } ?>
 </fieldset>
 
 <fieldset>
 	<legend>Jury Duty</legend>
   <? 
 	$juryArr = $defendant->checkJury();
-	
+  
 	if( !$juryArr ) { ?>
   <p>The defendant has not been assigned as a member of any jury.</p>
   <?   

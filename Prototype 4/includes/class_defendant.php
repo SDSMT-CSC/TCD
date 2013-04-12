@@ -413,7 +413,7 @@ class Defendant {
 	*************************************************************************************************/
 	public function checkCourt()
 	{
-		$courtID;
+		$courtID = array();
 		
 		// database connection and sql query
     $core = Core::dbOpen();
@@ -425,8 +425,8 @@ class Defendant {
 		try {
 			if( $stmt->execute() && $stmt->rowCount() > 0 )
 			{
-				$row = $stmt->fetch(PDO::FETCH_ASSOC);
-				$courtID = $row["courtID"];
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+				  $courtID[] = $row;
 			}
 		} 
 		catch (PDOException $e) {
@@ -450,7 +450,7 @@ class Defendant {
     $core = Core::dbOpen();
     $sql = "SELECT cjd.hours, cjd.courtID, UNIX_TIMESTAMP( c.date ) as date, UNIX_TIMESTAMP( c.closed) as closed, courtLocationID, timeEntered
 						FROM court_jury_defendant cjd, court c
-						WHERE cjd.defendantID = :defendantID";
+						WHERE cjd.defendantID = :defendantID AND cjd.courtID = c.courtID";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':defendantID', $this->defendantID);
     Core::dbClose();
@@ -459,7 +459,7 @@ class Defendant {
 			if( $stmt->execute() && $stmt->rowCount() > 0 )
 			{
 				while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
-					$output[] = $row;				
+					$output[] = $row;
 			}
 		} 
 		catch (PDOException $e) {
