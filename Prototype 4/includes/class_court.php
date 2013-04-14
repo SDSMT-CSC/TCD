@@ -437,7 +437,6 @@ class Court {
 				$stmt->execute();
 			}
 		}
-		
     Core::dbClose();
 	}
 	
@@ -457,6 +456,7 @@ class Court {
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':courtID', $this->courtID);
 		$stmt->execute();
+    Core::dbClose();
 		
 		try {
       if( $stmt->execute() ) {
@@ -476,21 +476,38 @@ class Court {
 		input: none
   	output: boolean true/false
 	*************************************************************************************************/
-	public function getMembersForTime()
+	public function getMembersForTime( $type )
 	{
 		$data = array();
 	
 		// delete existing
 		$core = Core::dbOpen();	
-		$sql = "SELECT cm.volunteerID, cm.positionID, position, firstName, lastName, hours
-						FROM court_member cm
-						JOIN volunteer v ON v.volunteerID = cm.volunteerID
-						JOIN court_position cp ON cp.positionID = cm.positionID 
-						WHERE cm.courtID = :courtID
-						ORDER BY position";
+		
+		if( $type == "positions" )
+		{
+			$sql = "SELECT cm.volunteerID, cm.positionID, position, firstName, lastName, hours
+							FROM court_member cm
+							JOIN volunteer v ON v.volunteerID = cm.volunteerID
+							JOIN court_position cp ON cp.positionID = cm.positionID 
+							WHERE cm.courtID = :courtID
+							ORDER BY position";
+		}
+		else if( $type == "jury" )
+		{
+			$sql = "( SELECT cv.volunteerID as id, 'Volunteer' as type, v.lastName, v.firstName, cv.hours
+					FROM court_jury_volunteer cv
+					JOIN volunteer v ON v.volunteerID = cv.volunteerID
+					WHERE cv.courtID = :courtID )
+					UNION
+					( SELECT cd.defendantID as id, 'Defendant' as type, d.lastName, d.firstName, cd.hours
+					FROM court_jury_defendant cd
+					JOIN defendant d ON d.defendantID= cd.defendantID
+					WHERE cd.courtID = :courtID )";
+		}
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':courtID', $this->courtID);
 		$stmt->execute();
+    Core::dbClose();
 		
 		try {
       if( $stmt->execute() ) {
@@ -502,6 +519,59 @@ class Court {
     }
 		
 		return $data;
+	}
+
+	/*************************************************************************************************
+		function: setMembersTime
+		purpose: sets time spent for members/jury on a particular court
+		input: $global = time to set all participants to
+		       $members = court position members
+					 $jury = volunteer/defendant jurors
+  	output: boolean true/false
+	*************************************************************************************************/
+	public function setMembersTime( $globalHrs, $members, $jury )
+	{
+		if( $members && $jury )
+		{
+			$core = Core::dbOpen();		
+			
+			// update court members hours
+			$sql = "UPDATE court_member SET hours = :hours WHERE courtID = :courtID AND volunteerID = :volunteerID AND positionID = :positionID";
+			foreach( $members as $key => $person )
+			{	
+				$stmt = $core->dbh->prepare($sql);
+				$stmt->bindParam(':courtID', $this->courtID);
+				$stmt->bindParam(':volunteerID', $person["volunteerID"]);
+				$stmt->bindParam(':positionID', $person["positionID"]);
+				$stmt->bindParam(':hours', $hours = ( $globalHrs > 0 ) ? $globalHrs : $person["hours"]);
+				$stmt->execute();
+			}
+			
+			// update jury hours
+			foreach( $jury as $key => $juror )
+			{
+				if( $juror["type"] == "Volunteer" )
+					$sql = "UPDATE court_jury_volunteer SET hours = :hours WHERE courtID = :courtID AND volunteerID = :id";
+				else
+					$sql = "UPDATE court_jury_defendant SET hours = :hours WHERE courtID = :courtID AND defendantID = :id";
+				
+				$stmt = $core->dbh->prepare($sql);
+				$stmt->bindParam(':courtID', $this->courtID);
+				$stmt->bindParam(':id', $juror["id"]);
+				$stmt->bindParam(':hours', $hours = ( $globalHrs ) ? $globalHrs : $juror["hours"]);
+				$stmt->execute();
+			}
+			
+			// mark the time has been entered for this court
+			$sql = "UPDATE court SET timeEntered = 1 WHERE courtID = :courtID";
+			$stmt = $core->dbh->prepare($sql);
+			$stmt->bindParam(':courtID', $this->courtID);
+			$stmt->execute();
+						
+    	Core::dbClose();
+			return true;
+		}
+		return false;
 	}
 
 	// setters

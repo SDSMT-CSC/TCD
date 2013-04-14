@@ -112,7 +112,8 @@ else {
 			<button id="add-court">Add Court</button>
       <? } else { ?>
 			<button id="update-court">Update Court</button>
-			<button id="delete-court" value="process.php?action=Delete+Court&id=<? echo $id  ?>">Delete Court</button>
+      <button id="court-hours">Court Hours</button>
+      <button id="delete-court" value="process.php?action=Delete+Court&id=<? echo $id  ?>">Delete Court</button>
 			<? } ?>
 		</div>
 	</div>

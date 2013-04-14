@@ -329,7 +329,7 @@ class Data {
 		if( $type == 'upcoming' ) {  $sql .= " AND c.closed IS NULL AND c.date > now()"; }
 		if( $type == 'current' ) { $sql .= " AND c.closed IS NULL"; };
 		if( $type == 'time' ) { $sql .= " AND c.timeEntered = 0"; };
-								
+		
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();

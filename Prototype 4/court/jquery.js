@@ -12,6 +12,7 @@ jQuery(function($) {
 	$("#court-list").button().click(function() { window.location.href = 'index.php' });
 	$("#add-court").button().click(function() { $("#court-primary").submit(); });
 	$("#update-court").button().click(function() { $("#court-primary").submit(); });
+	$("#court-hours").button().click(function() { window.location.href = 'hour_entry.php?id=' + $("#courtID").val() });
 	
 	// other buttons	
 	$('#court-defendant-select').button().click(function(){ $('#court-defendant-dialog').dialog('open'); });	

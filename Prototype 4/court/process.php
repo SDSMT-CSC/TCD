@@ -131,12 +131,30 @@ if( $action == "Delete Court" )
 	$court = new Court( $user_programID );
 	$court->getFromID( $_GET["id"] );
 
+	// delete court and add event
 	$court->deleteCourt();
 	$user->addEvent( "Court: " . $action, $_GET["id"] );
 		
 	// redirect to court page
 	header("location: index.php");		
 }
+
+/*********************************************************************************************
+	Update Court Hours
+*********************************************************************************************/
+if( $action == "Update Court Hours" )
+{
+	$court = new Court( $user_programID );
+	$court->getFromID( $_POST["courtID"] );
+
+	// update times and add event
+	$court->setMembersTime( $_POST["global-hours"], $_POST["members"], $_POST["jury"] );
+	$user->addEvent( "Court: " . $action, $_POST["courtID"] );
+		
+	// redirect to court page
+	header("location: hours.php");
+}
+
 ?>
 
 
