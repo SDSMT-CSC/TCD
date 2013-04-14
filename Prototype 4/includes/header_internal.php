@@ -22,6 +22,7 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 <script src="/includes/js/jquery.validate.min.js" type="text/javascript"></script>
 <script src="/includes/js/jquery.cookie.js" type="text/javascript"></script>
 <script src="/includes/js/jquery.ui.timepicker.js" type="text/javascript"></script>
+<script src="/includes/js/jquery.mask.js" type="text/javascript"></script>
 
 <script>
 jQuery(function($)
@@ -47,7 +48,12 @@ jQuery(function($)
 	
 	$(".listing").each(function() {
 			$(this).children('tbody').children(':even').css("background-color", "#EFF4F6");
-    });		
+    });
+		
+	// masking functions for form inputs
+	$(".phone").mask("(999) 999-9999");
+	$(".date").mask("99/99/9999");
+	$(".time").mask("99:99 aa");
 });
 
 // function to reset the datatables

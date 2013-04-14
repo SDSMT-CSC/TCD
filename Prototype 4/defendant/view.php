@@ -129,11 +129,11 @@ jQuery(function($) {
           </tr>
           <tr>
             <td>Date of Birth:</td>
-            <td><input type="text" name="dob" id="dob" size="10" value="<? echo $DOB ?>" /></td>
+            <td><input type="text" class="data" name="dob" size="10" value="<? echo $DOB ?>" /></td>
           </tr>          
           <tr>
             <td>Phone Number:</td>
-            <td><input type="text" name="phoneNumber" value="<? echo $PhoneNumber ?>" /></td>
+            <td><input type="text" class="phone" name="phoneNumber" value="<? echo $PhoneNumber ?>" /></td>
           </tr>
         </table>  
       </td>
@@ -177,7 +177,7 @@ if( isset($id) ) {
 <div id="tabs">
 	<ul>
 		<li><a href="#tab-personal">Personal</a></li>
-		<li><a href="#tab-parental">Parent</a></li>
+		<li><a href="#tab-guardian">Guardian</a></li>
 		<li><a href="#tab-citation">Citation</a></li>
 		<li><a href="#tab-intake">Intake</a></li>
 		<li><a href="#tab-court">Court</a></li>
@@ -190,8 +190,8 @@ if( isset($id) ) {
 	<div id="tab-personal">
 		<? include("tab_personal.php"); ?>	
 	</div>
-	<div id="tab-parental">
-		<? include("tab_parent.php"); ?>
+	<div id="tab-guardian">
+		<? include("tab_guardian.php"); ?>
 	</div>
 	<div id="tab-citation">
 		<? include("tab_citation.php"); ?>

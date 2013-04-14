@@ -92,7 +92,7 @@
             <td>School Contact:</td>
             <td>
               <input type="text" name="contact" value="<? echo $defendant->schoolContactName ?>" />
-              Phone: <input type="text" name="contact-phone" value="<? echo $defendant->schoolContactPhone ?>" />
+              Phone: <input type="text" class="phone" name="contact-phone" value="<? echo $defendant->schoolContactPhone ?>" />
             </td>
           </tr>
         </table>
@@ -183,10 +183,10 @@
           </tr>
         </table>
       </fieldset>
-      <div style="text-align: right; margin-top: 20px;"><button id="defendant-personal-submit">Update Personal Information</button></div>
     </td>
   </tr>
 </table>
 </form>
+<button id="defendant-personal-submit">Update Personal Information</button>
 
 

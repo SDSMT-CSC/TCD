@@ -2,15 +2,15 @@
 
 	if( $defendant->intake ) {
 		$intake_date = date("m/j/Y", $defendant->intake );
-		$intake_time = date("g:i A", $defendant->intake );
+		$intake_time = date("h:i A", $defendant->intake );
 	} else {
 		$intake_date = date("m/j/Y");
-		$intake_time = date("g:i A");
+		$intake_time = date("h:i A");
 	}
 	
 	if( $defendant->reschedule ) {
 		$reschedule_date = date("m/j/Y", $defendant->reschedule );
-		$reschedule_time = date("g:i A", $defendant->reschedule );
+		$reschedule_time = date("h:i A", $defendant->reschedule );
 	}
 	
 	$inteviewer = ( $defendant->inteviewer ) ? $defendant->inteviewer : $user->getUserID();
@@ -27,19 +27,19 @@
 		<table>
 			<tr>
 				<td width="250">Intake Date: </td>
-				<td><input type="text" name="intake-date" id="intake-date" value="<? echo $intake_date ?>" /></td>
+				<td><input type="text" class="date" name="intake-date" id="intake-date" value="<? echo $intake_date ?>" /></td>
 			</tr>
 			<tr>
 				<td>Intake Time: </td>
-				<td><input type="text" name="intake-time" id="intake-time" value="<? echo $intake_time ?>" /></td>
+				<td><input type="text" class="time" name="intake-time" id="intake-time" value="<? echo $intake_time ?>" /></td>
 			</tr>
 			<tr>
 				<td>Intake Reschedule Date: </td>
-				<td><input type="text" name="reschedule-date" id="reschedule-date" value="<? echo $reschedule_date ?>" /></td>
+				<td><input type="text" class="date" name="reschedule-date" id="reschedule-date" value="<? echo $reschedule_date ?>" /></td>
 			</tr>
 			<tr>
 				<td>Intake Reschedule Time: </td>
-				<td><input type="text" name="reschedule-time" id="reschedule-time" value="<? echo $reschedule_time ?>" /></td>
+				<td><input type="text" class="time" name="reschedule-time" id="reschedule-time" value="<? echo $reschedule_time ?>" /></td>
 			</tr>
 			<tr>
 				<td>Intake Inteviewer</td>

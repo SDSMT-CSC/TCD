@@ -5,8 +5,8 @@ jQuery(function($) {
 		BUTTON AND MAIN TAB SETUP
 	**************************************************************************************************/
 	$("#tabs").tabs({ cookie: { expires: 5 } });
-  $("#tabs").show(); 
-
+  $("#tabs").show();
+	
 	// Top menu
 	$("#update-defendant").button().click(function() { $("#defendant-primary").submit(); });
 	$("#delete-defendant").button().click(function() {  });
@@ -16,6 +16,7 @@ jQuery(function($) {
 	// TAB1: personal
 	$("#dob").datepicker();
 	$("#defendant-personal-submit").button().click(function() { $("#defendant-personal").submit(); });
+
 
 	// TAB2: Guardian items
 	$('#add-parent').click(function(){$('#parent-dialog').dialog('open');});
@@ -30,14 +31,14 @@ jQuery(function($) {
 	$("#add-item").button().click(function(){ $('#item-dialog').dialog('open'); });
 	$("#add-vehicle").button().click(function(){ $('#vehicle-dialog').dialog('open'); });
 	$("#citation-date").datepicker({maxDate: new Date});
-	$("#citation-time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: ''});
+	$("#citation-time").timepicker({showPeriod: true,defaultTime: ''});
 	
 	// TAB4: Intake
 	$("#intake-submit").button().click(function() { $("#intake").submit(); });
 	$("#intake-date").datepicker();
-	$("#intake-time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: 'now'});
+	$("#intake-time").timepicker({showPeriod: true,defaultTime: 'now'});
 	$("#reschedule-date").datepicker();
-	$("#reschedule-time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: 'now'});
+	$("#reschedule-time").timepicker({showPeriod: true,defaultTime: 'now'});
 	$("#referred-date").datepicker();
 	$("#dismissed-date").datepicker();
 
@@ -46,7 +47,7 @@ jQuery(function($) {
 
 	// TAB8: Court
 	$("#create-court").button().click(function() {	window.location.href = "/court/view.php";	});		
-	
+		
 	/**************************************************************************************************
 		FORM VALIDATION
 	**************************************************************************************************/

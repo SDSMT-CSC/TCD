@@ -20,7 +20,7 @@ $citation = new Citation( $defendant->getDefendantID() );
       </tr>
       <tr>
         <td>Phone Number:</td>
-        <td><input type="text" name="officer-phone" id="officer-phone" /></td>
+        <td><input type="text" class="phone" name="officer-phone" id="officer-phone" /></td>
       </tr>
     </table>		
   </form>
@@ -140,7 +140,7 @@ $citationTime = ( $citation->citationDate ) ? date("h:i A", $citation->citationD
     <table>
       <tr>
         <td>Date:</td>
-        <td><input type="text" name="citation-date" id="citation-date" value="<? echo $citationDate ?>" /></td>
+        <td><input type="text" class="date" name="citation-date" id="citation-date" value="<? echo $citationDate ?>" /></td>
         <td>Officer:</td>
         <td>
           <select name="officerID" id="officerID">
@@ -156,7 +156,7 @@ $citationTime = ( $citation->citationDate ) ? date("h:i A", $citation->citationD
       </tr>
       <tr>
         <td>Time:</td>
-        <td><input type="text" name="citation-time" id="citation-time" value="<? echo $citationTime ?>" /></td>
+        <td><input type="text" class="time" name="citation-time" id="citation-time" value="<? echo $citationTime ?>" /></td>
         <td>Miranda Given?</td>
         <td>
           <select name="miranda">
