@@ -111,9 +111,9 @@ else {
 			<? if( $action == "Add Court") { ?>
 			<button id="add-court">Add Court</button>
       <? } else { ?>
-			<button id="update-court">Update Court</button>
-      <button id="court-hours">Court Hours</button>
       <button id="delete-court" value="process.php?action=Delete+Court&id=<? echo $id  ?>">Delete Court</button>
+      <button id="court-hours">Court Hours</button>
+			<button id="update-court">Update Court</button>
 			<? } ?>
 		</div>
 	</div>
@@ -144,11 +144,11 @@ else {
             </tr>
             <tr>
               <td>Court Date: </td>
-              <td><input type="text" name="court-date" id="court-date" value="<? echo $courtDate ?>"></td>
+              <td><input type="text" class="date" name="court-date" id="court-date" value="<? echo $courtDate ?>"></td>
             </tr>
             <tr>
               <td>Court Time: </td>
-              <td><input type="text" name="court-time" id="court-time" value="<? echo $courtTime ?>"></td>
+              <td><input type="text" class="time" name="court-time" id="court-time" value="<? echo $courtTime ?>"></td>
             </tr>
           </table>
         </td>

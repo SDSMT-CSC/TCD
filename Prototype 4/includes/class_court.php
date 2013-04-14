@@ -181,7 +181,7 @@ class Court {
 						$sql2 = "SELECT vp.volunteerID, v.firstName, v.lastName
 										FROM volunteer_position vp
 										LEFT JOIN volunteer v ON v.volunteerID = vp.volunteerID
-										WHERE vp.positionID = :positionID
+										WHERE vp.positionID = :positionID AND v.active = 1
 										ORDER BY lastName, firstName";
 						$stmt2 = $core->dbh->prepare($sql2);
 						$stmt2->bindParam(':positionID', $cpRow["positionID"]);
@@ -319,12 +319,12 @@ class Court {
     $sql = "( SELECT cv.volunteerID as id, 'Volunteer' as type, v.lastName, v.firstName 
 						FROM court_jury_volunteer cv
 						JOIN volunteer v ON v.volunteerID = cv.volunteerID
-						WHERE cv.courtID = :courtID )
+						WHERE cv.courtID = :courtID AND v.active = 1 )
 						UNION
 						( SELECT cd.defendantID as id, 'Defendant' as type, d.lastName, d.firstName 
 						FROM court_jury_defendant cd
 						JOIN defendant d ON d.defendantID= cd.defendantID
-						WHERE cd.courtID = :courtID )";
+						WHERE cd.courtID = :courtID AND d.closedate is NULL )";
     $core = Core::dbOpen();
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':courtID', $this->courtID);

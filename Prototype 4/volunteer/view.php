@@ -34,6 +34,9 @@ else
 
 <script>
 $(function () {
+	$("#tabs").tabs({ cookie: { expires: 5 } });
+	$("#tabs").show(); 
+	
 	$( "#volunteer-list" ).button().click(function() { window.location.href = "index.php";});
 	$( "#update-volunteer" ).button().click(function() { $("#updateVolunteer").submit(); });
 	$( "#add-volunteer" ).button().click(function(){ $("#updateVolunteer").submit(); });
@@ -66,7 +69,6 @@ $(function () {
 </script>
 
 <div id="control-header">
-	
 	<div class="left"><h1><? echo $action ?></h1></div>	
 	<div class="right">
 		<div id="control" class="ui-state-error">
@@ -74,12 +76,11 @@ $(function () {
       <? if( !isset($id) ) { ?>
 			<button id="add-volunteer">Add Volunteer</button>
       <? } else { ?>
-			<button id="update-volunteer">Update Volunteer</button>
 			<button class="delete-volunteer" id="delete-volunteer" value="process.php?action=Delete%20Volunteer&id=<? echo $id; ?>" \>Delete Volunteer</button>
+			<button id="update-volunteer">Update Volunteer</button>
       <? } ?>
 		</div>
 	</div>
-	
 </div>
 
 <form name="updateVolunteer" id="updateVolunteer" method="post" action="process.php">
@@ -119,7 +120,7 @@ $(function () {
           <tr><td colspan="2"></td></tr>        
           <tr>
             <td width="75">Phone #:</td>
-            <td><input type="text" name="phone" value="<? echo $phone?>"/></td>
+            <td><input type="text" class="phone" name="phone" value="<? echo $phone?>"/></td>
           </tr>
           <tr>
             <td>Email:</td>
@@ -131,20 +132,33 @@ $(function () {
   </table>
 </fieldset>
 
-<fieldset>
-  <legend>Volunteer Positions</legend>
-  <table>
-    <? foreach( $programPositions as $key => $value) { ?>
-    <tr>
-      <td width="250"><? echo $key ?></td>
-      <td>
-        <? $checked = in_array( $value, $volunteer->getPositions() ) ? " checked" : ""; ?>
-        <input type="checkbox" name="position[]" value="<? echo $value ?>"<? echo $checked ?> />
-      </td>
-    </tr>
-    <? } ?>
-  </table>
-</fieldset>
+<? if( isset($id) ) { ?>
+<div id="tabs">
+	<ul>
+		<li><a href="#tabs-position">Positions</a></li>
+		<li><a href="#tabs-hours">Hours</a></li>
+	</ul>
+	<div id="tabs-position">
+		<fieldset>
+      <legend>Select Position(s)</legend>
+      <table>
+        <? foreach( $programPositions as $key => $value) { ?>
+        <tr>
+          <td width="250"><? echo $key ?></td>
+          <td>
+            <? $checked = in_array( $value, $volunteer->getPositions() ) ? " checked" : ""; ?>
+            <input type="checkbox" name="position[]" value="<? echo $value ?>"<? echo $checked ?> />
+          </td>
+        </tr>
+        <? } ?>
+      </table>
+    </fieldset>
+	</div>
+	<div id="tabs-hours">
+		TODO: List volunteer hours in dataTable
+	</div>
+</div>
+<? } ?>
 
 </form>
 

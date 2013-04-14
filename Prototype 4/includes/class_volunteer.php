@@ -134,24 +134,27 @@ class Volunteer {
 		// clear previous volunteer positions
 		$this->clearPositions();
   	
-  	// add positions		
-		$core = Core::dbOpen();
-		$sql = "INSERT INTO volunteer_position (volunteerID, positionID) VALUES (:volunteerID, :positionID)";
-		$stmt = $core->dbh->prepare($sql);
-		
-  	foreach ( $this->positions as $value )
-  	{
-  		$stmt->bindParam(':volunteerID', $this->volunteerID);
-  		$stmt->bindParam(':positionID', $value);
+  	// add positions
+  	if($this->positions != null)
+    {
+  		$core = Core::dbOpen();
+  		$sql = "INSERT INTO volunteer_position (volunteerID, positionID) VALUES (:volunteerID, :positionID)";
+  		$stmt = $core->dbh->prepare($sql);
   		
-			try {
-				$stmt->execute();
-			} catch( PDOException $e ) {
-  			echo "Add volunteer positons Failed!";
-			}
-		}
-		
- 		Core::dbClose();
+    	foreach ( $this->positions as $value )
+    	{
+    		$stmt->bindParam(':volunteerID', $this->volunteerID);
+    		$stmt->bindParam(':positionID', $value);
+    		
+  			try {
+  				$stmt->execute();
+  			} catch( PDOException $e ) {
+    			echo "Add volunteer positons Failed!";
+  			}
+  		}
+  		
+   		Core::dbClose();
+    }
 
   	return false;
   }
@@ -209,23 +212,7 @@ class Volunteer {
   	}
 		return false;
   }
-	
-  /*************************************************************************************************
-   function: editVolunteerHours
-   purpose: assign hours a volunteer has worked in court
-   input: 
-   output: 
-  *************************************************************************************************/
-  public function editVolunteerHours() {}
-  
-  /*************************************************************************************************
-   function: printVolunteerHours
-   purpose: print listing of volunteer hours
-   input: 
-   output: 
-  *************************************************************************************************/
-  public function printVolunteerHours() {}
-  
+	  
   //getter
   public function getVolunteerID() { return $this->volunteerID; }
   public function getProgramID() { return $this->programID; }

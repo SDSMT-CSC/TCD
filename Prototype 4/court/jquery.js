@@ -6,7 +6,7 @@ jQuery(function($) {
 	$("#tabs").tabs({ cookie: { expires: 5 } });
 	$("#tabs").show(); 
 	$("#court-date").datepicker();
-	$("#court-time").timepicker({showLeadingZero: false,showPeriod: true,defaultTime: ''});
+	$("#court-time").timepicker({showPeriod: true,defaultTime: ''});
 	
 	// Top menu
 	$("#court-list").button().click(function() { window.location.href = 'index.php' });
@@ -128,7 +128,7 @@ jQuery(function($) {
 				],
 				"sPaginationType": "full_numbers",
 				"bProcessing": false,
-				"sAjaxSource": '/data/defendants_current.php'
+				"sAjaxSource": '/data/defendants.php'
 	});
 	
 	var locTable = $("#location-table").dataTable({ 

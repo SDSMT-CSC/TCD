@@ -16,7 +16,7 @@ jQuery(function($)
 		"aoColumnDefs" : [ { "aTargets": [0], "bVisible": false, "bSearchable": false }  ],
 		"sPaginationType": "full_numbers",
 		"bProcessing": false,
-		"sAjaxSource": '/data/defendants_current.php',
+		"sAjaxSource": '/data/defendants.php',
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
 				// use ajax to get the source data
 				$.ajax( {

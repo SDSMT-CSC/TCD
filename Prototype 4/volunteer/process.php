@@ -10,6 +10,9 @@ if( $user_type == 1 )
   //get the action to be taken
 $action = $_REQUEST["action"];
 
+/****************************************************************************
+	UPDATE VOLUNTEER
+****************************************************************************/
 if( $action == "Add Volunteer" || $action == "Edit Volunteer" )
 {
 	$mod_volunteer = new Volunteer(  $user->getProgramID() );
@@ -29,9 +32,13 @@ if( $action == "Add Volunteer" || $action == "Edit Volunteer" )
 		$user->addEvent($action, $mod_volunteer->getVolunteerID() );
 	
 	//redirect to edit page
-	header("location:view.php?id=".$mod_volunteer->getVolunteerID() );
+	header("location: view.php?id=".$mod_volunteer->getVolunteerID() );
 }
-elseif( $action == "Delete Volunteer" )
+
+/****************************************************************************
+	DELETE VOLUNTEER
+****************************************************************************/
+if( $action == "Delete Volunteer" )
 {
 	$id = $_GET["id"];
 	$volunteer = new Volunteer( $user->getProgramID() );
@@ -48,9 +55,5 @@ elseif( $action == "Delete Volunteer" )
 	
 	header("location:index.php");
 }
-else
-{
-	//should not be here, return to main
-	header("location:index.php");
-}
-  ?>
+
+?>
