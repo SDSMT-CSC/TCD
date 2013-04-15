@@ -197,7 +197,7 @@ class Data {
 						$row = array();
 						$row[] = $aRow["statuteID"];
 						$row[] = $aRow["statute"];
-						$row[] = "<b>".$aRow["title"]."</b><br />".$aRow["description"];;
+						$row[] = "<b>".$aRow["title"]."</b><br />".$aRow["description"];
 						$output['aaData'][] = $row;
 				}
 				return json_encode($output);				
@@ -205,6 +205,50 @@ class Data {
 		} 
 		catch (PDOException $e) {
       		echo "Program Statutes Read Failed!";
+    }
+		return '{"aaData":[]}';
+	}
+	
+	/*************************************************************************************************
+   function: fetchProgramSentences
+   purpose: fetches sentence for the given program into a JSON object
+   input: $user_programID = program to fetch statutes for
+   output: JSON object
+  *************************************************************************************************/
+	public function fetchProgramSentences( $user_programID ) 
+	{
+		 // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT * FROM  program_sentences WHERE programID = :programID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $user_programID);
+    Core::dbClose();
+		
+		try {
+			if($stmt->execute() && $stmt->rowCount() > 0) {
+				
+				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+						$row = array();
+						$row[] = $aRow["sentenceID"];
+						$row[] = $aRow["name"];
+						$row[] = $aRow["description"];
+						
+						switch( $aRow["type"] ) {
+							case 1: $type = "Money"; break;
+							case 2: $type = "Numeric"; break;
+							case 3: $type = "Text"; break;
+							default: $type = "None";
+						}
+						
+						$row[] = $type;
+						
+						$output['aaData'][] = $row;
+				}
+				return json_encode($output);				
+			}
+		} 
+		catch (PDOException $e) {
+      		echo "Program Sentence Read Failed!";
     }
 		return '{"aaData":[]}';
 	}

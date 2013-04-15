@@ -42,11 +42,18 @@ jQuery(function($) {
 	$("#referred-date").datepicker();
 	$("#dismissed-date").datepicker();
 
+	// TAB5: Court
+	$("#create-court").button().click(function() {	window.location.href = "/court/view.php";	});		
+	
+	// TAB6: Sentence
+	$("#update-sentencing").button().click(function() {	});	
+	$("#add-existing-sentence").button().click(function() {	$('#sentence-existing-dialog').dialog('open'); return false; });	
+	$("#add-new-sentence").button().click(function() { $('#sentence-new-dialog').dialog('open'); return false; });	
+	$("#sentence-complete").datepicker();
+	$(".complete").datepicker();
+	
 	// TAB7: Workshop
 	$("#create-workshop").button().click(function() {	window.location.href = "/workshop/view.php";	});	
-
-	// TAB8: Court
-	$("#create-court").button().click(function() {	window.location.href = "/court/view.php";	});		
 		
 	/**************************************************************************************************
 		FORM VALIDATION
@@ -128,7 +135,19 @@ jQuery(function($) {
 		},
 		rules: { 'item-name': { required: true } }
 	});
-			
+	
+	$("#sentence-new").validate({
+		errorElement: "div",
+		wrapper: "div",
+		errorPlacement: function(error, element) {
+			  error.insertAfter(element);
+				error.addClass('message');
+		},
+		rules: {
+			'sentence-name': { required: true }
+		}
+	});	
+	
 	/**************************************************************************************************
 		DIALOG FUNCTIONALITY
 	**************************************************************************************************/
@@ -253,6 +272,28 @@ jQuery(function($) {
 			}
 		});
 	
+		$("#sentence-existing-dialog").dialog({
+			resizable: false,
+			autoOpen:false,
+			modal: true,
+			width:450,
+			buttons: {
+				
+				'Cancel': function() { $(this).dialog('close'); }
+			}
+		});
+		
+		$("#sentence-new-dialog").dialog({
+			resizable: false,
+			autoOpen:false,
+			modal: true,
+			width:525,
+			buttons: {
+				'Add Sentence': function() { $("#sentence-new").submit(); },
+				'Cancel': function() { $(this).dialog('close'); }
+			}
+		});
+	
 	/**************************************************************************************************
 		CLICK FUNCTIONS
 	**************************************************************************************************/
@@ -343,6 +384,14 @@ jQuery(function($) {
 				"bDeferRender": false,
 				"bProcessing": false,
 				"sAjaxSource": '/data/citation_offenses.php?id='+$("#citation input[name='defendantID']").val()
+	});
+	
+	var sentenceTable = $("#sentence-table").dataTable( { 
+				"aaSorting": [],
+				"aoColumnDefs" : [ { "aTargets": [0], "bVisible": false, "bSearchable": false } ],
+				"sPaginationType": "full_numbers",
+				"bProcessing": false,
+				"sAjaxSource": '/data/program_sentences.php'
 	});
 	
 	/**************************************************************************************************
@@ -459,6 +508,20 @@ jQuery(function($) {
 			// close the window
 			$("#offense-existing-dialog").dialog('close');
 		}
+	});
+	
+	$('#sentence-table tr').live('click', function (event) {
+		var mode;
+		
+		if( $(this).hasClass('odd') )
+			mode = 'odd';
+		else
+			mode = 'even';
+		
+		if ( $(this).hasClass('row_selected_'+mode) )
+			$(this).removeClass('row_selected_'+mode);
+		else
+			$(this).addClass('row_selected_'+mode);
 	});
 	
 	/**************************************************************************************************

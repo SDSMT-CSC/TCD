@@ -5,6 +5,7 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_school.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_guardian.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_citation.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_sentence.php");
 
 $action = $_REQUEST["action"];
 
@@ -194,7 +195,7 @@ if( $action == "Add Statute" )
 	$citation = new Citation( $_POST["defendantID"] );
 	
 	// add statute to program_statutes
-	$statuteID = $program->addStatute( $user_programID,	$_POST["statute-code"],	$_POST["statute-title"], $_POST["statute-description"] );
+	$statuteID = $program->addStatute( $_POST["statute-code"],	$_POST["statute-title"], $_POST["statute-description"] );
 	
 	if( $citation->addOffense( $statuteID ) )
 		$user->addEvent("Defendant: ".$action, $statuteID );
@@ -268,6 +269,23 @@ if( $action == "Update Intake" )
 	
  	// redirect to the defendant page	
 	header("location: view.php?id=".$defendant->getDefendantID() );
+}
+
+/*********************************************************************************************
+	TAB5: INTAKE INFORMATION
+*********************************************************************************************/
+if( $action == "Add Sentence" )
+{
+	$sentence = new Sentence( $_POST["defendantID"] );
+	
+	// add statute to program_statutes
+	$sentenceID = $program->addSentence( $_POST["sentence-name"],	$_POST["sentence-description"], $_POST["sentence-type"], $_POST["sentence-additional"] );
+	
+	if( $sentence->addSentence( $sentenceID ) )
+	$user->addEvent("Defendant: ".$action, $sentenceID );
+
+	// redirect to the defendant page	
+	header("location: view.php?id=".$sentence->getDefendantID() );
 }
 
 ?>

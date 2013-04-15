@@ -500,6 +500,41 @@ class Program {
   	return false;
   }
 	
+	/*************************************************************************************************
+   function: addSentence
+   purpose: inserts the sentence into the database
+   input: $programID = unused variable, uses object's programID
+          $code = statute code
+          $title = title of statute
+          $description = details of the statute
+   output: ID of added statute
+  *************************************************************************************************/
+	public function addSentence( $name,	$description, $type, $additional )
+	{						
+		if( $name )
+		{
+			$core = Core::dbOpen();
+			$sql = "INSERT INTO program_sentences (programID, name, description, type, additional) 
+							VALUES(:programID, :name, :description, :type, :additional)";
+			$stmt = $core->dbh->prepare($sql);
+			$stmt->bindParam(':programID', $this->programID);
+			$stmt->bindParam(':name', $name);
+			$stmt->bindParam(':description', $description);
+			$stmt->bindParam(':type', $type);
+			$stmt->bindParam(':additional', $additional);
+			Core::dbClose();
+			
+			try
+			{
+				if( $stmt->execute() )
+						$sentenceID = $core->dbh->lastInsertId();	
+			} catch ( PDOException $e ) {
+				echo "Add sentance Failed!";
+			}         
+		}			
+		return $sentenceID;
+	}
+	
   // public function removeProgram() { }  --- set deleted flag
 	
 	// getters

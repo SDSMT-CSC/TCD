@@ -60,7 +60,7 @@
 				<td>Dismissed - No Complaint: </td>
 				<td><input type="checkbox" name="intake-dismissed" id="intake-dismissed"<? if( $defendant->dismissed ) echo " checked"; ?>/><? echo $dismissed_date ?></td>
 			</tr>
-      <tr><td colspan="2" align="right"><button id="intake-submit">Update Intake Information</button></td></tr>
 		</table>
+    <button id="intake-submit">Update Intake Information</button>
 	</fieldset>
 </form> 
