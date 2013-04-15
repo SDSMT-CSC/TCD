@@ -68,6 +68,20 @@ $(function () {
 });
 </script>
 
+<? if( $user_type == 5 ) { ?>
+<script type="text/javascript">
+jQuery(function($) {  
+  $('form :input').attr ( 'disabled', true );
+  //$('#delete-volunteer').css("display","none");
+     
+  $('#add-volunteer').attr ( 'disabled', true );
+  $('#delete-volunteer').attr ( 'disabled', true );
+  $('#update-volunteer').attr ( 'disabled', true );
+  
+});
+</script>
+<? } ?>
+
 <div id="control-header">
 	<div class="left"><h1><? echo $action ?></h1></div>	
 	<div class="right">

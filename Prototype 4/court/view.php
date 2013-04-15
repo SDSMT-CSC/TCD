@@ -56,6 +56,27 @@ else {
 }
 ?>
 
+<? if( $user_type == 5 ) { ?>
+<script type="text/javascript">
+jQuery(function($) {  
+  $('form :input').attr ( 'disabled', true );
+  $('#court-defendant-select').css("display","none");
+  $('#court-location').css("display","none");
+  $('#program-location').css("display","none");
+  $('#update-court-members').css("display","none");
+  $('.add').css("display","none");
+  $('#add-jury-members').css("display","none");
+  $('#update-court-guardians').css("display","none");
+     
+  $('#add-court').attr ( 'disabled', true );
+  $('#update-court').attr ( 'disabled', true );
+  $('#delete-court').attr ( 'disabled', true );
+  $('a.delete-juror').attr ( 'disabled', true );
+  
+});
+</script>
+<? } ?>
+
 <script type="text/javascript" src="jquery.js"></script>
 
 <div id="court-defendant-dialog" title="Select Defendant">

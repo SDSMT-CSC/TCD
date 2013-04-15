@@ -54,6 +54,24 @@ else
 }
 ?>
 
+<? if( $user_type == 5 ) { ?>
+<script type="text/javascript">
+jQuery(function($) {  
+  $('form :input').attr ( 'disabled', true );
+  $('#workshop-location-dialog').css("display","none");
+  $('#program-location-dialog').css("display","none");
+  $('#participant-dialog').css("display","none");
+  $('#delete-workshop').css("display","none");
+  $('#workshop-location').css("display","none");
+  $('#program-location').css("display","none");
+  $('#add-participant').css("display","none");  
+     
+  $('#update-workshop').attr ( 'disabled', true );
+  
+});
+</script>
+<? } ?>
+
 <script type="text/javascript" src="jquery.js"></script>
 
 <div id="participant-dialog" title="Add Participant">
@@ -222,7 +240,7 @@ else
 		</thead>
 		<tbody>
     <? 
-		$data = $workshop->listWorkshopParticipants( $id ) ;
+		$data = $workshop->listWorkshopParticipants( $id, $user->getType() ) ;
 		if( !$data ) {		
 		?>
     <tr><td align="center" colspan="5">No Participants</td></tr>

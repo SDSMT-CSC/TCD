@@ -16,6 +16,17 @@ jQuery(function($) {
 });
 </script>
 
+<? if( $user_type == 5 ) { ?>
+<script type="text/javascript">
+jQuery(function($) {  
+  $('form :input').attr ( 'disabled', true );
+     
+  $('#update-court-hours').attr ( 'disabled', true );
+  
+});
+</script>
+<? } ?>
+
 <h1>Enter Court Hours</h1>
 
 <div id="control-header">

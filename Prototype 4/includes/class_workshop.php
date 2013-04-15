@@ -227,9 +227,10 @@ class Workshop {
 		function: listWorkshopParticipants
 		purpose: returns list of workshop participants for the given workshop
 		input: $id = workshop to get list from
+           $user_level = level of current user
   	output: data string
 	*************************************************************************************************/
-	public function listWorkshopParticipants( $id )
+	public function listWorkshopParticipants( $id, $user_level )
 	{
 		$core = Core::dbOpen();
 		$sql = "SELECT d.firstName, d.lastName, d.homePhone, d.defendantID, UNIX_TIMESTAMP(w.completed) AS completed FROM defendant d
@@ -250,9 +251,16 @@ class Workshop {
 						$completed = date( "m-d-Y g:i A", $aRow["completed"]);
 					$data .= '<tr><td>'.$aRow["lastName"].', '.$aRow["firstName"].
 							 '</td><td>'.$aRow["homePhone"].
-							 '</td><td>'.$completed.
-							 '</td><td><a href="process.php?remove='.$aRow["defendantID"].'&workshopID='.$id.'">Remove</a></td>
+							 '</td><td>'.$completed;
+          if( $user_level != 5 )
+          {
+							 $data .= '</td><td><a href="process.php?remove='.$aRow["defendantID"].'&workshopID='.$id.'">Remove</a></td>
 							 <td><a href="process.php?completed='.$aRow["defendantID"].'&workshopID='.$id.'">Completed</a></td></tr>';
+          }
+          else
+          {
+               $data .= '</td><td></td><td></td></tr>';
+          }
 				}
 			}
 		}
