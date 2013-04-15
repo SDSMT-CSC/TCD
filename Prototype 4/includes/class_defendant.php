@@ -152,6 +152,36 @@ class Defendant {
     }
     return false;
   }
+
+  /*************************************************************************************************
+    function: compareProgramID
+    purpose: compares defendant's programID to user's programID to determine if it should be listed
+    input: $id = defendant id
+           $user_program = program id for user trying to view defendant
+    output: boolean true/false
+  *************************************************************************************************/
+  public function compareProgramID( $id, $user_program )
+  {
+    // database connection and sql query
+    $sql = "SELECT programID FROM defendant WHERE defendantID = :defendantID";
+    $core = Core::dbOpen();
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $id);
+    Core::dbClose();
+    
+    try
+    {
+      if( $stmt->execute() )
+      {
+        $row = $stmt->fetch();
+        if( $user_program == $row["programID"] )
+          return true;
+      }
+    } catch( PDOException $e ) {
+      echo "ProgramID Compare Failed!";
+    }
+    return false;
+  }
 	
 	/*************************************************************************************************
 		function: updateDefendant

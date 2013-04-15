@@ -6,18 +6,17 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_volunteer.php");
 $id = $_GET["id"];
 $volunteer = new Volunteer( $user->getProgramID() );
 	
-if( isset($id) )
-{
-	$action = "Edit Volunteer";
-	
-	$volunteer->getVolunteer( $id );
-	$firstName = $volunteer->getFirstName();
-	$lastName = $volunteer->getLastName();
-	$phone = $volunteer->getPhone();
-	$email = $volunteer->getEmail();
-	$positions = $volunteer->getPositions();
-	$active = $volunteer->getActive();
-	$programPositions = $program->getProgramPositions();
+if( isset($id) && $volunteer->compareProgramID( $id, $user_programID ) ){
+  	$action = "Edit Volunteer";
+  	
+  	$volunteer->getVolunteer( $id );
+  	$firstName = $volunteer->getFirstName();
+  	$lastName = $volunteer->getLastName();
+  	$phone = $volunteer->getPhone();
+  	$email = $volunteer->getEmail();
+  	$positions = $volunteer->getPositions();
+  	$active = $volunteer->getActive();
+  	$programPositions = $program->getProgramPositions();
 }
 else
 {
@@ -72,7 +71,6 @@ $(function () {
 <script type="text/javascript">
 jQuery(function($) {  
   $('form :input').attr ( 'disabled', true );
-  //$('#delete-volunteer').css("display","none");
      
   $('#add-volunteer').attr ( 'disabled', true );
   $('#delete-volunteer').attr ( 'disabled', true );
@@ -87,7 +85,7 @@ jQuery(function($) {
 	<div class="right">
 		<div id="control" class="ui-state-error">
 			<button id="volunteer-list">Back to List</button>
-      <? if( !isset($id) ) { ?>
+      <? if( $action == "Add Volunteer" ) { ?>
 			<button id="add-volunteer">Add Volunteer</button>
       <? } else { ?>
 			<button class="delete-volunteer" id="delete-volunteer" value="process.php?action=Delete%20Volunteer&id=<? echo $id; ?>" \>Delete Volunteer</button>
@@ -100,7 +98,7 @@ jQuery(function($) {
 <form name="updateVolunteer" id="updateVolunteer" method="post" action="process.php">
 <input type="hidden" name="action" value="<? echo $action ?>" />
 
-<? if( isset($id) ) { ?>
+<? if( $action == "Edit Volunteer" ) { ?>
 <input type="hidden" name="volunteerID" value="<? echo $id ?>" />
 <? } ?>
 
@@ -146,7 +144,7 @@ jQuery(function($) {
   </table>
 </fieldset>
 
-<? if( isset($id) ) { ?>
+<? if( $action == "Edit Volunteer" ) { ?>
 <div id="tabs">
 	<ul>
 		<li><a href="#tabs-position">Positions</a></li>

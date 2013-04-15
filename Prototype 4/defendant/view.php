@@ -14,19 +14,19 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_court_location.php");
 
 $id = $_GET["id"];
 $defendant = new Defendant();
-
-if( isset($id) ) {
-	$action = "Edit Defendant";
-	
-	$defendant->getFromID( $id );
-	$FirstName = $defendant->getFirstName();
-	$LastName = $defendant->getLastName();
-	$MiddleName = $defendant->getMiddleName();
-	$PhoneNumber = $defendant->getPhoneNumber();
-	$DOB = $defendant->getDateOfBirth();
-	$CourtCaseNumber = $defendant->getCourtCaseNumber();
-	$AgencyNumber = $defendant->getAgencyNumber();	
-} 
+if( isset($id)) {
+  if( $defendant->compareProgramID( $id, $user_programID) ){
+  	$action = "Edit Defendant";
+  	
+  	$defendant->getFromID( $id );
+  	$FirstName = $defendant->getFirstName();
+  	$LastName = $defendant->getLastName();
+  	$MiddleName = $defendant->getMiddleName();
+  	$PhoneNumber = $defendant->getPhoneNumber();
+  	$DOB = $defendant->getDateOfBirth();
+  	$CourtCaseNumber = $defendant->getCourtCaseNumber();
+  	$AgencyNumber = $defendant->getAgencyNumber();	
+} }
 else {	
 	$action = "Add Defendant";
 	$FirstName = NULL;
@@ -181,7 +181,7 @@ if( isset($id) ) {
 		<li><a href="#tab-citation">Citation</a></li>
 		<li><a href="#tab-intake">Intake</a></li>
 		<li><a href="#tab-court">Court</a></li>
-		<li><a href="#tab-sentance">Sentance</a></li>
+		<li><a href="#tab-sentence">Sentence</a></li>
 		<li><a href="#tab-workshop">Workshop</a></li>
 		<li><a href="#tab-expunge">Expunge</a></li>
 		<li><a href="#tab-forms">Forms</a></li>
@@ -202,7 +202,7 @@ if( isset($id) ) {
 	<div id="tab-court">
 		<? include("tab_court.php"); ?>
 	</div>
-	<div id="tab-sentance">
+	<div id="tab-sentence">
 		<? include("tab_sentence.php"); ?>
 	</div>	
 	<div id="tab-workshop">

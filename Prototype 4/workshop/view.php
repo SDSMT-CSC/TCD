@@ -9,7 +9,7 @@ $id = $_GET["id"];
 $workshop = new Workshop( $user_programID );
 $data = new Data();
 	
-if( isset($id) )
+if( isset($id) && $workshop->compareProgramID( $id, $user_programID ) )
 {
 	$action = "Edit Workshop";
 	

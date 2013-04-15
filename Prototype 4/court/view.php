@@ -8,36 +8,36 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_court_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_guardian.php");
 
 $id = $_GET["id"];
+$court = new Court( $user_programID );
 
-if( isset($id) ) {
-	$action = "Edit Court";
-	
-	$court = new Court( $user_programID );
-	$court->getFromID( $id );
-	
-	$courtDate = date("m/j/Y", $court->courtDate );
-	$courtTime = date("h:i A", $court->courtDate );
-	$courtType = $court->type;
-	$contract = $court->contractSigned;
-	$closedDate = $court->closed;
-	$courtLocationID = $court->courtLocationID;
-	
-	// defendant name
-	$defendantID = $court->getDefendantID();	
-	$defendant = new Defendant();
-	$defendant->getFromID( $defendantID );
-	$defendantName = $defendant->getLastName() . ", " . $defendant->getFirstName();
-	
-	// location name
-	$courtLocation = new CourtLocation( $user_programID );
-	$courtLocation->getCourtLocation( $courtLocationID );
-	$locationName = $courtLocation->name;
-	$locationAddress = $courtLocation->address;
-	$locationCity = $courtLocation->city;
-	$locationState = $courtLocation->state;
-	$locationZip = $courtLocation->zip;
-	unset( $courtLocation );	
-} 
+if( isset($id) && $court->compareProgramID( $id, $user_programID) ){
+  	$action = "Edit Court";
+  	
+  	$court->getFromID( $id );
+  	
+  	$courtDate = date("m/j/Y", $court->courtDate );
+  	$courtTime = date("h:i A", $court->courtDate );
+  	$courtType = $court->type;
+  	$contract = $court->contractSigned;
+  	$closedDate = $court->closed;
+  	$courtLocationID = $court->courtLocationID;
+  	
+  	// defendant name
+  	$defendantID = $court->getDefendantID();	
+  	$defendant = new Defendant();
+  	$defendant->getFromID( $defendantID );
+  	$defendantName = $defendant->getLastName() . ", " . $defendant->getFirstName();
+  	
+  	// location name
+  	$courtLocation = new CourtLocation( $user_programID );
+  	$courtLocation->getCourtLocation( $courtLocationID );
+  	$locationName = $courtLocation->name;
+  	$locationAddress = $courtLocation->address;
+  	$locationCity = $courtLocation->city;
+  	$locationState = $courtLocation->state;
+  	$locationZip = $courtLocation->zip;
+  	unset( $courtLocation );	
+}
 else {	
 	$action = "Add Court";
 
@@ -142,7 +142,7 @@ jQuery(function($) {
 
 <form name="court-primary" id="court-primary" method="post" action="process.php">
 	<input type="hidden" name="action" value="<? echo $action ?>" />
-  <? if( isset($id) ) { ?>
+  <? if( isset($id) && $court->compareProgramID( $id, $user_programID) ) { ?>
   <input type="hidden" name="courtID" id="courtID" value="<? echo $id ?>" />
   <? } ?>
   <fieldset>
@@ -245,7 +245,7 @@ jQuery(function($) {
 
 <?
 unset( $action );
-if( isset($id) ) { 
+if( isset($id) && $court->compareProgramID( $id, $user_programID) ) { 
 ?>
 
 <div id="tabs">
