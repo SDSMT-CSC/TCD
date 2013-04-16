@@ -15,17 +15,16 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_court_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_sentence.php");
 
 $id = $_GET["id"];
-$error;
 
 $defendant = new Defendant();
 
 // if the user is trying to go to a defendant that doesn't belong to
 // their program, dont let them get the info
-if( !$defendant->compareProgramID( $id, $user_programID) ) {
+if( isset($id) && !$defendant->compareProgramID( $id, $user_programID) ) {
 	echo "No defendant data to display";
 }
 else {
-	if( isset($id) && !$error )
+	if( isset($id) )
 	{
 			$action = "Edit Defendant";
 			

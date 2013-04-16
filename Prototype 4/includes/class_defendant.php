@@ -526,6 +526,30 @@ class Defendant {
 		return $output;
 	}
 	
+	/*************************************************************************************************
+		function: updateNotes
+		purpose: updates defendant notes
+		input: none
+  	output: none
+	*************************************************************************************************/
+	public function updateNotes()
+	{
+		// database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "UPDATE defendant SET notes = :notes WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    $stmt->bindParam(':notes', $this->notes);
+    Core::dbClose();
+		
+		try {
+			$stmt->execute();
+		} 
+		catch (PDOException $e) {
+      		echo "Program Update Notes Failed!";
+    }
+	}
+	
 	// setters
 	public function setDefendantID( $str ) { $this->defendantID = $str; }
 	public function setProgramID( $str ) { $this->programID = $str; }

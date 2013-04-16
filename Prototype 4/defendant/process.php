@@ -338,4 +338,18 @@ if( $action == "Update Sentencing" )
 	
 }
 
+/*********************************************************************************************
+	TAB10: NOTES
+*********************************************************************************************/
+if( $action == "Update Notes" )
+{
+	$defendant = new Defendant();
+	$defendant->getFromID( $_POST["defendantID"] );
+	$defendant->notes = $_POST["notes"];
+	$defendant->updateNotes();
+	$user->addEvent("Defendant: ".$action, $_POST["defendantID"] );
+		
+	// redirect to the defendant page	
+	header("location: view.php?id=".$_POST["defendantID"] );
+}
 ?>

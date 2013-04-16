@@ -53,6 +53,9 @@ jQuery(function($) {
 	// TAB7: Workshop
 	$("#create-workshop").button().click(function() {	window.location.href = "/workshop/view.php";	});	
 		
+	// TAB10: Notes
+	$("#update-notes").button().click(function() {	$("#notes").submit();	});	
+	
 	/**************************************************************************************************
 		FORM VALIDATION
 	**************************************************************************************************/
