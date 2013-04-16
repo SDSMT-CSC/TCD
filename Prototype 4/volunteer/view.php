@@ -2,6 +2,7 @@
 $menuarea = "volunteer";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_volunteer.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_court_location.php");
 
 $id = $_GET["id"];
 $volunteer = new Volunteer( $user->getProgramID() );
@@ -167,7 +168,49 @@ jQuery(function($) {
     </fieldset>
 	</div>
 	<div id="tabs-hours">
-		TODO: List volunteer hours in dataTable
+		<fieldset>
+		  <legend>Volunteer Hours</legend>
+		  <?
+		  $volunteerHours = $volunteer->fetchVolunteerHours();
+      
+		  if( !$volunteerHours) { ?>
+		  <p>This volunteer has yet to work any courts.</p>
+		  <? 
+		  } else {
+		  ?>
+		  <table class="listing" id="volunteer-hours">
+		    <thead>
+		      <tr>
+		        <th width="20%">Date</th>
+		        <th width="30%">Venue</th>
+            <th width="20%">Location</th>
+            <th width="10%">Hours</th>
+            <th width="10%"></th>
+            <th width="10%"></th>
+		      </tr>
+		    </thead>
+		    <tbody>
+		      <?
+          foreach( $volunteerHours as $key => $row ) {
+            
+            $courtloc = new CourtLocation( $user_programID );
+            $courtloc->getCourtLocation( $row["courtLocationID"] );
+          ?>
+          <tr>
+            <td><? echo date("n/j/y h:i a", $row["date"] ) ?></td>
+            <td><? echo $courtloc->name ?></td>
+            <td><? echo $courtloc->city . ", " . $courtloc->state ?></td>
+            <td><? echo $row["hours"] ?></td>
+            <td><a href="/court/hour_entry.php?id=<? echo $row["courtID"] ?>">Hours</a></td>
+            <td align="center"><a href="/court/view.php?id=<? echo $row["courtID"] ?>">View</a></td>
+           </tr>
+          <? 
+          }
+          ?>
+		    </tbody>
+		  </table>
+		  <? } ?>
+		</fieldset>
 	</div>
 </div>
 <? } ?>

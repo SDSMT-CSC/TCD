@@ -242,6 +242,40 @@ class Volunteer {
   	}
 		return false;
   }
+  
+  /*************************************************************************************************
+   function: fetchVolunteerHours
+   purpose: fetches hours that the volunteer has worked for different courts
+   input: $id = volunteer to fetch hours for
+   output: JSON object
+  *************************************************************************************************/
+  public function fetchVolunteerHours()
+  {
+    $output = array();
+    //database connection and SQL query
+    $core = Core::dbOpen();
+    
+    $sql = "( SELECT UNIX_TIMESTAMP( c.date ) as date, c.courtLocationID, cm.hours, cm.courtID 
+              FROM court_member cm, court c
+              WHERE volunteerID = :id AND cm.courtID = c.courtID )
+            UNION ( SELECT UNIX_TIMESTAMP( c.date ) as date, c.courtLocationID, cm.hours, cm.courtID 
+              FROM court_jury_volunteer cm, court c
+              WHERE volunteerID = :id AND cm.courtID = c.courtID )";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':id', $this->volunteerID );
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() && $stmt->rowCount() > 0) {
+        while( $row = $stmt->fetch(PDO::FETCH_ASSOC)) {          
+          $output[] = $row;
+        }
+      }
+    } catch (PDOException $e) {
+      echo "Volunteer Hour Read Failed!";
+    }
+    return $output;
+  }
 	  
   //getter
   public function getVolunteerID() { return $this->volunteerID; }
