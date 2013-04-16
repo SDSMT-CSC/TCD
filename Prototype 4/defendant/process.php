@@ -272,20 +272,70 @@ if( $action == "Update Intake" )
 }
 
 /*********************************************************************************************
-	TAB5: INTAKE INFORMATION
+	TAB5: SENTENCE INFORMATION
 *********************************************************************************************/
 if( $action == "Add Sentence" )
 {
 	$sentence = new Sentence( $_POST["defendantID"] );
 	
 	// add statute to program_statutes
-	$sentenceID = $program->addSentence( $_POST["sentence-name"],	$_POST["sentence-description"], $_POST["sentence-type"], $_POST["sentence-additional"] );
+	$sentenceID = $program->addSentence( $_POST["sentence-name"],	$_POST["sentence-description"], $_POST["sentence-additional"] );
 	
 	if( $sentence->addSentence( $sentenceID ) )
-	$user->addEvent("Defendant: ".$action, $sentenceID );
+	$user->addEvent("Defendant: ".$action, $_POST["defendantID"] );
+
+	// redirect to the defendant page	
+	header("location: view.php?id=".$_POST["defendantID"] );
+}
+
+if( $action == "Add Sentence Items" )
+{
+	$items = explode( ",", $_POST["items"] );
+
+	$sentence = new Sentence( $_POST["defendantID"] );
+
+	if( $sentence->addSentence( $items ) )
+		$user->addEvent("Defendant: ".$action, $sentence->getDefendantID() );
 
 	// redirect to the defendant page	
 	header("location: view.php?id=".$sentence->getDefendantID() );
+}
+
+if( $action == "Delete Sentence" )
+{
+	$sentence = new Sentence( $_GET["defendantID"] );
+	
+	if( $sentence->removeSentence( $_GET["id"] ) )
+		$user->addEvent("Defendant: ".$action, $sentence->getDefendantID() );
+	
+	// redirect to the defendant page	
+	header("location: view.php?id=".$_GET["defendantID"] );
+}
+
+if( $action == "Update Sentencing" )
+{
+	
+	// these two fields won't update yet - need to add fields to the defendant table
+	// not before the design fair though!
+	// [sentence-complete] 
+	// [sentence-reason]
+	
+	$sentence = new Sentence( $_POST["defendantID"] );
+	
+	foreach( $_POST["sentence"] as $row )
+	{
+		$sentence->getFromID( $row["defsentID"] );
+		$sentence->value = $row["value"];
+		$sentence->additionalValue = $row["additional"];
+		$sentence->completeDate = $row["date"];
+		$sentence->updateSentence();
+	}
+	
+	$user->addEvent("Defendant: ".$action, $_POST["defendantID"] );
+		
+	// redirect to the defendant page	
+	header("location: view.php?id=".$_POST["defendantID"] );
+	
 }
 
 ?>

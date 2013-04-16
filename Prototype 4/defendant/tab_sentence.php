@@ -26,16 +26,6 @@
         <td><input type="text" name="sentence-description" /></td>
       </tr>
       <tr>
-        <td valign="top">Type:</td>
-        <td>
-        	<select name="sentence-type" id="statute-type">
-          	<option value="1">Money</option>
-          	<option value="2">Numeric</option>
-          	<option value="3">Text</option>
-        	</select>  
-        </td>
-      </tr>
-      <tr>
         <td>Additional Text Name:</td>
         <td><input type="text" name="sentence-additional" /></td>
       </tr>
@@ -43,16 +33,24 @@
   </form>
 </div>
 
+<form name="sentence-add-items" id="sentence-add-items" action="process.php" method="post">
+  <input type="hidden" name="action" value="Add Sentence Items" />
+  <input type="hidden" name="defendantID" value="<? echo $defendant->getDefendantID() ?>" />
+	<input type="hidden" name="items" id="items" />
+</form>
+  
 <form name="sentence" id="sentence" action="process.php" method="post">
   <input type="hidden" name="action" value="Update Sentencing" />
   <input type="hidden" name="defendantID" value="<? echo $defendant->getDefendantID() ?>" />
+    
   <fieldset>
     <legend>Sentence Requirements</legend>
     <table class="listing" id="sentence-listing">
       <thead>
         <tr>
-          <th width="60%" colspan="3">Sentence</th>
-          <th width="30%">Complete</th>
+          <th width="20%">Sentence</th>
+          <th width="60%" colspan="2">Requirements</th>
+          <th width="15%">Complete</th>
           <th width="10%"></th>
         </tr>
       </thead>
@@ -65,24 +63,31 @@
       <?
       }	else {
 				
+				$sentence = new Sentence( $defendant->getDefendantID() );
 				foreach( $sentences as $key => $row ) {
-	      ?>
+	      
+					$sentence->getFromID( $row["defsentID"] );
+				?>
       <tr>
-      	<td><? echo $row["name"] ?></td>
-      	<td align="right"><? echo $row["description"] ?>:</td>
-      	<td>
+      	<td><? echo $sentence->name ?></td>
+        <td><? echo $sentence->description ?>:</td>
+        <td>
+          <input type="hidden" name="sentence[<? echo $key ?>][defsentID]" value="<? echo $row["defsentID"] ?>" />
+        	<input type="text" name="sentence[<? echo $key ?>][value]" size="5" value="<? echo $sentence->value ?>" />
         	<?
-						switch( $row["type"] ) {
-							case 1: $value = $row["money"]; break;
-							case 2: $value = $row["numbers"]; break;
-							case 3: $value = $row["text"]; break;
-						}
-					?>
-          <input type="hidden" name="sentence[<? echo $key ?>][sentenceID]" value="<? echo $row["sentenceID"] ?>" />
-        	<input type="text" name="sentence[<? echo $key ?>][value]" size="5" value="<? echo $value ?>" />
+					if( $sentence->additional ) { ?>
+          <? echo $sentence->additional ?>: 
+          <input type="text" size="30" name="sentence[<? echo $key ?>][additional]" value="<? echo $sentence->additionalValue ?>" />
+          <? } ?>
          </td>
-      	<td><input type="text" class="date complete" size="10" name="sentence[<? echo $key ?>][date]" value=""  /></td>
-      	<td>Remove</td>
+      	<td>
+        	<input type="text" class="date complete" size="10" 
+          				name="sentence[<? echo $key ?>][date]" value="<? if( $sentence->completeDate ) echo date( "m/d/Y", $sentence->completeDate ) ?>" />
+        </td>
+      	<td>
+        	<a class="delete-sentence" 
+          	 href="process.php?action=Delete+Sentence&defendantID=<? echo $defendant->getDefendantID() ?>&id=<? echo $row["defsentID"] ?>">Delete</a>
+        </td>
       </tr>
       	<?  
 				}
@@ -91,11 +96,13 @@
       </tbody>
     </table>
     <div class="belowListing">
+			<button id="update-sentencing">Update Sentencing</button>
       <button id="add-existing-sentence">Add Existing Sentence</button>
       <button id="add-new-sentence">Add New Sentence</button>
     </div>
   </fieldset>
   
+  <!--
   <fieldset>
     <legend>Sentence Information</legend>
     <table>
@@ -109,6 +116,5 @@
       </tr>
     </table>
   </fieldset>
-  <button id="update-sentencing">Update Sentencing</button>
-
+  -->
 </form>

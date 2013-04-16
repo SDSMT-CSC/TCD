@@ -1,4 +1,3 @@
-
 jQuery(function($) {	
 
 	/**************************************************************************************************
@@ -16,7 +15,6 @@ jQuery(function($) {
 	// TAB1: personal
 	$("#dob").datepicker();
 	$("#defendant-personal-submit").button().click(function() { $("#defendant-personal").submit(); });
-
 
 	// TAB2: Guardian items
 	$('#add-parent').click(function(){$('#parent-dialog').dialog('open');});
@@ -46,7 +44,7 @@ jQuery(function($) {
 	$("#create-court").button().click(function() {	window.location.href = "/court/view.php";	});		
 	
 	// TAB6: Sentence
-	$("#update-sentencing").button().click(function() {	});	
+	$("#update-sentencing").button().click(function() {	$("#sentence").submit(); });	
 	$("#add-existing-sentence").button().click(function() {	$('#sentence-existing-dialog').dialog('open'); return false; });	
 	$("#add-new-sentence").button().click(function() { $('#sentence-new-dialog').dialog('open'); return false; });	
 	$("#sentence-complete").datepicker();
@@ -278,7 +276,26 @@ jQuery(function($) {
 			modal: true,
 			width:450,
 			buttons: {
+				'Add Sentence Items': function() { 
 				
+					var items = new Array();
+					var aTrs = sentenceTable.fnGetNodes();
+										
+					// build array with selected items in the table
+					for ( var i=0 ; i<aTrs.length ; i++ )
+					{
+						if ( $(aTrs[i]).hasClass('row_selected_odd') || $(aTrs[i]).hasClass('row_selected_even') )
+						{
+							var aData = sentenceTable.fnGetData( aTrs[i] );					
+							items.push( aData[0] );
+						}
+					}					
+				
+					// set the form element to this string and submit it
+					$("#items").val(items);
+					
+					$("#sentence-add-items").submit();				
+				},
 				'Cancel': function() { $(this).dialog('close'); }
 			}
 		});
@@ -553,10 +570,19 @@ jQuery(function($) {
 		return false;
 	});
 	
-	// Delete an vehicle
+	// Delete a vehicle
 	$("a.delete-vehicle").click(function() {
 		dTitle = 'Delete Vehicle';
 		dMsg = 'Are you sure you want to delete this vehicle?';
+		dHref = $(this).attr("href");
+		popupDialog( dTitle, dMsg, dHref );
+		return false;
+	});
+	
+	// Delete a sentence
+	$("a.delete-sentence").click(function() {
+		dTitle = 'Delete Sentence Requirement';
+		dMsg = 'Are you sure you want to delete this sentence requirement?';
 		dHref = $(this).attr("href");
 		popupDialog( dTitle, dMsg, dHref );
 		return false;

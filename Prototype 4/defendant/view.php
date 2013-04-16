@@ -1,4 +1,5 @@
-<?php 
+<?php
+ob_start();
 $menuarea = "defendant";
 include($_SERVER['DOCUMENT_ROOT']."/includes/header_internal.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_data.php");
@@ -11,32 +12,42 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_court.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_court_location.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_sentence.php");
 
 $id = $_GET["id"];
+$error;
+
 $defendant = new Defendant();
-if( isset($id)) {
-  if( $defendant->compareProgramID( $id, $user_programID) ){
-  	$action = "Edit Defendant";
-  	
-  	$defendant->getFromID( $id );
-  	$FirstName = $defendant->getFirstName();
-  	$LastName = $defendant->getLastName();
-  	$MiddleName = $defendant->getMiddleName();
-  	$PhoneNumber = $defendant->getPhoneNumber();
-  	$DOB = $defendant->getDateOfBirth();
-  	$CourtCaseNumber = $defendant->getCourtCaseNumber();
-  	$AgencyNumber = $defendant->getAgencyNumber();	
-} }
-else {	
-	$action = "Add Defendant";
-	$FirstName = NULL;
-	$LastName = NULL;
-	$MiddleName = NULL;
-	$PhoneNumber = NULL;
-	$DOB = NULL;
-	$CourtCaseNumber = NULL;
-	$AgencyNumber = NULL;
+
+// if the user is trying to go to a defendant that doesn't belong to
+// their program, dont let them get the info
+if( !$defendant->compareProgramID( $id, $user_programID) ) {
+	echo "No defendant data to display";
 }
+else {
+	if( isset($id) && !$error )
+	{
+			$action = "Edit Defendant";
+			
+			$defendant->getFromID( $id );
+			$FirstName = $defendant->getFirstName();
+			$LastName = $defendant->getLastName();
+			$MiddleName = $defendant->getMiddleName();
+			$PhoneNumber = $defendant->getPhoneNumber();
+			$DOB = $defendant->getDateOfBirth();
+			$CourtCaseNumber = $defendant->getCourtCaseNumber();
+			$AgencyNumber = $defendant->getAgencyNumber();	
+	} 
+	else {	
+		$action = "Add Defendant";
+		$FirstName = NULL;
+		$LastName = NULL;
+		$MiddleName = NULL;
+		$PhoneNumber = NULL;
+		$DOB = NULL;
+		$CourtCaseNumber = NULL;
+		$AgencyNumber = NULL;
+	}
 ?>
 
 <? if( $user_type == 5 ) { ?>
@@ -129,7 +140,7 @@ jQuery(function($) {
           </tr>
           <tr>
             <td>Date of Birth:</td>
-            <td><input type="text" class="data" name="dob" size="10" value="<? echo $DOB ?>" /></td>
+            <td><input type="text" class="date" id="dob" name="dob" size="10" value="<? echo $DOB ?>" /></td>
           </tr>          
           <tr>
             <td>Phone Number:</td>
@@ -219,7 +230,10 @@ if( isset($id) ) {
 	</div>
 </div>
 
-<? } ?>
+<?
+	} 
+}
+?>
 
 <?php 
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");

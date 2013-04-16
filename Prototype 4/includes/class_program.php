@@ -509,18 +509,17 @@ class Program {
           $description = details of the statute
    output: ID of added statute
   *************************************************************************************************/
-	public function addSentence( $name,	$description, $type, $additional )
+	public function addSentence( $name,	$description, $additional )
 	{						
 		if( $name )
 		{
 			$core = Core::dbOpen();
-			$sql = "INSERT INTO program_sentences (programID, name, description, type, additional) 
-							VALUES(:programID, :name, :description, :type, :additional)";
+			$sql = "INSERT INTO program_sentences (programID, name, description, additional) 
+							VALUES(:programID, :name, :description, :additional)";
 			$stmt = $core->dbh->prepare($sql);
 			$stmt->bindParam(':programID', $this->programID);
 			$stmt->bindParam(':name', $name);
 			$stmt->bindParam(':description', $description);
-			$stmt->bindParam(':type', $type);
 			$stmt->bindParam(':additional', $additional);
 			Core::dbClose();
 			

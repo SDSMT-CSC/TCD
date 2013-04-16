@@ -287,7 +287,7 @@ $citationTime = ( $citation->citationDate ) ? date("h:i A", $citation->citationD
       <?
 			$vehicles = $citation->getVehicles();
 			if( count($vehicles) == 0 ) {
-				echo '<tr><td align="center" colspan="7">No vehicles to display</td></tr>';
+				echo '<tr><td align="center" colspan="8">No vehicles to display</td></tr>';
 			} else {
 				foreach( $vehicles as $row )  { 
 					echo '<tr>';

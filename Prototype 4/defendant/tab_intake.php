@@ -1,22 +1,22 @@
 <?
 
 	if( $defendant->intake ) {
-		$intake_date = date("m/j/Y", $defendant->intake );
+		$intake_date = date("m/d/Y", $defendant->intake );
 		$intake_time = date("h:i A", $defendant->intake );
 	} else {
-		$intake_date = date("m/j/Y");
+		$intake_date = date("m/d/Y");
 		$intake_time = date("h:i A");
 	}
 	
 	if( $defendant->reschedule ) {
-		$reschedule_date = date("m/j/Y", $defendant->reschedule );
+		$reschedule_date = date("m/d/Y", $defendant->reschedule );
 		$reschedule_time = date("h:i A", $defendant->reschedule );
 	}
 	
 	$inteviewer = ( $defendant->inteviewer ) ? $defendant->inteviewer : $user->getUserID();
 	
-	$referred_date = ( $defendant->referred ) ?  " on " . date("m/j/Y g:i A", $defendant->referred ) : NULL;
-	$dismissed_date = ( $defendant->dismissed ) ?  " on " . date("m/j/Y g:i A", $defendant->dismissed ) : NULL;
+	$referred_date = ( $defendant->referred ) ?  " on " . date("m/d/Y g:i A", $defendant->referred ) : NULL;
+	$dismissed_date = ( $defendant->dismissed ) ?  " on " . date("m/d/Y g:i A", $defendant->dismissed ) : NULL;
 	
 ?>
 <form id="intake" method="post" action="process.php">

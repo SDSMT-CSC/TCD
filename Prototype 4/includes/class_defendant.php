@@ -163,20 +163,18 @@ class Defendant {
   public function compareProgramID( $id, $user_program )
   {
     // database connection and sql query
-    $sql = "SELECT programID FROM defendant WHERE defendantID = :defendantID";
+    $sql = "SELECT programID FROM defendant WHERE defendantID = :defendantID AND programID = :programID";
     $core = Core::dbOpen();
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':defendantID', $id);
+    $stmt->bindParam(':programID', $user_program);
     Core::dbClose();
     
     try
     {
-      if( $stmt->execute() )
-      {
-        $row = $stmt->fetch();
-        if( $user_program == $row["programID"] )
+			// if there is a record, they must be ok to access this defendant
+      if( $stmt->execute() && $stmt->rowCount() > 0 )
           return true;
-      }
     } catch( PDOException $e ) {
       echo "ProgramID Compare Failed!";
     }
@@ -494,6 +492,36 @@ class Defendant {
 		} 
 		catch (PDOException $e) {
       		echo "Jury check failed!";
+    }
+		return $output;
+	}
+	
+	/*************************************************************************************************
+		function: checkSentence
+		purpose: returns list of sentences that have been assigned to the defendant
+		input: none
+  	output: array of sentence options and information
+	*************************************************************************************************/
+	public function checkSentence()
+	{
+		$output = array();
+		
+		// database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT defsentID FROM defendant_sentence WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    Core::dbClose();
+		
+		try {
+			if( $stmt->execute() && $stmt->rowCount() > 0 )
+			{
+				while ($row = $stmt->fetch(PDO::FETCH_ASSOC))
+					$output[] = $row;
+			}
+		} 
+		catch (PDOException $e) {
+      		echo "Sentence check failed!";
     }
 		return $output;
 	}

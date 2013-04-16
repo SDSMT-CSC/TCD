@@ -98,6 +98,12 @@ jQuery(function($) {
 					{
 						if ( $(aTrs[i]).hasClass('row_selected_odd') || $(aTrs[i]).hasClass('row_selected_even') )
 						{
+							
+							/*  UPDATE TO THIS:
+							var aData = sentenceTable.fnGetData( aTrs[i] );					
+							items.push( aData[0] + ':' + aData[0] );
+							*/
+							
 							id = aTrs[i].cells[0].innerText;
 							type = aTrs[i].cells[1].innerText;
 							
