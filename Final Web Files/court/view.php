@@ -149,71 +149,6 @@ jQuery(function($) {
     <legend>Court Information</legend>
     <table>
       <tr>
-        <td width="70%">
-          <table>		
-            <tr>
-              <td width="100">Defendant: </td>
-              <td>
-              	<input type="hidden" id="court-defendantID" name="court-defendantID" value="<? echo $defendantID ?>" />
-                <input type="text" id="court-defendant" name="court-defendant" 
-                       style="width: 200px;" value="<? echo $defendantName ?>" readonly="readonly" />
-                
-                <a class="select-item ui-state-default ui-corner-all"  id="court-defendant-select" title="Select Defendant">
-                  <span class="ui-icon ui-icon-newwin"></span>
-                </a>        
-              </td>
-            </tr>
-            <tr>
-              <td>Court Date: </td>
-              <td><input type="text" class="date" name="court-date" id="court-date" value="<? echo $courtDate ?>"></td>
-            </tr>
-            <tr>
-              <td>Court Time: </td>
-              <td><input type="text" class="time" name="court-time" id="court-time" value="<? echo $courtTime ?>"></td>
-            </tr>
-          </table>
-        </td>
-        <td width="30%" valign="top">
-          <table>
-            <tr>
-              <td width="125">Court Type: </td>
-              <td>
-                <select id="court-type" name="court-type">
-                  <option<? if($courtType == "Trial") echo " selected"; ?>>Trial</option>
-                  <option<? if($courtType == "Hearing") echo " selected"; ?>>Hearing</option>
-                </select>
-              </td>
-            </tr>
-            <tr>
-              <td>Contract Signed? </td>
-              <td>
-                <select id="court-contract" name="court-contract">
-                  <option<? if($contract == "Yes") echo " selected"; ?>>Yes</option>
-                  <option<? if($contract == "No") echo " selected"; ?>>No</option>
-                </select>
-              </td>
-            </tr>
-            <tr>
-            	<td>Closed: </td>
-              <td>
-              	<?
-								if( $closedDate ) {
-									echo $closedDate;
-								} else {
-								?>
-              	<input type="checkbox" name="court-closed" value="yes" />
-                <? } ?>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
-  </fieldset>
-  <fieldset>
-    <legend>Court Location</legend>
-    <table>
-      <tr>
         <td width="100">Name:</td>
         <td>
           <input type="text" name="court-name" id="court-name" style="width: 250px;" value="<? echo $locationName ?>"/>
@@ -222,10 +157,14 @@ jQuery(function($) {
             <span class="ui-icon ui-icon-newwin"></span>
           </a>        
         </td>
+        <td>Court Date: </td>
+        <td><input type="text" class="date" name="court-date" id="court-date" value="<? echo $courtDate ?>"></td>
       </tr>
       <tr>
         <td>Address:</td>
         <td><input type="text" name="court-address" id="court-address" style="width: 250px;" value="<? echo $locationAddress ?>"/></td>
+        <td>Court Time: </td>
+        <td><input type="text" class="time" name="court-time" id="court-time" value="<? echo $courtTime ?>"></td>
       </tr>
       <tr>
         <td>City:</td>
@@ -238,12 +177,20 @@ jQuery(function($) {
             <span class="ui-icon ui-icon-newwin"></span>
           </a>
         </td>
+        <td width="125">Court Type: </td>
+        <td>
+          <select id="court-type" name="court-type">
+            <option<? if($courtType == "Trial/Hearing") echo " selected"; ?>>Trial/Hearing</option>
+            <option<? if($courtType == "Truancy") echo " selected"; ?>>Truancy</option>
+            <option<? if($courtType == "Peer Bond") echo " selected"; ?>>Peer Bond</option>
+          </select>
+        </td>
       </tr>
     </table>
   </fieldset>
 </form>
 
-<?
+<?/*
 unset( $action );
 if( isset($id) && $court->compareProgramID( $id, $user_programID) ) { 
 ?>
@@ -267,7 +214,7 @@ if( isset($id) && $court->compareProgramID( $id, $user_programID) ) {
 
 <? 
 	unset( $defendant );
-} 
+}*/
 
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");
 ?>
