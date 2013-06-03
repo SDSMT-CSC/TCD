@@ -15,18 +15,11 @@ if( isset($id) && $court->compareProgramID( $id, $user_programID) ){
   	
   	$court->getFromID( $id );
   	
-  	$courtDate = date("m/j/Y", $court->courtDate );
+  	$courtDate = date("m/d/Y", $court->courtDate );
   	$courtTime = date("h:i A", $court->courtDate );
   	$courtType = $court->type;
-  	$contract = $court->contractSigned;
-  	$closedDate = $court->closed;
   	$courtLocationID = $court->courtLocationID;
-  	
-  	// defendant name
-  	$defendantID = $court->getDefendantID();	
-  	$defendant = new Defendant();
-  	$defendant->getFromID( $defendantID );
-  	$defendantName = $defendant->getLastName() . ", " . $defendant->getFirstName();
+    $courtCases = $court->checkCases();
   	
   	// location name
   	$courtLocation = new CourtLocation( $user_programID );
@@ -80,6 +73,10 @@ jQuery(function($) {
 <script type="text/javascript" src="jquery.js"></script>
 
 <div id="court-defendant-dialog" title="Select Defendant">
+  <form name="add-defendant" id="add-defendant" method="post" action="process.php">
+  <input type="hidden" name="courtID" value="<? echo $court->getCourtID() ?>" />
+  <input type="hidden" name="action" value="Add Participant" />
+  <input type="hidden" name="add" id="add" value="" />
 	<table id="court-defendant-table">
 		<thead>
 			<tr>
@@ -94,6 +91,7 @@ jQuery(function($) {
 		</thead>
 		<tbody></tbody>
 	</table>
+	</form>
 </div>
 
 <div id="court-location-dialog" title="Select Existing Location">
@@ -190,31 +188,52 @@ jQuery(function($) {
   </fieldset>
 </form>
 
-<?/*
+<?
 unset( $action );
-if( isset($id) && $court->compareProgramID( $id, $user_programID) ) { 
+if( isset($id) && $court->compareProgramID( $id, $user_programID) ){
+//check if cases exist
+if( !$courtCases ) {
 ?>
+<p style="padding: 10px">This court has no assigned cases.</p>
+<? } else { ?>
+<fieldset>
+  <legend>Court Cases</legend>
+  <table class="listing" id="case-listing">
+    <thead>
+      <tr>
+        <th width="20%">First Name</th>
+        <th width="20%">Last Name</th>
+        <th width="20%">Positions Entered?</th>
+        <th width="20%">View</th>
+        <th width="20%">Remove</th>
+      </tr>
+    </thead>
+    <tbody>
+    <?
+    foreach( $courtCases as $row )
+    { ?>
+      <tr>
+        <td><? echo $row["firstName"]; ?></td>
+        <td><? echo $row["lastName"]; ?></td>
+        <td><? if ($row["timeEntered"] != 0) 
+                 echo "YES";
+               else
+	               echo "No"; ?></td>
+	      <td><? echo '<a class="view-case" href="hour_entry.php?id='.$row["court_caseID"].'">View</a>'?></td>
+	      <td>
+	      <?  if ($user_type != 5) 
+                 echo '<a class="delete-case" href="process.php?action=Delete+Case&courtID='.$id.'&id='.$row["court_caseID"].'">Delete</a>' 
+	      ?>
+	      </td>
+      </tr>
+    <? } ?>
+    </tbody>
+  </table>
+</fieldset>
+<? } ?>
+<button id="court-defendant-select">Assign Defendant</button>
+<?
 
-<div id="tabs">
-	<ul>
-		<li><a href="#tabs-members">Court Members</a></li>
-		<li><a href="#tabs-jury">Jury Members</a></li>
-		<li><a href="#tabs-guardians">Parents/Guardians</a></li>
-	</ul>
-	<div id="tabs-members">
-		<? include("tab_members.php"); ?>	
-	</div>
-	<div id="tabs-jury">
-		<? include("tab_jury.php"); ?>	
-	</div>
-	<div id="tabs-guardians">
-		<? include("tab_guardians.php"); ?>	
-	</div> 
-</div>
-
-<? 
-	unset( $defendant );
-}*/
-
+}
 include($_SERVER['DOCUMENT_ROOT']."/includes/footer_internal.php");
 ?>

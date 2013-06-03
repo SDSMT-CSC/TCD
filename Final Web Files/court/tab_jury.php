@@ -13,7 +13,7 @@
 </div>
 
 <form name="jury" id="jury" method="post" action="process.php">
-	<input type="hidden" name="courtID" value="<? echo $id ?>" />
+	<input type="hidden" name="caseID" value="<? echo $id ?>" />
 	<input type="hidden" name="action" value="Add Jury Members" />
 	<input type="hidden" name="members" id="members" />
 </form>
@@ -21,9 +21,10 @@
 <table class="listing">
   <thead>
     <tr>
-      <th width="30%">Type</th>
-      <th width="30%">Last Name</th>
-      <th width="30%">First Name</th>
+      <th width="20%">Type</th>
+      <th width="25%">Last Name</th>
+      <th width="25%">First Name</th>
+      <th width="20%">Hours</th>
       <th width="10%"></th>
     </tr>
   </thead>
@@ -32,14 +33,14 @@
 	$members = $court->getJuryMembers();
 	
 	if( sizeof( $members ) == 0 ) {
-		echo '<tr><td align="center" colspan="4">No Jury Members Listed</td></tr>';
+		echo '<tr><td align="center" colspan="5">No Jury Members Listed</td></tr>';
 	} else {
 		foreach( $members as $row ) {
   		echo '<tr>';
 				echo '<td>'.$row["type"].'</td>';
 				echo '<td>'.$row["lastName"].'</td>';
 				echo '<td>'.$row["firstName"].'</td>';
-				
+				echo '<td><input type="text" /></td>';
 				echo '<td>';
 				if( $user_type != 5 )
 					echo '<a class="delete-juror" href="process.php?action=Delete+Jury+Member&courtID='.

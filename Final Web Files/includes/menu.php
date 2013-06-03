@@ -36,8 +36,8 @@
 				<li><a href="/workshop/search.php">Search Workshops</a></li>
 			</ul>
 		</li>
-		<!--<li><a id="reports" href="/reports/index.php">Reports</a></li>-->
-		<li><a id="statistics" href="/statistics/index.php">Statistics</a></li>
+		<li><a id="reports" href="/reports/index.php">Reports</a></li>
+		<!--<li><a id="statistics" href="/statistics/index.php">Statistics</a></li>-->
 		<? } ?>
     
 		<? // if ( $user_type == 2 ) { ?>

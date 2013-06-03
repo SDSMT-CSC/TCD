@@ -362,17 +362,26 @@ class Data {
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
-		$sql = "SELECT c.courtID, d.courtCaseNumber, d.firstName, d.lastName, UNIX_TIMESTAMP(c.date) as date, cl.name, l.city, l.state
-						FROM court c
-						LEFT JOIN defendant d ON c.defendantID = d.defendantID
+		if( $type == 'time' ) {
+		$sql = "SELECT cc.courtID, cc.court_caseID, c.type, UNIX_TIMESTAMP(c.date) as date, cl.name, l.city, l.state, cc.timeEntered
+						FROM court_case cc
+						LEFT JOIN court c ON c.courtID = cc.courtID
 						LEFT JOIN court_location cl ON c.courtLocationID = cl.courtLocationID
 						LEFT JOIN program_locations l ON l.locationID = cl.locationID
-						WHERE c.programID = :programID";
+						WHERE cc.programID = :programID";
+    } else {
+    $sql = "SELECT DISTINCT cc.courtID, c.type, UNIX_TIMESTAMP(c.date) as date, cl.name, l.city, l.state, cc.timeEntered
+            FROM court_case cc
+            LEFT JOIN court c ON c.courtID = cc.courtID
+            LEFT JOIN court_location cl ON c.courtLocationID = cl.courtLocationID
+            LEFT JOIN program_locations l ON l.locationID = cl.locationID
+            WHERE cc.programID = :programID";
+    }
 	
 		// additional sql command if different type of data wanted
-		if( $type == 'upcoming' ) {  $sql .= " AND c.closed IS NULL AND c.date > now()"; }
-		if( $type == 'current' ) { $sql .= " AND c.closed IS NULL"; };
-		if( $type == 'time' ) { $sql .= " AND c.timeEntered = 0"; };
+		if( $type == 'upcoming' ) {  $sql .= " AND c.date > now()"; }
+		if( $type == 'current' ) { $sql .= " AND c.date >= now() - INTERVAL 1 DAY"; };
+		if( $type == 'time' ) { $sql .= " AND cc.timeEntered = 0"; };
 		
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
@@ -383,15 +392,13 @@ class Data {
 				while ($aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
 						$row = array();
 						
-						$row[] = $aRow["courtCaseNumber"];
-						$row[] = $aRow["firstName"];
-						$row[] = $aRow["lastName"];
+						$row[] = $aRow["type"];
 						$row[] = date("n/j/y h:i a",$aRow["date"]);
 						$row[] = $aRow["name"];
 						$row[] = ($aRow["city"]) ? $aRow["city"] . ", " . $aRow["state"] : NULL;
 						
 						if( $type == 'time' ) // change the link to go to time entry
-							$row[] = '<a href="/court/hour_entry.php?id='. $aRow["courtID"] .'">View</a>';						
+							$row[] = '<a href="/court/hour_entry.php?id='. $aRow["court_caseID"] .'">View</a>';						
 						else
 							$row[] = '<a href="/court/view.php?id='. $aRow["courtID"] .'">View</a>';
 						

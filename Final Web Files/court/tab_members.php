@@ -1,7 +1,7 @@
 <form name="court-members" id="court-members" method="post" action="process.php">	
-<input type="hidden" name="courtID" value="<? echo $id ?>" />
+<input type="hidden" name="caseID" value="<? echo $id ?>" />
 <input type="hidden" name="action" value="Update Court Members" />
-<table style="width: 400px">
+<table style="width:675px">
 <?
 
 // get programs court positions and available members
@@ -35,6 +35,7 @@ foreach( $positions as $row )
         ?>
       </select>
     </td>
+    <td><input type="text" /></td>
   </tr>  
   <?
 }
