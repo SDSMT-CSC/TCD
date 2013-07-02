@@ -1,7 +1,0 @@
-[15-Apr-2013 02:06:04] PHP Fatal error:  Call to a member function compareProgramID() on a non-object in /home/teencour/public_html/volunteer/view.php on line 10
-[15-Apr-2013 02:06:44] PHP Fatal error:  Call to a member function compareProgramID() on a non-object in /home/teencour/public_html/volunteer/view.php on line 10
-[15-Apr-2013 02:07:11] PHP Warning:  Invalid argument supplied for foreach() in /home/teencour/public_html/volunteer/view.php on line 158
-[16-Apr-2013 00:59:59] PHP Fatal error:  Class 'CourtLocation' not found in /home/teencour/public_html/volunteer/view.php on line 196
-[16-Apr-2013 01:00:58] PHP Warning:  include(/home/teencour/public_html/includes/class_court_location) [<a href='function.include'>function.include</a>]: failed to open stream: No such file or directory in /home/teencour/public_html/volunteer/view.php on line 5
-[16-Apr-2013 01:00:58] PHP Warning:  include() [<a href='function.include'>function.include</a>]: Failed opening '/home/teencour/public_html/includes/class_court_location' for inclusion (include_path='.:/usr/lib/php:/usr/local/lib/php') in /home/teencour/public_html/volunteer/view.php on line 5
-[16-Apr-2013 01:00:58] PHP Fatal error:  Class 'CourtLocation' not found in /home/teencour/public_html/volunteer/view.php on line 197
