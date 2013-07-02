@@ -364,6 +364,26 @@ class Program {
 			Core::dbClose();
 			return $commonID;
 		}
+
+  public function editCommonLocation( $locationID, $location ) {
+    $core = Core::dbOpen();
+    $sql = "UPDATE program_common_location SET commonPlace = :location WHERE commonPlaceID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':location', $location);
+    $stmt->bindParam(':id', $locationID);
+    
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() ) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (PDOException $e) {
+      return false;
+    }
+  }
 		
 	 /*************************************************************************************************
    function: getCommonLocation
@@ -431,6 +451,28 @@ class Program {
 			}			
 			return $officerID;
 		}
+    
+    public function editOfficer( $firstName, $lastName, $idNumber, $phone, $id ) {
+      $core = Core::dbOpen();
+      $sql = "UPDATE program_officers SET firstname = :firstname, lastname = :lastname,
+              idNumber = :idNumber, phone = :phone WHERE officerID = :id";
+      $stmt = $core->dbh->prepare($sql);
+      $stmt->bindParam(':firstname', $firstName);
+      $stmt->bindParam(':lastname', $lastName);
+      $stmt->bindParam(':idNumber', $idNumber);
+      $stmt->bindParam(':phone', $phone);
+      $stmt->bindparam(':id', $id);
+      Core::dbClose();
+      
+      try {
+        if( $stmt->execute() ) {
+          return true;
+        }
+      } catch (PDOException $e) {
+        echo "Edit Officer Failed!";
+      }
+      return false;
+    }
 		
 	/*************************************************************************************************
    function: addStatute
@@ -467,6 +509,27 @@ class Program {
 		}			
 		return $statuteID;
 	}
+
+  public function editStatute( $code, $title, $description, $statuteID ) {
+    $core = Core::dbOpen();
+    $sql = "UPDATE program_statutes SET statute = :statute, title = :title,
+            description = :description WHERE statuteID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':statute', $code);
+    $stmt->bindParam(':title', $title);
+    $stmt->bindParam(':description', $description);
+    $stmt->bindParam(':id', $statuteID);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() ) {
+        return true;
+      }
+    } catch (PDOException $e) {
+      echo "Edit Officer Failed!";
+    }
+    return false;
+  }
 	
 	/*************************************************************************************************
    function: getProgramPositions
@@ -499,7 +562,44 @@ class Program {
   	
   	return false;
   }
-	
+  
+  public function addPosition( $programID, $position )
+  {
+    $core = Core::dbOpen();
+    $sql = "INSERT INTO court_position (programID, position) VALUES (:programID, :position)";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $programID);
+    $stmt->bindParam(':position', $position);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() )
+        return true;
+    } catch (PDOException $e) {
+      echo "Add Position Failed!";
+    }
+    return false;
+  }
+  
+  public function editPosition( $programID, $position, $positionID )
+  {
+    $core = Core::dbOpen();
+    $sql = "UPDATE court_position SET position = :position
+            WHERE programID = :programID AND positionID = :positionID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $programID);
+    $stmt->bindParam(':position', $position);
+    $stmt->bindParam(':positionID', $positionID);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() )
+        return true;
+    } catch (PDOException $e) {
+      echo "Edit Position Failed!";
+    }
+    return false;
+  }
 	/*************************************************************************************************
    function: addSentence
    purpose: inserts the sentence into the database
@@ -528,11 +628,32 @@ class Program {
 				if( $stmt->execute() )
 						$sentenceID = $core->dbh->lastInsertId();	
 			} catch ( PDOException $e ) {
-				echo "Add sentance Failed!";
+				echo "Add Sentence Failed!";
 			}         
 		}			
 		return $sentenceID;
 	}
+
+  public function editSentence( $name, $description, $additional, $sentenceID )
+  {
+    $core = Core::dbOpen();
+    $sql = "UPDATE program_sentences SET name = :name, description = :description,
+            additional = :additional WHERE sentenceID = :sentenceID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':name', $name);
+    $stmt->bindParam(':description', $description);
+    $stmt->bindParam(':additional', $additional);
+    $stmt->bindParam(':sentenceID', $sentenceID);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() )
+        return true;
+    } catch (PDOException $e) {
+      echo "Edit Sentence Failed!";
+    }
+    return false;
+  }
 	
   // public function removeProgram() { }  --- set deleted flag
 	

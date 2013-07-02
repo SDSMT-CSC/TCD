@@ -175,14 +175,8 @@ jQuery(function($) {
             <span class="ui-icon ui-icon-newwin"></span>
           </a>
         </td>
-        <td width="125">Court Type: </td>
-        <td>
-          <select id="court-type" name="court-type">
-            <option<? if($courtType == "Trial/Hearing") echo " selected"; ?>>Trial/Hearing</option>
-            <option<? if($courtType == "Truancy") echo " selected"; ?>>Truancy</option>
-            <option<? if($courtType == "Peer Bond") echo " selected"; ?>>Peer Bond</option>
-          </select>
-        </td>
+        <td></td>
+        <td></td>
       </tr>
     </table>
   </fieldset>

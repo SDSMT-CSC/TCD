@@ -89,6 +89,27 @@ class courtLocation {
 		}
 		return false;
 	}
+	
+	public function editCourtLocation()
+	{
+	  $core = Core::dbOpen();
+    $sql = "UPDATE court_location SET name = :name, address = :address,
+            locationID = :locationID WHERE courtLocationID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':locationID', $this->locationID);
+    $stmt->bindParam(':name', $this->name);
+    $stmt->bindParam(':address', $this->address);
+    $stmt->bindParam(':id', $this->courtLocationID);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() )
+        return true;
+    } catch (PDOException $e) {
+      echo "Edit Court Location Failed!";
+    }
+    return false;
+	}
 
 	/*************************************************************************************************
    function: getCourtLocation

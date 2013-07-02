@@ -1,8 +1,10 @@
-<form name="court-members" id="court-members" method="post" action="process.php">	
-<input type="hidden" name="caseID" value="<? echo $id ?>" />
+<form name="court-members" id="court-members" method="post" action="process.php">
 <input type="hidden" name="action" value="Update Court Members" />
+<input type="hidden" name="caseID" value="<? echo $id ?>" />
 <table style="width:675px">
 <?
+//TO DO: Both getCourtMembers and getMembersForTime do pretty much the exact same thing
+//       remove getCourtMembers and rewrite to just use getMembersForTime function (will need to rewrite function slightly)
 
 // get programs court positions and available members
 $positions = $court->getCourtMembers();
@@ -10,8 +12,12 @@ $positions = $court->getCourtMembers();
 // array for existing members
 $existing = $court->existingCourtMembers();
 
-foreach( $positions as $row )
+// array for hours
+$hours = $court->getMembersForTime( "positions" );
+
+foreach( $positions as $key => $row )
 {
+  $hour = $hours[$key];
  ?>
   <tr>
     <td><? echo $row['position'] ?>: </td>
@@ -35,11 +41,11 @@ foreach( $positions as $row )
         ?>
       </select>
     </td>
-    <td><input type="text" /></td>
+    <td><input type="text" name="hours-<? echo $row['id'] ?>" value="<? echo $hour["hours"] ?>"/></td>
   </tr>  
   <?
 }
 ?>
 </table>
 </form>
-<button id="update-court-members">Update Court Members</button>
+<button id="update-court-members">Update Court Members and Hours</button>

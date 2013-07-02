@@ -31,11 +31,11 @@ class Court {
 			
 		// add new defendant or update existing record
 		if( $this->courtID == 0 ) {
-			$sql = "INSERT INTO court (programID, courtLocationID, type, date)
-							VALUES (:programID, :courtLocationID, :type, :date)";
+			$sql = "INSERT INTO court (programID, courtLocationID, date)
+							VALUES (:programID, :courtLocationID, :date)";
 		} else {
 			$sql = "UPDATE court SET programID = :programID, courtLocationID = :courtLocationID, 
-							type = :type, date = :date WHERE courtID = :courtID";
+							date = :date WHERE courtID = :courtID";
 		}
 		
 		// database connection and sql query			
@@ -44,7 +44,6 @@ class Court {
 		if( $this->courtID > 0 ) { $stmt->bindParam(':courtID', $this->courtID); }
 		$stmt->bindParam(':programID', $this->programID);
 		$stmt->bindParam(':courtLocationID', $this->courtLocationID);
-		$stmt->bindParam(':type', $this->type);
 		$stmt->bindParam(':date', $core->convertToServerDate( $this->courtDate, $_SESSION["timezone"] ));
 		Core::dbClose();
 				
@@ -87,7 +86,6 @@ class Court {
         $this->courtID = $id;
         $this->programID = $row["programID"];
 				$this->courtDate =  $row["date"]; // keep as unix time for easier date seperation on form
-				$this->type = $row["type"];
 				$this->courtLocationID =  $row["courtLocationID"];
 			}
 		} catch ( PDOException $e ) {
@@ -105,7 +103,7 @@ class Court {
   public function getFromCaseID( $caseID )
   {
     // database connection and sql query
-    $sql = "SELECT courtID FROM court_case WHERE court_caseID = :court_caseID";
+    $sql = "SELECT courtID, type FROM court_case WHERE court_caseID = :court_caseID";
     $core = Core::dbOpen();
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':court_caseID', $caseID );
@@ -113,16 +111,18 @@ class Court {
     
     try
     {
-      if( $stmt->execute() )
+      if( $stmt->execute() ) {
         $row = $stmt->fetch();
         $this->courtID = $row["courtID"];
+        $this->type = $row["type"];
+        
+        $this->court_caseID = $caseID;
+        $this->getFromID( $this->courtID );
+      }
     } catch ( PDOException $e ) {
       echo "Get Court ID failed";
       return false;
     }
-    
-    $this->court_caseID = $caseID;
-    $this->getFromID( $this->courtID );
   }
 
   /*************************************************************************************************
@@ -258,9 +258,10 @@ class Court {
 		function: updateCourtMembers
 		purpose: update all assigned court members
 		input: $members = array of positionIDs as key and volunteer IDs as value
+           $hours = array of positionIDs as key and hours as value (used to set member hours called at end)
   	output: boolean true/false
 	*************************************************************************************************/
-	public function updateCourtMembers( $members )
+	public function updateCourtMembers( $members, $hours )
 	{		
 		// only run if this is an existing court
 		if( $this->court_caseID > 0 ) 
@@ -313,6 +314,8 @@ class Court {
 				}
 			}
 			Core::dbClose();
+      //hours set with this too
+      $this->setCaseMembersTime( $members, $hours );
 			return true;
 		}
 		Core::dbClose();	
@@ -363,18 +366,18 @@ class Court {
 		$data = array();
 		
 		 // database connection and sql query
-    $sql = "( SELECT cv.volunteerID as id, 'Volunteer' as type, v.lastName, v.firstName 
+    $sql = "( SELECT cv.volunteerID as id, 'Volunteer' as type, v.lastName, v.firstName, cv.hours
 						FROM court_jury_volunteer cv
 						JOIN volunteer v ON v.volunteerID = cv.volunteerID
-						WHERE cv.courtID = :courtID AND v.active = 1 )
+						WHERE cv.court_caseID = :court_caseID AND v.active = 1 )
 						UNION
-						( SELECT cd.defendantID as id, 'Defendant' as type, d.lastName, d.firstName 
+						( SELECT cd.defendantID as id, 'Defendant' as type, d.lastName, d.firstName, cd.hours
 						FROM court_jury_defendant cd
 						JOIN defendant d ON d.defendantID= cd.defendantID
-						WHERE cd.courtID = :courtID AND d.closedate is NULL )";
+						WHERE cd.court_caseID = :court_caseID AND d.closedate is NULL )";
     $core = Core::dbOpen();
     $stmt = $core->dbh->prepare($sql);
-    $stmt->bindParam(':courtID', $this->courtID);
+    $stmt->bindParam(':court_caseID', $this->court_caseID);
     Core::dbClose();
     
     try
@@ -408,12 +411,12 @@ class Court {
 			
 		  // database connection and sql query			
 			if( $parts[1] == 'Volunteer' )
-				$sql = "INSERT INTO court_jury_volunteer ( courtID, volunteerID ) VALUES ( :courtID, :jurorID )";
+				$sql = "INSERT INTO court_jury_volunteer ( court_caseID, volunteerID ) VALUES ( :court_caseID, :jurorID )";
 			else
-				$sql = "INSERT INTO court_jury_defendant ( courtID, defendantID ) VALUES ( :courtID, :jurorID )";
+				$sql = "INSERT INTO court_jury_defendant ( court_caseID, defendantID ) VALUES ( :court_caseID, :jurorID )";
 						
 			$stmt = $core->dbh->prepare($sql);
-			$stmt->bindParam(':courtID', $this->courtID);
+			$stmt->bindParam(':court_caseID', $this->court_caseID);
 			$stmt->bindParam(':jurorID', $parts[0]);
 			$stmt->execute();
 		}
@@ -434,12 +437,12 @@ class Court {
 		
 		// database connection and sql query			
 		if( $type == 'Volunteer' )
-			$sql = "DELETE FROM court_jury_volunteer WHERE courtID = :courtID AND volunteerID = :jurorID";
+			$sql = "DELETE FROM court_jury_volunteer WHERE court_caseID = :court_caseID AND volunteerID = :jurorID";
 		else
-			$sql = "DELETE FROM court_jury_defendant WHERE courtID = :courtID AND defendantID = :jurorID";
+			$sql = "DELETE FROM court_jury_defendant WHERE court_caseID = :court_caseID AND defendantID = :jurorID";
 						
 			$stmt = $core->dbh->prepare($sql);
-			$stmt->bindParam(':courtID', $this->courtID);
+			$stmt->bindParam(':court_caseID', $this->court_caseID);
 			$stmt->bindParam(':jurorID', $id);
     	Core::dbClose();
 		
@@ -532,27 +535,30 @@ class Court {
 		
 		if( $type == "positions" )
 		{
-			$sql = "SELECT cm.volunteerID, cm.positionID, position, firstName, lastName, hours
+			/*$sql = "SELECT cm.volunteerID, cm.positionID, position, firstName, lastName, hours
 							FROM court_member cm
 							JOIN volunteer v ON v.volunteerID = cm.volunteerID
 							JOIN court_position cp ON cp.positionID = cm.positionID 
-							WHERE cm.courtID = :courtID
-							ORDER BY position";
+							WHERE cm.court_caseID = :court_caseID
+							ORDER BY position";*/
+			$sql = "SELECT cm.positionID, cm.hours, cp.position FROM court_member cm 
+			        JOIN court_position cp ON cp.positionID = cm.positionID
+			        WHERE court_caseID = :court_caseID ORDER BY position";
 		}
 		else if( $type == "jury" )
 		{
 			$sql = "( SELECT cv.volunteerID as id, 'Volunteer' as type, v.lastName, v.firstName, cv.hours
 					FROM court_jury_volunteer cv
 					JOIN volunteer v ON v.volunteerID = cv.volunteerID
-					WHERE cv.courtID = :courtID )
+					WHERE cv.court_caseID = :court_caseID )
 					UNION
 					( SELECT cd.defendantID as id, 'Defendant' as type, d.lastName, d.firstName, cd.hours
 					FROM court_jury_defendant cd
 					JOIN defendant d ON d.defendantID= cd.defendantID
-					WHERE cd.courtID = :courtID )";
+					WHERE cd.court_caseID = :court_caseID )";
 		}
 		$stmt = $core->dbh->prepare($sql);
-		$stmt->bindParam(':courtID', $this->courtID);
+		$stmt->bindParam(':court_caseID', $this->court_caseID);
 		$stmt->execute();
     Core::dbClose();
 		
@@ -620,7 +626,101 @@ class Court {
 		}
 		return false;
 	}
-
+  
+  /*************************************************************************************************
+    function: setCaseMembersTime
+    purpose: sets time spent for case members
+    input: $global = time to set all participants to
+           $members = court position members
+           $jury = volunteer/defendant jurors
+    output: boolean true/false
+  *************************************************************************************************/
+  public function setCaseMembersTime( $caseMembers, $hours )
+  {
+    $core = Core::dbOpen();   
+      
+    // update court members hours
+    $sql = "UPDATE court_member SET hours = :hours WHERE court_caseID = :court_caseID AND volunteerID = :volunteerID AND positionID = :positionID";
+    foreach( $caseMembers as $posID => $volID )
+    {
+      //get hours
+      $hour = $hours[$posID]; 
+      $stmt = $core->dbh->prepare($sql);
+      $stmt->bindParam(':court_caseID', $this->court_caseID);
+      $stmt->bindParam(':volunteerID', $volID);
+      $stmt->bindParam(':positionID', $posID);
+      $stmt->bindParam(':hours', $hour);
+      $stmt->execute();
+    }
+    
+    Core::dbClose();
+    return true;
+  }
+  
+  /*************************************************************************************************
+    function: setCaseMembersTime
+    purpose: sets time spent for case members
+    input: $global = time to set all participants to
+           $members = court position members
+           $jury = volunteer/defendant jurors
+    output: boolean true/false
+  *************************************************************************************************/
+  public function setCaseJuryTime( $jury )
+  {
+    $core = Core::dbOpen();
+    
+    foreach( $jury as $key => $juror )
+      {
+        if( $juror["type"] == "Volunteer" )
+          $sql = "UPDATE court_jury_volunteer SET hours = :hours WHERE court_caseID = :court_caseID AND volunteerID = :id";
+        else
+          $sql = "UPDATE court_jury_defendant SET hours = :hours WHERE court_caseID = :court_caseID AND defendantID = :id";
+        
+        $stmt = $core->dbh->prepare($sql);
+        $stmt->bindParam(':court_caseID', $this->court_caseID);
+        $stmt->bindParam(':id', $juror["id"]);
+        $stmt->bindParam(':hours', $juror["hours"]);
+        $stmt->execute();
+      }
+      
+    Core::dbClose();
+    return true;
+  }
+  
+  /*************************************************************************************************
+    function: setCaseMembersTime
+    purpose: sets time spent for case members
+    input: $global = time to set all participants to
+           $members = court position members
+           $jury = volunteer/defendant jurors
+    output: boolean true/false
+  *************************************************************************************************/
+  public function setCaseGlobalTime( $hours )
+  {
+    $core = Core::dbOpen();
+    
+    $sql = "UPDATE court_member SET hours = :hours WHERE court_caseID = :court_caseID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':court_caseID', $this->court_caseID);
+    $stmt->bindParam(':hours', $hours);
+    $stmt->execute();
+    
+    $sql = "UPDATE court_jury_volunteer SET hours = :hours WHERE court_caseID = :court_caseID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':court_caseID', $this->court_caseID);
+    $stmt->bindParam(':hours', $hours);
+    $stmt->execute();
+    
+    $sql = "UPDATE court_jury_defendant SET hours = :hours WHERE court_caseID = :court_caseID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':court_caseID', $this->court_caseID);
+    $stmt->bindParam(':hours', $hours);
+    $stmt->execute();
+          
+    Core::dbClose();
+    return true;
+  }
+  
   /*************************************************************************************************
     function: checkCases
     purpose: returns if the court has any cases assigned to it
@@ -636,7 +736,8 @@ class Court {
     $sql = "SELECT d.firstName, d.lastName, cs.timeEntered, cs.court_caseID 
             FROM court_case cs 
             JOIN court c ON c.courtID = :courtID AND c.programID = :programID
-            JOIN defendant d ON cs.defendantID = d.defendantID";
+            JOIN defendant d ON cs.defendantID = d.defendantID
+            WHERE cs.courtID = :courtID";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':courtID', $this->courtID);
     $stmt->bindParam(':programID', $this->programID);
@@ -671,26 +772,73 @@ class Court {
   *************************************************************************************************/
   public function addCase( $defendantID )
   {
-    $zero = 0;
     $core = Core::dbOpen();
-    $sql = "INSERT INTO court_case (courtID,programID,defendantID,timeEntered) VALUES (:courtID,:programID,:defendantID,:timeEntered)";
+    $sql = "INSERT INTO court_case (courtID,programID,defendantID) VALUES (:courtID,:programID,:defendantID)";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':courtID', $this->courtID);
     $stmt->bindParam(':programID', $this->programID);
     $stmt->bindParam(':defendantID', $defendantID);
-    $stmt->bindParam(':timeEntered', $zero);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() )
+        return true;
+    } catch ( PDOException $e ) {
+      echo "Add Court Case Failed!";
+    }
+    return false;
+  }
+  
+  /*************************************************************************************************
+    function: updateCaseType
+    purpose: update the type for the given case
+    input: $court_caseID = caseID to update type for
+    output: boolean true/false
+  *************************************************************************************************/
+  public function updateCaseType( $type )
+  {
+    $core = Core::dbOpen();
+    $sql = "UPDATE court_case SET type = :type WHERE court_caseID = :court_caseID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':type', $type);
+    $stmt->bindParam(':court_caseID', $this->court_caseID);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() )
+        return true;
+    } catch ( PDOException $e ) {
+      echo "Update Case Type Failed!";
+    }
+    return false;
+  }
+  
+  /*************************************************************************************************
+    function: getDefendant
+    purpose: gets the defendant's name for a court case
+    input: $court_caseID = ID to get defendant name for
+    output: character string
+  *************************************************************************************************/
+  public function getDefendant( $court_caseID )
+  {
+    $core = Core::dbOpen();
+    $sql = "SELECT d.firstName, d.lastName FROM defendant d
+            JOIN court_case cc ON cc.defendantID = d.defendantID
+            WHERE cc.court_caseID = :court_caseID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':court_caseID', $court_caseID);
     Core::dbClose();
     
     try {
       if( $stmt->execute() )
       {
-        
-        return true;
+        $aRow = $stmt->fetch();
+        $result = $aRow["firstName"].', '.$aRow["lastName"];
+        return $result;
       }
     } catch ( PDOException $e ) {
-      echo "Add Court Case Failed!";
+      echo "Defendant Name Get Failed!";
     }
-    return false;
   }
   
   /*************************************************************************************************

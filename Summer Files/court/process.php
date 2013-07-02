@@ -6,7 +6,6 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_location.php");
 
 $action = $_REQUEST["action"];
 
-
 /*********************************************************************************************
 	Update Court
 *********************************************************************************************/
@@ -17,7 +16,7 @@ if( $action == "Add Court" || $action == "Edit Court" )
 	
 	if( $_POST["courtID"] > 0 ) { $court->setCourtID( $_POST["courtID"] ); }	
 	$court->courtDate = $_POST["court-date"] . " " . $_POST["court-time"];
-	$court->type = $_POST["court-type"];
+	//$court->type = $_POST["court-type"];
 
 	// check court location
 	$courtLocation = new courtLocation( $user_programID );
@@ -52,18 +51,28 @@ if( $action == "Update Court Members" )
 	$court->getFromCaseID( $_POST["caseID"] );
 	
 	$members = array();
+	$hours = array();
 	
 	foreach ( $_POST as $posID => $volID )
 	{
-		if( $posID != "courtID" && $posID != "action"  )
-		{
-		  $positionID = str_replace( "positionID-" , "", $posID );
-			$members[$positionID] = $volID;
-		}
+	  //using strpos to spot the h and p in hours and position, === for difference between 0 and false
+		if( $posID != "caseID" && $posID != "action" )
+    {
+      if( strpos($posID, "h") === FALSE )
+  		{
+  		  $positionID = str_replace( "positionID-" , "", $posID );
+  			$members[$positionID] = $volID;
+  		}
+      if( strpos($posID, "p") === FALSE )
+      {
+        $hourID = str_replace( "hours-" , "", $posID);
+        $hours[$hourID] = $volID;
+      }
+    }
 	}
-		
+  
 	// update the court members and add	log the event
-	if( $court->updateCourtMembers( $members ) )
+	if( $court->updateCourtMembers( $members, $hours ) )
 		$user->addEvent( "Court Case: " . $action, $court->getCourtCaseID() );
 		
 	// redirect to court page
@@ -94,14 +103,46 @@ if( $action == "Add Jury Members" )
 if( $action == "Delete Jury Member" )
 {
 	$court = new Court( $user_programID );
-	$court->getFromID( $_GET["courtID"] );
+	$court->getFromCaseID( $_GET["caseID"] );
 			
 	// update the court members and add	log the event
 	if( $court->deleteJuryMember( $_GET["id"], $_GET["type"] ) )
-		$user->addEvent( "Court: " . $action, $court->getCourtID() );
+		$user->addEvent( "Court: " . $action, $court->getCourtCaseID() );
 		
 	// redirect to court page
-	header("location: view.php?id=".$court->getCourtID() );	
+	header("location: hour_entry.php?id=".$court->getCourtCaseID() );	
+}
+
+/*********************************************************************************************
+  Update Jury Hours
+*********************************************************************************************/
+if( $action == "Update Jury Hours" )
+{
+  $court = new Court( $user_programID );
+  $court->getFromCaseID( $_POST["caseID"] );
+  
+  // update the court jury hours and log
+  if( $court->setCaseJuryTime( $_POST["jury"]) )
+    $user->addEvent( "Court: " . $action, $court->getCourtCaseID() );
+  
+  // redirect to court page
+  header("location: hour_entry.php?id=".$court->getCourtCaseID() );
+}
+
+/*********************************************************************************************
+  Update All Hours
+*********************************************************************************************/
+if( $action == "Set Global Hours" )
+{
+  $court = new Court( $user_programID );
+  $court->getFromCaseID( $_POST["caseID"] );
+    
+  // update the court jury hours and log
+  if( $court->setCaseGlobalTime( $_POST["global-hours"]) )
+    $user->addEvent( "Court: " . $action, $court->getCourtCaseID() );
+  
+  // redirect to court page
+  header("location: hour_entry.php?id=".$court->getCourtCaseID() );
 }
 
 /*********************************************************************************************
@@ -165,6 +206,21 @@ if( $action == "Add Participant")
 
   // redirect to court page
   header("location: view.php?id=".$court->getCourtID() ); 
+}
+
+/*********************************************************************************************
+  Add Case Type
+*********************************************************************************************/
+if( $action == "Add Case Type")
+{
+  $court = new Court( $user_programID );
+  $court->getFromCaseID( $_POST["caseID"]);
+  
+  if( $court->updateCaseType($_POST["court-type"]) )
+    $user->addEvent( "Update Cast Type: ". $court->getCourtCaseID() );
+    
+  // redirect to case page
+  header("location: hour_entry.php?id=". $court->getCourtCaseID() );
 }
 
 /*********************************************************************************************

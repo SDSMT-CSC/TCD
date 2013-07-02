@@ -130,5 +130,67 @@ class Location {
 		}
     return $locationID;
   }
+  
+  public function updateLocation()
+  {
+    $core = Core::dbOpen();
+    $sql = "UPDATE program_locations SET city = :city, state = :state, zip = :zip
+            WHERE locationID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':city', $this->city);
+    $stmt->bindParam(':state', $this->state);
+    $stmt->bindParam(':zip', $this->zip);
+    $stmt->bindParam(':id', $this->locationID);
+    
+    Core::dbClose();
+    
+    try {
+      if($stmt->execute()) {
+        return true;
+      }
+    } catch (PDOException $e) {
+      return false;
+    }
+  }
+  
+  public function deleteLocation( $locationID )
+  {
+    $core = Core::dbOpen();
+    //don't delete if locationID comes up anywhere
+    $sql = "SELECT locationID FROM court_location WHERE programID = :programID AND locationID = :locationID
+            UNION
+            SELECT locationID FROM workshop_location WHERE programID = :programID AND locationID = :locationID
+            UNION
+            SELECT defendantID FROM defendant WHERE programID = :programID AND (plocationID = :locationID OR mlocationID = :locationID)";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $this->programID);
+    $stmt->bindParam(':locationID', $locationID);
+    
+    try {
+      if( $stmt->execute() ) {
+        if( $stmt->rowCount() == 0 ) {
+          $sql2 = "DELETE FROM program_locations WHERE locationID = :locationID";
+          $stmt2 = $core->dbh->prepare($sql2);
+          $stmt2->bindParam(':locationID', $locationID);
+          
+          try {
+            if ($stmt2->execute()) {
+              Core::dbClose();
+              return true;
+            }
+          } catch (PDOException $e) {
+            Core::dbClose();
+            return false;
+          }
+        }
+      } else {
+        Core::dbClose();
+        return false;
+      }
+    } catch (PDOException $e) {
+      Core::dbClose();
+      return false;
+    }
+  }
 }
 ?>

@@ -146,5 +146,27 @@ class School {
 		}
     return $schoolID;
   }
+  
+  public function editSchool( $name, $address, $city, $state, $zip, $id ) {
+    $core = Core::dbOpen();
+    $sql = "UPDATE program_schools SET schoolName = :name, address = :address,
+            city = :city, state = :state, zip = :zip WHERE schoolID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':name', $name);
+    $stmt->bindParam(':address', $address);
+    $stmt->bindParam(':city', $city);
+    $stmt->bindParam(':state', $state);
+    $stmt->bindParam(':zip', $zip);
+    $stmt->bindparam(':id', $id);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() )
+        return true;
+    } catch (PDOException $e) {
+      echo "Edit School Failed!";
+    }
+    return false;
+  }
 } // end class
 ?>

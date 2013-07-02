@@ -20,7 +20,9 @@ jQuery(function($) {
 	$('#program-location').button().click(function(){ $('#location-dialog').dialog('open'); });	
 	$('#update-court-members').button().click(function() { $("#court-members").submit(); });
 	$('#add-jury-members').button().click(function(){ $('#jury-member-dialog').dialog('open'); });
-	$('#update-court-guardians').button().click(function(){ $('#court-guardian').submit(); });
+	$('#update-court-type').button().click(function(){ $('#case-type').submit(); });
+	$('#update-jury-hours').button().click(function(){ $('#jury-hours').submit(); });
+	$('#update-court-hours').button().click(function(){ $('#case-global-hours').submit(); });
 	
 	/**************************************************************************************************
 		FORM VALIDATION
@@ -89,7 +91,7 @@ jQuery(function($) {
 		width:450,
 		buttons: {
 			'Add Jury': function() {
-					var members = new Array();
+					var members = [];
 					var aTrs = courtJuryTable.fnGetNodes();
 					var id, type;
 					
@@ -98,22 +100,14 @@ jQuery(function($) {
 					{
 						if ( $(aTrs[i]).hasClass('row_selected_odd') || $(aTrs[i]).hasClass('row_selected_even') )
 						{
-							
-							/*  UPDATE TO THIS:
-							var aData = sentenceTable.fnGetData( aTrs[i] );					
-							items.push( aData[0] + ':' + aData[0] );
-							*/
-							
-							id = aTrs[i].cells[0].innerText;
-							type = aTrs[i].cells[1].innerText;
-							
-							members.push( id + ':' + type );
+							var aData = courtJuryTable.fnGetData( aTrs[i] );					
+							members.push( aData[0] + ':' + aData[1] );
 						}
 					}					
 				
 					// set the form element to this string and submit it
 					$("#members").val(members);
-					$("#jury").submit();
+					$("#court-jury").submit();
 			},
 			Cancel: function() {
 				resetDataTable( courtJuryTable );
@@ -155,7 +149,7 @@ jQuery(function($) {
 		"aaSorting": [],
 		"sPaginationType": "full_numbers",
 		"bProcessing": false,
-		"sAjaxSource": '/data/court_jurypool.php?id=' + $("#courtID").val()
+		"sAjaxSource": '/data/court_jurypool.php?id=' + $("#caseID").val()
 	});
 	
 	/**************************************************************************************************
@@ -194,7 +188,7 @@ jQuery(function($) {
 		}
 	});
 	
-	$('#court-jury-table tr').live('click', function (event) {
+	$('#court-jury-table tbody tr').live('click', function (event) {
 		var mode;
 		
 		if( $(this).hasClass('odd') )
@@ -236,6 +230,6 @@ jQuery(function($) {
 		dHref = $(this).attr("href");
 		popupDialog( dTitle, dMsg, dHref );
 		return false;
-	})
+	});
 	
 });

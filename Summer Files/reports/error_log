@@ -1,0 +1,17 @@
+[17-Jun-2013 21:48:57] PHP Warning:  date() expects at least 1 parameter, 0 given in /home/teencour/public_html/reports/index.php on line 24
+[17-Jun-2013 21:48:57] PHP Warning:  date() expects at least 1 parameter, 0 given in /home/teencour/public_html/reports/index.php on line 28
+[17-Jun-2013 21:52:17] PHP Warning:  date() expects at least 1 parameter, 0 given in /home/teencour/public_html/reports/index.php on line 24
+[17-Jun-2013 21:52:17] PHP Warning:  date() expects at least 1 parameter, 0 given in /home/teencour/public_html/reports/index.php on line 28
+[19-Jun-2013 13:53:35] PHP Fatal error:  Class 'Report' not found in /home/teencour/public_html/reports/process.php on line 5
+[19-Jun-2013 13:55:04] PHP Fatal error:  Function name must be a string in /home/teencour/public_html/reports/process.php on line 11
+[20-Jun-2013 14:07:16] PHP Fatal error:  Function name must be a string in /home/teencour/public_html/reports/process.php on line 11
+[20-Jun-2013 18:13:05] PHP Warning:  Missing argument 1 for Reports::printVolunteers(), called in /home/teencour/public_html/reports/process.php on line 19 and defined in /home/teencour/public_html/includes/class_reports.php on line 92
+[20-Jun-2013 18:13:27] PHP Warning:  Missing argument 1 for Reports::printVolunteers(), called in /home/teencour/public_html/reports/process.php on line 19 and defined in /home/teencour/public_html/includes/class_reports.php on line 93
+[22-Jun-2013 00:58:11] PHP Warning:  in_array() [<a href='function.in-array'>function.in-array</a>]: Wrong datatype for second argument in /home/teencour/public_html/includes/class_reports.php on line 144
+[22-Jun-2013 00:58:11] PHP Warning:  in_array() [<a href='function.in-array'>function.in-array</a>]: Wrong datatype for second argument in /home/teencour/public_html/includes/class_reports.php on line 144
+[22-Jun-2013 00:58:11] PHP Warning:  in_array() [<a href='function.in-array'>function.in-array</a>]: Wrong datatype for second argument in /home/teencour/public_html/includes/class_reports.php on line 144
+[22-Jun-2013 00:58:11] PHP Warning:  in_array() [<a href='function.in-array'>function.in-array</a>]: Wrong datatype for second argument in /home/teencour/public_html/includes/class_reports.php on line 144
+[22-Jun-2013 00:58:11] PHP Warning:  in_array() [<a href='function.in-array'>function.in-array</a>]: Wrong datatype for second argument in /home/teencour/public_html/includes/class_reports.php on line 144
+[22-Jun-2013 00:58:11] PHP Warning:  in_array() [<a href='function.in-array'>function.in-array</a>]: Wrong datatype for second argument in /home/teencour/public_html/includes/class_reports.php on line 144
+[22-Jun-2013 00:58:11] PHP Warning:  in_array() [<a href='function.in-array'>function.in-array</a>]: Wrong datatype for second argument in /home/teencour/public_html/includes/class_reports.php on line 144
+[22-Jun-2013 00:58:11] PHP Warning:  in_array() [<a href='function.in-array'>function.in-array</a>]: Wrong datatype for second argument in /home/teencour/public_html/includes/class_reports.php on line 144

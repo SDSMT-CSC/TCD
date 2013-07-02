@@ -9,6 +9,10 @@ class Volunteer {
   private $email;
   private $positions;
   private $active;
+  public $address;
+  public $parentName;
+  public $grade;
+  public $adultOrTeen;
   
   public function __construct( $programID )
   {
@@ -20,6 +24,10 @@ class Volunteer {
   	$this->email = NULL;
   	$this->positions = array();
   	$this->active = 1;
+    $this->address = NULL;
+    $this->parentName = NULL;
+    $this->grade = 0;
+    $this->adultOrTeen = 0;
   }
 	
 	/*************************************************************************************************
@@ -50,6 +58,10 @@ class Volunteer {
   			$this->phone = $row["phone"];
   			$this->email = $row["email"];
   			$this->active = $row["active"];
+        $this->address = $row["address"];
+        $this->parentName = $row["parentName"];
+        $this->grade = $row["grade"];
+        $this->adultOrTeen = $row["adultOrTeen"];
   		}
   	}
   	catch ( PDOException $e )
@@ -124,11 +136,12 @@ class Volunteer {
   	$core = Core::dbOpen();
 				
 		if( $this->volunteerID == 0 ) { // add volunteer
-			$sql = "INSERT INTO volunteer ( programID, firstName, lastName, phone, email, active )
-							VALUES (:programID, :firstName, :lastName, :phone, :email, :active)";
+			$sql = "INSERT INTO volunteer ( programID, firstName, lastName, phone, email, active, address, parentName, grade, adultOrTeen )
+							VALUES (:programID, :firstName, :lastName, :phone, :email, :active, :address, :parentName, :grade, :adultOrTeen)";
 		
 		} else { // update volunteer
-			$sql = "UPDATE volunteer SET firstName = :firstName, lastName = :lastName, phone = :phone, email = :email, active = :active
+			$sql = "UPDATE volunteer SET firstName = :firstName, lastName = :lastName, phone = :phone, email = :email, 
+			        active = :active, address = :address, parentName = :parentName, grade = :grade, adultOrTeen = :adultOrTeen
 							WHERE volunteerID = :id";
 		}
 		
@@ -145,6 +158,10 @@ class Volunteer {
   	$stmt->bindParam(':phone', $this->phone);
   	$stmt->bindParam(':email', $this->email);
   	$stmt->bindParam(':active', $this->active);
+    $stmt->bindParam(':address', $this->address);
+    $stmt->bindParam(':parentName', $this->parentName);
+    $stmt->bindparam(':grade', $this->grade);
+    $stmt->bindParam(':adultOrTeen', $this->adultOrTeen);
   	Core::dbClose();
   	
   	// execute stmt
@@ -255,12 +272,13 @@ class Volunteer {
     //database connection and SQL query
     $core = Core::dbOpen();
     
-    $sql = "( SELECT UNIX_TIMESTAMP( c.date ) as date, c.courtLocationID, cm.hours, cm.courtID 
-              FROM court_member cm, court c
-              WHERE volunteerID = :id AND cm.courtID = c.courtID )
-            UNION ( SELECT UNIX_TIMESTAMP( c.date ) as date, c.courtLocationID, cm.hours, cm.courtID 
-              FROM court_jury_volunteer cm, court c
-              WHERE volunteerID = :id AND cm.courtID = c.courtID )";
+    $sql = "( SELECT cp.position, cm.hours, cm.court_caseID 
+              FROM court_member cm
+              JOIN court_position cp ON cm.positionID = cp.positionID
+              WHERE volunteerID = :id)
+            UNION ( SELECT 'Jury' as position, cm.hours, cm.court_caseID 
+              FROM court_jury_volunteer cm
+              WHERE volunteerID = :id)";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':id', $this->volunteerID );
     Core::dbClose();
