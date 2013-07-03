@@ -193,6 +193,7 @@ class Reports {
       if( $stmt->execute() && $stmt->rowCount() > 0) {
         while( $aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
           $row = array();
+          $row["defendantID"] = $aRow["defendantID"];
           $row["dob"] = $aRow["dob"];
           $row["locationID"] = $aRow["pLocationID"];
           $row["sex"] = $aRow["sex"];
@@ -210,32 +211,223 @@ class Reports {
   public function printDemographics( $defendants )
   {
     //print number of defendants entered within program in time frame
-    echo "Number of Defendants Entered: ".count($defendants)."<br>";
+    echo "All data is where the Defendent Added date falls within the date range<br>";
+    $count = count($defendants);
+    echo "Number of Defendants Entered: ".$count."<br>";
     
-    //get age, location, sex, and ethnicity for all defendatns in this time period
-    $locationName = array();
-    $locationCount = array();
+    $demoBySex = array();
+    $location = array();
+    $race = array();
+    $sex = array();
+    $age = array();
+    $offense = array();
     foreach( $defendants as $defendant ) {
+      
+      //block to get demographic based on sex
+      if( $defendant["sex"] == "" )
+        $defendant["sex"] = "Not Entered";
+      $demoBySex[$defendant["sex"]]["count"] += 1;
+      //taken from stack exchange, converts string date to year.
+      $diff = strtotime(date(Y)) - (strtotime($defendant["dob"]));
+      $years = floor($diff / (365 * 60 * 60 * 24));
+      $demoBySex[$defendant["sex"]]["$years"]["count"] += 1;
+      if( $defendant["ethnicity"] == "" )
+        $defendant["ethnicity"] = "Not Entered";
+      $demoBySex[$defendant["sex"]]["$years"][$defendant["ethnicity"]] += 1;
+      
+      //gets statistics per section
       foreach( $defendant as $key => $value) {
-        echo $key.': '.$value.'<br>';
         switch( $key ) {
           case "locationID":
-            if( in_array($value, $locationName)) {  //check if location has already been entered
-              
-            } else {
-              $locationName[] = $value;
-              $locationCount[] += 1;
-            }
+            if ( $value == "" )
+              $value = "Not Entered";
+            $location[$value] += 1;;
             break;
           case "dob":
+            //taken from stack exchange, converts string date to year.
+            $diff = strtotime(date(Y)) - (strtotime($value));
+            $years = floor($diff / (365 * 60 * 60 * 24));
+            $age[$years] += 1;
             break;
           case "sex":
+            if ( $value == "" )
+              $value = "Not Entered";
+            $sex[$value] += 1;
             break;
           case "ethnicity":
+            if ( $value == "" )
+              $value = "Not Entered";
+            $race[$value] += 1;
             break;
+          case "defendantID":
+            $offense[] = $value;
         }
       }
     }
+    
+    //var_dump($offense);
+    //echo "<br>";
+    //fetch extra information for each table
+    $offense = $this->getOffenses( $offense );
+    $location = $this->getLocation( $location );
+    var_dump($offense);
+    
+    //sort arrays to simplify
+    ksort($location);
+    ksort($age);
+    ksort($sex);
+    ksort($race);
+    
+    //move 'Not Entered' to end
+    $location = $this->moveToEnd($location);
+    $sex = $this->moveToEnd($sex);
+    $race = $this->moveToEnd($race);
+    
+    //print demo by sex
+    echo "<p>Demographics By Sex</p>";
+    echo "<table>";
+    echo "  <thead>";
+    echo "    <tr>";
+    echo "      <th></th><th>Sex</th><th></th>";
+    echo "      <th></th><th>Age</th><th></th>";
+    echo "      <th></th><th>Race</th><th></th>";
+    echo "    </tr>";
+    echo "  </thead>";
+    echo "  <tbody>";
+    foreach( $demoBySex as $dsex => $gender ) {
+      echo "<tr><td>".$dsex."</td><td>".$gender["count"]."</td><td>".sprintf("%0.2f",$gender["count"]/$count*100)."</td>";
+      echo "<td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+      foreach( $gender as $dage => $year ) {
+        if( $dage == "count") 
+          continue;
+        echo "<tr><td></td><td></td><td></td>";
+        echo "<td>".$dage."</td><td>".$year["count"]."</td><td>".sprintf("%0.2f",$year["count"]/$gender["count"]*100)."</td>";
+        echo "<td></td><td></td><td></td></tr>";
+        foreach( $year as $drace => $ethnic ) {
+          if( $drace == "count")
+            continue;
+          echo "<tr><td></td><td></td><td></td><td></td><td></td><td></td>";
+          echo "<td>".$drace."</td><td>".$ethnic."</td><td>".sprintf("%0.2f",$ethnic/$year["count"]*100)."</td></tr>";
+        }
+      }
+    }
+    echo "  </tbody>";
+    echo "</table><br>";
+    
+    echo "<p>Court Statistics</p>";
+    
+    $this->basicTablePrint( $location, "Location", $count);
+    $this->basicTablePrint( $sex, "Gender", $count);
+    $this->basicTablePrint( $age, "Age", $count);
+    $this->basicTablePrint( $race, "Race", $count);
+  }
+
+  public function basicTablePrint( $printArray, $colName, $count ) {
+    echo "<table>";
+    echo "  <thead>";
+    echo "    <tr>";
+    echo "      <th>".$colName."</th>";
+    echo "      <th>Count</th>";
+    echo "      <th>Percent</th>";
+    echo "    </tr>";
+    echo "  </thead>";
+    echo "  <tbody>";
+    foreach( $printArray as $key => $number ) {
+      echo '<tr><td>'.$key.'</td><td>'.$number.'</td><td>'.sprintf("%0.2f",$number/$count*100).'%</td></tr>';
+    }
+    echo "  </tbody>";
+    echo "</table><br>";
+  }
+  
+  public function moveToEnd( $arr )
+  {
+    $val = $arr["Not Entered"];
+    unset($arr["Not Entered"]);
+    $arr["Not Entered"] = $val;
+    return $arr;
+  }
+  
+  public function getOffenses( $defendants )
+  {
+    $offenses = array();
+    $offense = array();
+    $existingOff = array();
+    
+    //fetch information
+    $core = Core::dbOpen();
+    $sql = "SELECT c.citationID, c.drugsOrAlcohol, ps.statute, ps.title,
+            cv.vehicleID, d.sex, d.ethnicity
+            FROM citation c
+            LEFT JOIN citation_offense co ON c.defendantID = co.defendantID
+            LEFT JOIN program_statutes ps ON co.statuteID = ps.statuteID
+            LEFT JOIN citation_vehicle cv ON c.citationID = cv.citationID
+            LEFT JOIN defendant d ON d.defendantID = c.defendantID
+            WHERE c.defendantID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    foreach( $defendants as $key => $value) {
+      $stmt->bindParam(':id', $value);
+      try {
+        if( $stmt->execute() ) {
+          while( $aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $offenses[$value]["statute"][] = $aRow["statute"];
+            $offenses[$value]["title"][] = $aRow["title"];
+            $offenses[$value]["drugsOrAlcohol"][] = $aRow["drugsOrAlcohol"];
+            $offenses[$value]["vehicle"][] = $aRow["vehicleID"];
+            $offenses[$value]["sex"] = $aRow["sex"];
+            $offenses[$value]["ethnicity"] = $aRow["ethnicity"];
+          }
+        }
+      } catch (PDOException $e) {
+        echo "Location Fetch Failed!";
+      }
+    }
+    Core::dbClose();
+    //var_dump($offenses);
+    
+    //convert to table form
+    foreach( $offenses as $key => $info ) {
+      foreach( $info["statute"] as $key2 =>$statute) {
+        if( in_array( $statute, $existingOff))
+          continue;
+        $offense["statute"][] = $statute;
+        $offense["title"][] = $info["title"][$key2];
+        $existingOff[] = $statute;
+      }
+    }
+    
+    //tie defendant info to each statute
+    
+    return $offense;
+  }
+  
+  public function getLocation( $location )
+  {
+    $location2 = array();
+    //convert location from id to town
+    $core = Core::dbOpen();
+    $sql = "SELECT city, state, zip FROM program_locations WHERE locationID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    foreach( $location as $key => $value) {
+      if( $key == "Not Entered" ) {
+        $key2 = "Not Entered";
+        $location2[$key2] = $value;
+        continue;
+      }
+      $stmt->bindParam(':id', $key);
+      try {
+        if( $stmt->execute() ) {
+          while( $aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $key2 = $aRow["city"].', '.$aRow["state"];
+            $location2[$key2] = $value;
+          }
+        }
+      } catch (PDOException $e) {
+        echo "Location Fetch Failed!";
+      }
+    }
+    Core::dbClose();
+    
+    return $location2;
   }
   
 } //end class
