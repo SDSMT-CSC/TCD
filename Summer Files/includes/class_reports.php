@@ -265,12 +265,9 @@ class Reports {
       }
     }
     
-    //var_dump($offense);
-    //echo "<br>";
     //fetch extra information for each table
     $offense = $this->getOffenses( $offense );
     $location = $this->getLocation( $location );
-    var_dump($offense);
     
     //sort arrays to simplify
     ksort($location);
@@ -314,6 +311,10 @@ class Reports {
     echo "  </tbody>";
     echo "</table><br>";
     
+    //print demographics by offense
+    echo "<p>Demographics by Offense</p>";
+    $this->printOffenses( $offense );
+    
     echo "<p>Court Statistics</p>";
     
     $this->basicTablePrint( $location, "Location", $count);
@@ -337,6 +338,43 @@ class Reports {
     }
     echo "  </tbody>";
     echo "</table><br>";
+  }
+  
+  public function printOffenses( $offenses ) {
+    $totalCount = $offenses["totalCount"];
+    unset( $offenses["totalCount"]);
+    
+    echo "Offenses in this time period: ".$totalCount;
+    foreach( $offenses as $key => $offense ) {
+      echo "<table>";
+      echo "  <thead>";
+      echo "    <tr>";
+      echo "      <th>Statute</th>";
+      echo "      <th>Title</th>";
+      echo "      <th>Total</th>";
+      echo "    </tr>";
+      echo "  </thead>";
+      echo "  <tbody>";
+      echo "  <tr><td>".$key."</td><td>".$offense["title"]."</td><td>".$offense["count"]."</td></tr>";
+      echo "  </tbody>";
+      echo "</table>";
+      echo "<table>";
+      echo "  <thead>";
+      echo "    <tr>";
+      echo "      <th></th><th>Gender</th><th></th>";
+      echo "      <th></th><th>Race</th><th></th>";
+      echo "    </tr>";
+      echo "  </thead>";
+      echo "  <tbody>";
+      foreach( $offense["sex"] as $gender => $value ) {
+        echo "<tr><td>".$gender."</td><td>".$value["count"]."</td><td>".sprintf("%0.2f",$value["count"]/$totalCount*100)."%</td><td></td><td></td><td></td></tr>";
+        foreach ( $value["race"] as $race => $count) {
+          echo "<tr><td></td><td></td><td></td><td>".$race."</td><td>".$count."</td><td>".sprintf("%0.2f",$count/$value["count"]*100)."%</tr>";
+        }
+      }
+      echo "  </tbody>";
+      echo "</table><br>";
+    }
   }
   
   public function moveToEnd( $arr )
@@ -371,8 +409,8 @@ class Reports {
           while( $aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $offenses[$value]["statute"][] = $aRow["statute"];
             $offenses[$value]["title"][] = $aRow["title"];
-            $offenses[$value]["drugsOrAlcohol"][] = $aRow["drugsOrAlcohol"];
-            $offenses[$value]["vehicle"][] = $aRow["vehicleID"];
+            $offenses[$value]["drugsOrAlcohol"] = $aRow["drugsOrAlcohol"];
+            $offenses[$value]["vehicle"] = $aRow["vehicleID"];
             $offenses[$value]["sex"] = $aRow["sex"];
             $offenses[$value]["ethnicity"] = $aRow["ethnicity"];
           }
@@ -382,20 +420,40 @@ class Reports {
       }
     }
     Core::dbClose();
-    //var_dump($offenses);
     
+    $currStatutes = array();
     //convert to table form
-    foreach( $offenses as $key => $info ) {
-      foreach( $info["statute"] as $key2 =>$statute) {
-        if( in_array( $statute, $existingOff))
-          continue;
-        $offense["statute"][] = $statute;
-        $offense["title"][] = $info["title"][$key2];
-        $existingOff[] = $statute;
+    foreach( $offenses as $blah => $statute ) {
+      foreach( $statute as $key => $info ) {
+        if( $key == "statute" ) {
+          foreach( $info as $value ) {
+            $currStatutes[] = $value;
+            $offense["totalCount"] += 1;
+            $offense[$value]["count"] += 1;
+          }
+        } elseif( $key == "title" ) {
+          foreach( $info as $codeKey => $value ) {
+            $offense[$currStatutes[$codeKey]]["title"] = $value;
+          }
+        } elseif( $key == "sex") {
+          foreach( $currStatutes as $value ) {
+            if( $info == "" )
+              $info = "Not Entered";
+            $offense[$value]["sex"][$info]["count"] += 1;
+            $gender = $info;
+          }
+        } elseif( $key == "ethnicity") {
+          foreach( $currStatutes as $value ) {
+            if( $info == "" )
+              $info = "Not Entered";
+          $offense[$value]["sex"][$gender]["race"][$info] += 1;
+          }
+          //reset information for next pass through
+          $currStatutes = array();
+          $gender = NULL;
+        }
       }
     }
-    
-    //tie defendant info to each statute
     
     return $offense;
   }
