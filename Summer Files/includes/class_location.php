@@ -131,6 +131,12 @@ class Location {
     return $locationID;
   }
   
+  /*************************************************************************************************
+    function: updateLocation
+    purpose: updates the existing location
+    input: none
+    output: boolean true/false
+  ************************************************************************************************/
   public function updateLocation()
   {
     $core = Core::dbOpen();
@@ -153,6 +159,12 @@ class Location {
     }
   }
   
+  /*************************************************************************************************
+   function: deleteLocation
+   purpose: verify the location isn't in use anywhere, delete if not in use
+   input: $locationID = id of location to be deleted
+   output: Boolean true/false
+  *************************************************************************************************/
   public function deleteLocation( $locationID )
   {
     $core = Core::dbOpen();
@@ -165,30 +177,29 @@ class Location {
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':programID', $this->programID);
     $stmt->bindParam(':locationID', $locationID);
+    Core::dbClose();
     
     try {
       if( $stmt->execute() ) {
         if( $stmt->rowCount() == 0 ) {
+          $core = Core::dbOpen();
           $sql2 = "DELETE FROM program_locations WHERE locationID = :locationID";
           $stmt2 = $core->dbh->prepare($sql2);
           $stmt2->bindParam(':locationID', $locationID);
+          Core::dbClose();
           
           try {
             if ($stmt2->execute()) {
-              Core::dbClose();
               return true;
             }
           } catch (PDOException $e) {
-            Core::dbClose();
             return false;
           }
         }
       } else {
-        Core::dbClose();
         return false;
       }
     } catch (PDOException $e) {
-      Core::dbClose();
       return false;
     }
   }

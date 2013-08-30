@@ -5,6 +5,8 @@ include($_SERVER['DOCUMENT_ROOT']."/includes/class_reports.php");
 $report = new Reports();
 $action = $_POST["report_type"];
 
+//var_dump($_POST);
+
 //return user to reports page if type not selected (verify later)
 if ( $_POST["report_type"] == NULL)
 header("location: index.php");
@@ -15,13 +17,11 @@ $report->printHeader();
 
 //get report information, pass off to next page to generate report
 if( $action == "Volunteer Hours" ) {
-  $volunteers = $report->getVolunteers( $_POST["start-date"], $_POST["end-date"], $_POST["programID"] );
-  $report->printVolunteers( $volunteers );
+  $report->printVolunteers( $_POST["start-date"], $_POST["end-date"], $_POST["programID"] );
 }
 
 if( $action == "Demographics") {
-  $defendants = $report->getDemographics( $_POST["start-date"], $_POST["end-date"], $_POST["programID"]);
-  $report->printDemographics( $defendants );
+  $report->printDemographics( $_POST["start-date"], $_POST["end-date"], $_POST["demographics"]);
 }
 
 ?>

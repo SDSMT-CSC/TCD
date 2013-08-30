@@ -147,6 +147,17 @@ class School {
     return $schoolID;
   }
   
+  /*************************************************************************************************
+    function: editSchool
+    purpose: edit an existing school in the database
+    input: $name = name of the school
+           $address = address of the school
+           $city = city where school is located
+           $state = state where school is located
+           $zip = zip code of school
+           $id = id in database of school
+    output: boolean true/false
+  ************************************************************************************************/
   public function editSchool( $name, $address, $city, $state, $zip, $id ) {
     $core = Core::dbOpen();
     $sql = "UPDATE program_schools SET schoolName = :name, address = :address,
@@ -167,6 +178,43 @@ class School {
       echo "Edit School Failed!";
     }
     return false;
+  }
+  
+  /*************************************************************************************************
+   function: deleteSchool
+   purpose: chedk to see if a school is used within the program, delete if not in use
+   input: $id = id of the school to be deleted
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function deleteSchool( $id ) {
+    $core = Core::dbOpen();
+    $sql = "SELECT schoolID FROM defendant WHERE schoolID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':id', $id);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() ) {
+        if( $stmt->rowCount() == 0) {
+          $core = Core::dbOpen();
+          $sql2 = "DELETE FROM program_schools WHERE schoolID = :id";
+          $stmt2 = $core->dbh->prepare($sql2);
+          $stmt2->bindParam(':id', $id);
+          Core::dbClose();
+          
+          try {
+            if( $stmt2->execute() )
+              return true;
+            else
+              return false;
+          } catch (PDOException $e) {
+            return false;
+          }
+        }
+      } return false;
+    } catch (PDOException $e) {
+      return false;
+    }
   }
 } // end class
 ?>

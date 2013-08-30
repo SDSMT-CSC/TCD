@@ -90,6 +90,12 @@ class courtLocation {
 		return false;
 	}
 	
+	/*************************************************************************************************
+   function: editCourtLocation
+   purpose: edit existing court location based off courtLocationID
+   input: none
+   output: boolean true/false
+  *************************************************************************************************/
 	public function editCourtLocation()
 	{
 	  $core = Core::dbOpen();
@@ -110,6 +116,44 @@ class courtLocation {
     }
     return false;
 	}
+  
+  /*************************************************************************************************
+   function: deleteCourtLocation
+   purpose: delete a court location from a program
+   input: none
+   output: boolean true/false
+  *************************************************************************************************/
+  public function deleteCourtLocation()
+  {
+    $core = Core::dbOpen();
+    $sql = "SELECT courtLocationID FROM court WHERE courtLocationID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':id', $this->courtLocationID);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() ) {
+        if( $stmt->rowCount() == 0 ) {
+          $core = Core::dbOpen();
+          $sql2 = "DELETE FROM court_location WHERE courtLocationID = :id";
+          $stmt2 = $core->dbh->prepare($sql2);
+          $stmt2->bindParam(':id', $this->courtLocationID);
+          Core::dbClose();
+          
+          try{
+            if( $stmt2->execute() )
+              return true;
+            else
+              return false;
+          } catch (PDOException $e) {
+            return false;
+          }
+        }
+      } return false;
+    } catch (PDOException $e) {
+      return false;
+    }
+  }
 
 	/*************************************************************************************************
    function: getCourtLocation

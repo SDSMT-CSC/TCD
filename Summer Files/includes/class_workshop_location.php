@@ -114,6 +114,71 @@ class workshopLocation {
 			echo "Get Workshop Location Failed!";
 		}
 	}
+  
+  /*************************************************************************************************
+   function: editWorkshopLocation
+   purpose: edit an existing workshop location
+   input: $workshopLocID = id of workshop location to be updated
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function editWorkshopLocation( $workshopLocID )
+  {
+    $core = Core::dbOpen();
+    $sql = "UPDATE class_workshop_location SET name = :name, address = :address,
+            locationID = :locationID WHERE workshopLocationID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':name', $this->name);
+    $stmt->bindParam(':address', $this->address);
+    $stmt->bindParam(':locationID', $this->locationID);
+    $stmt->bindParam(':id', $workshopLocID);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() )
+        return true;
+    } catch (PDOException $e) {
+      return false;
+    }
+    return false;
+  }
+  
+  /*************************************************************************************************
+   function: deleteWorkshopLocation
+   purpose: check if the workshop location is in use within the program, delete if not in use
+   input: $workshopLocID = id of workshop location to be deleted
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function deleteWorkshopLocation( $workshopLocID )
+  {
+    $core = Core::dbOpen();
+    $sql = "SELECT workshopLocationID FROM workshop WHERE workshopLocationID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':id', $workshopLocID);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() ) {
+        if( $stmt->rowCount() == 0 ) {
+          $core = Core::dbOpen();
+          $sql2 = "DELETE FROM workshop_location WHERE workshopLocationID = :id";
+          $stmt2 = $core->dbh->prepare($sql2);
+          $stmt2->bindParam(':id', $workshopLocID);
+          Core::dbClose();
+          
+          try {
+            if( $stmt2->execute() )
+              return true;
+            else
+              return false;
+          } catch (PDOException $e) {
+            return false;
+          }
+        }
+      } return false;
+    } catch (PDOException $e) {
+      return false;
+    }
+  }
 	
 	//getters
 	public function getWorkshopLocationID() { return $this->workshopLocationID; }

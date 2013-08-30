@@ -22,7 +22,14 @@ class Sentence {
 		$this->additionalValue = NULL;
 		$this->completeDate = NULL;
 	}
-		
+  
+  /*************************************************************************************************
+   function: addSentenceFunction
+   purpose: add a sentence to a defendant
+   input: $defendantID = id of defendant to have the sentence added
+          $sentenceID = id of the sentence
+   output: Boolean true/false
+  *************************************************************************************************/
 	private function addSentenceFunction( $defendantID, $sentenceID )
 	{
 		$core = Core::dbOpen();
@@ -153,6 +160,44 @@ class Sentence {
 		}
 		return false;
 	}
+  
+  /*************************************************************************************************
+   function: deleteSentence
+   purpose: checks the program to see if a sentence is in use, delete if not in use
+   input: None
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function deleteSentence()
+  {
+    $core = Core::dbOpen();
+    $sql = "SELECT sentenceID FROM defendant_sentence WHERE sentenceID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':id', $this->sentenceID);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() ) {
+        if( $stmt->rowCount() == 0) {
+          $core = Core::dbClose();
+          $sql2 = "DELETE FROM program_sentences WHERE sentenceID = :id";
+          $stmt2 = $core->dbh->prepare($sql2);
+          $stmt2->bindParam(':id', $this->sentenceID);
+          Core::dbClose();
+          
+          try {
+            if( $stmt->execute() )
+              return true;
+            else
+              return false;
+          } catch (PDOException $e) {
+            return false;
+          }
+        }
+      } return false;
+    } catch (PDOException $e) {
+      return false;
+    }
+  }
 	
 	// setters
 	public function setDefendantID( $var ) { $this->defendantID = $var; }

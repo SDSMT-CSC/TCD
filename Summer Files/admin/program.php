@@ -27,6 +27,10 @@ if( $user_programID != $program->getProgramID() )
       <td>Edit Program's Name, Code, Phone Number, and Address</td>
     </tr>
     <tr>
+      <td><a href="program_data.php?action=Record%20Access">Add/Edit Program Record Access</a></td>
+      <td>Allow or remove access for other programs to generate reports</td>
+    </tr>
+    <tr>
       <td><a href="program_data.php?action=Edit%20Location">Add/Edit Program Locations</a></td>
       <td>Add/Edit City, State, and Zip Information</td>
     </tr>
@@ -57,6 +61,10 @@ if( $user_programID != $program->getProgramID() )
     <tr>
       <td><a href="program_data.php?action=Edit%20Sentence">Add/Edit Program Sentences</a></td>
       <td>Add/Edit Sentences Defendants can be assigned</td>
+    </tr>
+    <tr>
+      <td><a href="program_data.php?action=Edit%20Workshop%20Location">Add/Edit Workshop Locations</a></td>
+      <td>Add/Edit Locations Workshops are held</td>
     </tr>
   </table>
 </fieldset>

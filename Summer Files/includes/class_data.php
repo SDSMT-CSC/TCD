@@ -70,7 +70,7 @@ class Data {
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		$sql = "SELECT p.programID, p.code, p.name, p.pCity, p.pState, p.pZip, p.active 
-						FROM program p";
+						FROM program p WHERE active = 1";
 		$stmt = $core->dbh->prepare($sql);
 		Core::dbClose();
 		
@@ -257,6 +257,12 @@ class Data {
 		return '{"aaData":[]}';
 	}
   
+  /*************************************************************************************************
+   function: fetchProgramPositions
+   purpose: return court positions of a given program
+   input: $user_programID = programID to retrieve positions for
+   output: JSON object
+  *************************************************************************************************/
   public function fetchProgramPositions( $user_programID )
   {
     $core = Core::dbOpen();
@@ -458,6 +464,16 @@ class Data {
 		return '{"aaData":[]}';
 	}
 
+  /*************************************************************************************************
+   function: fetchCourtSearchListing
+   purpose: fetches all courts based on input
+   input: $user_programID = used to pull only members from that programID
+          $courtName = name of court location
+          $courtAddress = address of court location
+          $courtTime = time of court
+          $courtDate = date of court
+   output: JSON object
+  *************************************************************************************************/
   public function fetchCourtSearchListing( $user_programID, $courtName, $courtAddress, $courtTime, $courtDate ) 
   {
     //database connection and SQL query
@@ -596,7 +612,7 @@ class Data {
 						WHERE cp.position = 'Jury' AND v.programID = :programID )
 						UNION
 						( SELECT defendantID as id, 'Defendant' as type, lastName, firstName FROM defendant 
-						WHERE programID = :programID )";
+						WHERE programID = :programID AND expungeDate IS NULL)";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		
@@ -647,7 +663,7 @@ class Data {
 							UNION ( SELECT volunteerID FROM court_member WHERE court_caseID = :court_caseID AND volunteerID = :jurorID )";
 		else
 			$sql = "( SELECT defendantID FROM court_jury_defendant WHERE court_caseID = :court_caseID AND defendantID = :jurorID )
-		 					UNION ( SELECT defendantID FROM court WHERE court_caseID = :court_caseID AND defendantID = :jurorID )";
+		 					UNION ( SELECT defendantID FROM court_case WHERE court_caseID = :court_caseID AND defendantID = :jurorID )";
 		
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':court_caseID', $court_caseID );
@@ -671,10 +687,10 @@ class Data {
 		//database connection and SQL query
 		$core = Core::dbOpen();
 		
-		$sql = "SELECT defendantID, courtCaseNumber, lastName, firstName, pLocationID, city, state, UNIX_TIMESTAMP( added ) AS added
+		$sql = "SELECT defendantID, courtFileNumber, lastName, firstName, pLocationID, city, state, UNIX_TIMESTAMP( added ) AS added
             FROM defendant d
 						LEFT JOIN program_locations pl ON pl.locationID = d.pLocationID
-            WHERE closeDate IS NULL AND d.programID =:programID";
+            WHERE closeDate IS NULL AND expungeDate IS NULL AND d.programID =:programID";
     $stmt = $core->dbh->prepare($sql);
     $stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();
@@ -686,7 +702,7 @@ class Data {
 						$row = array();
 						
 						$row[] = $aRow["defendantID"];
-						$row[] = $aRow["courtCaseNumber"];
+						$row[] = $aRow["courtFileNumber"];
 						$row[] = $aRow["lastName"];
 						$row[] = $aRow["firstName"];
 						$row[] = ($aRow["city"]) ? $aRow["city"] . ", " . $aRow["state"] : NULL;					
@@ -705,13 +721,26 @@ class Data {
 		return '{"aaData":[]}';
 	}
 	
+	/*************************************************************************************************
+   function: fetchDefendantSearchListing
+   purpose: fetches defendants for the given program who fit search criteria
+   input: $user_programID = program to fetch defendants for
+          $lastName = defendant last name (partial search)
+          $firstName = defendant first name (partial search)
+          $location = defendant city or state (partial search)
+          $dateOfBirth = defendant date of Birth (partial search)
+          $homePhone = defendant home phone number (partial search)
+          $courtFileNumber = court file for defendant (partial search)
+          $agencyNumber = agency file for defendant (partial search)
+   output: JSON object
+  *************************************************************************************************/
 	public function fetchDefendantSearchListing( $user_programID, $lastName, $firstName,
 	                                             $location, $dateOfBirth, $homePhone,
                                                $courtFileNumber, $agencyNumber )
   {
     //set up sql
     $core = Core::dbOpen();
-    $sql = "SELECT defendantID, courtCaseNumber, lastName, firstName, pLocationID, city, state, UNIX_TIMESTAMP( added ) AS added, dob, homePhone, agencyCaseNumber
+    $sql = "SELECT defendantID, courtFileNumber, lastName, firstName, pLocationID, city, state, UNIX_TIMESTAMP( added ) AS added, dob, homePhone, agencyCaseNumber
             FROM defendant d
             LEFT JOIN program_locations pl ON pl.locationID = d.pLocationID
             WHERE closeDate IS NULL AND d.programID = :programID";
@@ -728,7 +757,7 @@ class Data {
     if( $homePhone != '' )
       $sql = $sql." AND homePhone LIKE :homePhone";
     if( $courtFileNumber != '' )
-      $sql = $sql." AND courtCaseNumber LIKE :courtFileNumber";
+      $sql = $sql." AND courtFileNumber LIKE :courtFileNumber";
     if( $agencyNumber != '')
       $sql = $sql." AND agencyCaseNumber LIKE :agencyNumber";
             
@@ -774,7 +803,7 @@ class Data {
             $row = array();
             
             $row[] = $aRow["defendantID"];
-            $row[] = $aRow["courtCaseNumber"];
+            $row[] = $aRow["courtFileNumber"];
             $row[] = $aRow["lastName"];
             $row[] = $aRow["firstName"];
             $row[] = ($aRow["city"]) ? $aRow["city"] . ", " . $aRow["state"] : NULL;          
@@ -793,13 +822,50 @@ class Data {
     return '{"aaData":[]}';
   }
 
+  /*************************************************************************************************
+   function: fetchProgramAccessListing
+   purpose: fetches programs that can read the target program's data for demographics
+   input: $user_programID = program to fetch volunteers for
+   output: JSON object
+  *************************************************************************************************/
+  public function fetchProgramAccessListing( $user_programID )
+  {
+    $core = Core::dbOpen();
+    
+    $sql = "SELECT p.name, p.code, ra.programID
+            FROM report_access ra
+            JOIN program p ON p.programID = ra.programID
+            WHERE ra.access_program = :programID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $user_programID );
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() && $stmt->rowCount() > 0) {
+        while( $aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
+          $row = array();
+          
+          $row[] = $aRow["name"];
+          $row[] = $aRow["code"];
+          $row[] = $aRow["programID"];
+          
+          $output['aaData'][] = $row;
+        }
+      return json_encode($output);
+      }
+    } catch (PDOException $e) {
+      echo "Program Access Read Failed!";
+    }
+    return '{"aaData":[]}';
+  }
+
 	/*************************************************************************************************
    function: fetchVolunteerListing
    purpose: fetches active volunteers for the given program into a JSON object
    input: $user_programID = program to fetch volunteers for
    output: JSON object
   *************************************************************************************************/
-	public function fetchVolunteerListing(  $user_programID ) 
+	public function fetchVolunteerListing( $user_programID ) 
 	{
 		//database connection and SQL query
 		$core = Core::dbOpen();
@@ -809,7 +875,6 @@ class Data {
 						FROM volunteer v WHERE v.programID = :programID AND v.active = 1";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
-		Core::dbClose();
 		Core::dbClose();
 		
 		try {
@@ -837,6 +902,17 @@ class Data {
 		return '{"aaData":[]}';
 	}
 
+  /*************************************************************************************************
+   function: fetchVolunteerSearchListing
+   purpose: fetches volunteers for the given program who fit the search criteria
+   input: $user_programID = program to fetch volunteers for
+          $firstName = volunteer first name (partial search)
+          $lastName = volunteer last name (partial search)
+          $phone = volunteer phone number (partial search)
+          $email = volunteer email (partial search)
+          $active = if the volunteer is active or not
+   output: JSON object
+  *************************************************************************************************/
   public function fetchVolunteerSearchListing( $user_programID, $firstName, $lastName, $phone, $email, $active ) 
   {
     //database connection and SQL query
@@ -915,7 +991,7 @@ class Data {
    input: $user_programID = program to fetch workshops for
    output: JSON object
   *************************************************************************************************/
-	public function fetchWorkshopListing(  $user_programID ) 
+	public function fetchWorkshopListing( $user_programID ) 
 	{
 		//database connection and SQL query
 		$core = Core::dbOpen();
@@ -954,6 +1030,17 @@ class Data {
 		return '{"aaData":[]}';
 	}
 	
+	/*************************************************************************************************
+   function: fetchWorkshopSearchListing
+   purpose: fetches workshops for the given program that fit the search criteria
+   input: $user_programID = program to fetch workshops for
+          $date = workshop date
+          $instructor = workshop instructor (partial search)
+          $location = workshop location
+          $time = workshop time
+          $topic = workshop topic (partial search)
+   output: JSON object
+  *************************************************************************************************/
 	public function fetchWorkshopSearchListing( $user_programID, $date, $instructor, $location, $time, $topic ) 
   {
     //database connection and SQL query
@@ -1027,7 +1114,7 @@ class Data {
 	public function fetchWorkshopDefendantsListing( $user_programID ) 
 	{
 		$core = Core::dbOpen();
-		$sql = "SELECT d.firstName, d.lastName, d.defendantID FROM defendant d WHERE d.programID = :programID";
+		$sql = "SELECT d.firstName, d.lastName, d.defendantID FROM defendant d WHERE d.programID = :programID AND expungeDate IS NULL";
 		$stmt = $core->dbh->prepare($sql);
 		$stmt->bindParam(':programID', $user_programID );
 		Core::dbClose();
@@ -1125,6 +1212,12 @@ class Data {
 		return '{"aaData":[]}';
 	}
 	
+  /*************************************************************************************************
+   function: fetchOfficerListing
+   purpose: fetches officers for the given program into a JSON object
+   input: $user_programID = program to fetch common places for
+   output: JSON object
+  *************************************************************************************************/
 	public function fetchOfficerListing( $user_programID ) {
 	  $core = Core::dbOpen();
     $sql = "SELECT firstName, lastName, idNumber, phone, officerID FROM program_officers

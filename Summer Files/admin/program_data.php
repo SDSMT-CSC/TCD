@@ -8,10 +8,6 @@ $action = $_GET["action"];
 <script type="text/javascript">
   jQuery(function($) {
   $("#my-program").button().click(function() {  window.location.href = "program.php"; });
-  $("#location-delete").button().click(function () {
-    $("#action").val("Delete Location");
-    $("#location").submit();
-  });
 });
 </script>
 
@@ -34,19 +30,22 @@ $action = $_GET["action"];
         "bProcessing": false,
         "sAjaxSource": '/data/program_locations.php'
   });
+
+  $('#location-table tbody tr').live("click", function() {
+    var oData = locTable.fnGetData(this); // get datarow
+    if (oData != null)  // null if we clicked on title row
+    {
+      $("#location-city").val(oData[0]);
+      $("#location-state").val(oData[1]);
+      $("#location-zip").val(oData[2]);
+      $("#location-id").val(oData[3]);
+    }
+  });
   
-  //$(document).ready( function() {
-    $('#location-table tbody tr').live("click", function() {
-      var oData = locTable.fnGetData(this); // get datarow
-      if (oData != null)  // null if we clicked on title row
-      {
-        $("#location-city").val(oData[0]);
-        $("#location-state").val(oData[1]);
-        $("#location-zip").val(oData[2]);
-        $("#location-id").val(oData[3]);
-      }
-    });
-  //});
+  $("#location-delete").button().click(function () {
+    $("#action").val("Delete Location");
+    $("#location").submit();
+  });
 });
 </script>
 <table id="location-table">
@@ -85,6 +84,7 @@ $action = $_GET["action"];
   </fieldset>
 </form>
 
+
 <? } if($action == "Edit Common Location") { ?>
 <script type="text/javascript">
   jQuery(function($) {
@@ -103,6 +103,11 @@ $action = $_GET["action"];
         $("#common-location").val(oData[0]);
         $("#common-locationID").val(oData[1]);
     }
+    });
+    
+    $("#common-location-delete").button().click(function () {
+      $("#action").val("Delete Location");
+      $("#common").submit();
     });
   });
 </script>
@@ -128,10 +133,12 @@ $action = $_GET["action"];
         <td>Name:</td>
         <td><input type="text" name="common-location" id="common-location" /></td>
         <td><input type="submit" name="submit" id="submit" value="Submit"/></td>
+        <td><button id="common-location-delete">Delete</button></td>
       </tr>
     </table>
   </fieldset>
 </form>
+
 
 <? } if($action == "Edit Officers") { ?>
 <script type="text/javascript">
@@ -154,6 +161,11 @@ $action = $_GET["action"];
         $("#officer-id").val(oData[4]);
     }
     });
+    
+    $("#officer-delete").button().click(function () {
+      $("#action").val("Delete Officer");
+      $("#officer").submit();
+    });
   });
 </script>
 
@@ -167,8 +179,7 @@ $action = $_GET["action"];
       </tr>
   </thead>
   <tbody></tbody>
-</table> 
-
+</table>
 
 <form id="officer" name="officer" method="post" action="process.php">
   <input type="hidden" name="action" value="Edit Officers" />
@@ -178,26 +189,32 @@ $action = $_GET["action"];
       <tr>
         <td width="100">Identification:</td>
         <td><input type="text" name="officer-idNumber" id="officer-idNumber" /></td>
+        <td></td>
       </tr>
       <tr>
         <td>Last Name:</td>
         <td><input type="text" name="officer-lastname" id="officer-lastName" /></td>
+        <td></td>
       </tr>
       <tr>
         <td>First Name:</td>
         <td><input type="text" name="officer-firstname" id="officer-firstName" /></td>
+        <td></td>
       </tr>
       <tr>
         <td>Phone Number:</td>
         <td><input type="text" class="phone" name="officer-phone" id="officer-phone" /></td>
+        <td></td>
       </tr>
       <tr>
         <td></td>
         <td><input type="submit" name="submit" id="submit" value="Submit"/></td>
+        <td><button id="officer-delete">Delete</button></td>
       </tr>
     </table>
   </fieldset>
 </form>
+
 
 <? } if($action == "Edit Statutes") { ?>
 <script type="text/javascript">
@@ -224,6 +241,11 @@ $action = $_GET["action"];
       $("#statute-title").val(oData[3]);
       $("#statute-description").val(oData[4]);
     }  
+    });
+    
+    $("#statute-delete").button().click(function () {
+      $("#action").val("Delete Statute");
+      $("#statute").submit();
     });
   });
 </script>
@@ -258,12 +280,13 @@ $action = $_GET["action"];
         <td><textarea name="statute-description" id="statute-description" style="width: 300px; height: 100px;"></textarea></td>
       </tr>
       <tr>
-        <td></td>
         <td><input type="submit" name="submit" id="submit" value="Submit"/></td>
+        <td><button id="statute-delete">Delete</button></td>
       </tr>
     </table>
   </fieldset>
 </form>
+
   
 <? } if($action == "Edit Schools") { ?>
 <script type="text/javascript">
@@ -286,6 +309,11 @@ $action = $_GET["action"];
           $("#school-zip").val(oData[4]);
           $("#schoolID").val(oData[5]);
       }
+    });
+    
+    $("#school-delete").button().click(function () {
+      $("#action").val("Delete School");
+      $("#school").submit();
     });
   });
 </script>
@@ -326,11 +354,12 @@ $action = $_GET["action"];
       </td>
     </tr>
     <tr>
-      <td></td>
       <td><input type="submit" name="submit" id="submit" value="Submit"/></td>
+      <td><button id="school-delete">Delete</button></td>
     </tr>
   </table>
 </fieldset>
+</form>
   
 <? } if($action == "Edit Positions") { ?>
 <script type="text/javascript">
@@ -349,6 +378,11 @@ $action = $_GET["action"];
           $("#position-title").val(oData[0]);
           $("#positionID").val(oData[1]);
       }
+    });
+    
+    $("#position-delete").button().click(function () {
+      $("#action").val("Delete Position");
+      $("#position").submit();
     });
   });
 </script>
@@ -372,12 +406,13 @@ $action = $_GET["action"];
         <td><input type="text" name="position" id="position-title" /></td>
       </tr>
       <tr>
-        <td></td>
         <td><input type="submit" name="submit" id="submit" value="Submit"/></td>
+        <td><button id="position-delete">Delete</button></td>
       </tr>
     </table>
   </fieldset>
 </form>
+
   
 <? } if($action == "Edit Court Locations") { ?>
 <script type="text/javascript">
@@ -433,6 +468,11 @@ $action = $_GET["action"];
         $("#location-id").val(oData[3]);
         $('#location-dialog').dialog('close');
       }
+    });
+    
+    $("#court-location-delete").button().click(function () {
+      $("#action").val("Delete CourtLocation");
+      $("#court").submit();
     });
   });
 </script>
@@ -490,14 +530,15 @@ $action = $_GET["action"];
           </a>
         </td>
       <tr>
-        <td></td>
         <td><input type="submit" name="submit" id="submit" value="Submit"/></td>
+        <td><button id="court-location-delete">Delete</button></td>
       </tr>
     </table>
   </fieldset>
 </form>
+
   
-<? } if($action == "Edit Sentence") { ?>
+<? } if( $action == "Edit Sentence" ) { ?>
 <script type="text/javascript">
   jQuery(function($) {
     var sentenceTable = $("#sentence-table").dataTable( { 
@@ -517,6 +558,11 @@ $action = $_GET["action"];
           $("#sentence-description").val(oData[2]);
           $("#sentence-additional").val(oData[3]);
       }
+    });
+    
+    $("#sentence-delete").button().click(function () {
+      $("#action").val("Delete Sentence");
+      $("#sentence").submit();
     });
   });
 </script>
@@ -552,12 +598,210 @@ $action = $_GET["action"];
           <td><input type="text" name="sentence-additional" id="sentence-additional"/></td>
         </tr>
         <tr>
-          <td></td>
           <td><input type="submit" name="submit" id="submit" value="Submit"/></td>
+          <td><button id="sentence-delete">Delete</button></td>
         </tr>
       </table>
   </fieldset>
 </form>
+
+<? } if( $action == "Edit Workshop Location" ) { ?>
+
+<script type="text/javascript">
+  jQuery(function($) {
+    $('#program-location').button().click(function(){ $('#program-location-dialog').dialog('open'); });
+    
+    $("#workshop-location-dialog").dialog({
+      resizable: false,
+      autoOpen:false,
+      modal: true,
+      width:550,
+      buttons: {
+        Cancel: function() {
+          resetDataTable( workshopLocationTable );
+          $(this).dialog('close');
+        }
+      }
+    });
+    
+    $("#program-location-dialog").dialog({
+      resizable: false,
+      autoOpen:false,
+      modal: true,
+      width:550,
+      buttons: {
+        Cancel: function() {
+          resetDataTable( locTable );
+          $(this).dialog('close');
+        }
+      }
+    });
+    
+    var workshopLocationTable = $("#workshop-location-table").dataTable( { 
+          "aaSorting": [],
+          "sPaginationType": "full_numbers",
+          "bProcessing": false,
+          "sAjaxSource": '/data/workshop_location.php'
+    });
+    
+    var locTable = $("#program-location-table").dataTable( { 
+          "aaSorting": [],
+          "sPaginationType": "full_numbers",
+          "bProcessing": false,
+          "sAjaxSource": '/data/program_locations.php'
+    });
+    
+    $('#workshop-location-table tbody tr').live('click', function (event) {        
+      var oData = workshopLocationTable.fnGetData(this); // get datarow
+      if (oData != null)  // null if we clicked on title row
+      {
+        $("#workshop-name").val(oData[0]);
+        $("#workshop-address").val(oData[1]);
+        $("#workshop-city").val(oData[2]);
+        $("#workshop-state").val(oData[3]);
+        $("#workshop-zip").val(oData[4]);
+        $("#workshop-location-id").val(oData[5]);
+      }
+    });
+    
+    $('#program-location-table tbody tr').live('click', function (event) {
+      var oData = locTable.fnGetData(this);
+      if (oData != null)
+      {
+        $("#workshop-city").val(oData[0]);
+        $("#workshop-state").val(oData[1]);
+        $("#workshop-zip").val(oData[2]);
+        $("#location-id").val(oData[3]);
+        $('#program-location-dialog').dialog('close');
+      }
+    });
+    
+    $("#workshop-delete").button().click(function () {
+      $("#action").val("Delete Workshop");
+      $("#sentence").submit();
+    });
+  });
+</script>
+
+<table id="workshop-location-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Address</th>
+      <th>City</th>
+      <th>State</th>
+      <th>Zip</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div id="program-location-dialog" title="Select Existing Location">
+  <table id="program-location-table">
+    <thead>
+        <tr>
+          <th>City</th>
+          <th>State</th>
+          <th>Zip</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<fieldset>
+  <form id="workshop-location" name="workshop-location" method="post" action="process.php">
+  <input type="hidden" name="action" id="action" value="Edit Workshop" />
+  <input type="hidden" name="workshop-location-id" id="workshop-location-id" />
+  <input type="hidden" name="location-id" id="location-id" />
+  <legend>Workshop Location</legend>
+  <table>
+    <tr>
+      <td width="75">Name:</td>
+      <td>
+        <input type="text" name="workshop-name" id="workshop-name" style="width: 250px;" />  
+      </td>
+    </tr>
+    <tr>
+      <td>Address:</td>
+      <td><input type="text" name="workshop-address" id="workshop-address" style="width: 250px;" /></td>
+    </tr>
+    <tr>
+      <td>City:</td>
+      <td>     
+        <input type="text" name="workshop-city" id="workshop-city" readonly=""/>
+        State: <input type="text" name="workshop-state" id="workshop-state" size="2" readonly/>
+        Zip: <input type="text" name="workshop-zip" id="workshop-zip" size="7" readonly/>
+        
+        <a class="select-item ui-state-default ui-corner-all"  id="program-location" title="Select Existing Location">
+          <span class="ui-icon ui-icon-newwin"></span>
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td><input type="submit" name="submit" id="submit" value="Submit" /></td>
+      <td><button id="workshop-delete">Delete</button></td>
+    </tr>
+  </table>
+  </form>
+</fieldset>
+
+<? } if( $action == "Record Access" ) { ?>
+<script>
+  jQuery(function($) {
+    $('#submit').button().click(function() { $('#program-access').submit(); });
+    
+    $("#program-access-delete").button().click(function () {
+      $("#action").val("Delete Program Access");
+      $("#sentence").submit();
+    });
+    
+    var programAccessTable = $("#program-access-table").dataTable( { 
+          "aaSorting": [],
+          "sPaginationType": "full_numbers",
+          "bProcessing": false,
+          "sAjaxSource": '/data/program_access.php'
+    });
+    
+    $('#program-access-table tbody tr').live('click', function (event) {        
+      var oData = programAccessTable.fnGetData(this); // get datarow
+      if (oData != null)  // null if we clicked on title row
+      {
+        $("#program-code").val(oData[1]);
+        $("#programID").val(oData[2]);
+      }
+    });
+  });
+</script>
+
+<table id="program-access-table">
+  <thead>
+    <tr>
+      <th>Program Name</th>
+      <th>Code</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<fieldset>
+  <form id="program-access" name="program-access" method="post" action="process.php">
+    <input type="hidden" name="action" id="action" value="Program Access" />
+    <input type="hidden" name="programID" id="programID" />
+    <legend>Program Access</legend>
+    <table>
+      <tr>
+        <td>Code:</td>
+        <td><input type="text" id="program-code" name="program-code"</td>
+      </tr>
+      <tr>
+        <td><button id="submit">Submit</button></td>
+        <td><button id="program-access-delete">Delete</button></td>
+      </tr>
+    </table>
+  </form>
+</fieldset>
+
 <?php
 }
 

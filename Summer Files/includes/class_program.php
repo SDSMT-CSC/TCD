@@ -188,7 +188,7 @@ class Program {
               mAddress = :mAddress, mCity = :mCity, mState = :mState, mZip = :mZip, phone = :phone, expunge = :expunge,
               timezoneID = :timezoneID, active = :active WHERE programID = :programID";
     }
-
+    //echo "test1";
     $stmt = $core->dbh->prepare($sql);
     if( $this->programID > 0 ) { $stmt->bindParam(':programID', $this->programID); }
     $stmt->bindParam(':code', $this->code);
@@ -208,7 +208,7 @@ class Program {
     Core::dbClose();
     
     try
-      {     
+      {   
         if( $stmt->execute()) {
           
           // if it's a new program, get the last insertId
@@ -365,6 +365,13 @@ class Program {
 			return $commonID;
 		}
 
+  /*************************************************************************************************
+   function: editCommonLocation
+   purpose: edit name of common location
+   input: $locationID = id of common location
+          $location = common location name
+   output: Location name string
+  *************************************************************************************************/
   public function editCommonLocation( $locationID, $location ) {
     $core = Core::dbOpen();
     $sql = "UPDATE program_common_location SET commonPlace = :location WHERE commonPlaceID = :id";
@@ -385,37 +392,82 @@ class Program {
     }
   }
 		
-	 /*************************************************************************************************
+  /*************************************************************************************************
    function: getCommonLocation
    purpose: returns the common place name
    input: $commonLocationID = location to retrieve
    output: Location name string
   *************************************************************************************************/
-		public function getCommonLocation( $commonLocationID )
-		{
-			$commonPlaceName = NULL;
-				
-			$core = Core::dbOpen();
-			$sql = "SELECT commonPlace FROM program_common_location WHERE programID = :programID AND commonPlaceID = :commonPlaceID";
-			$stmt = $core->dbh->prepare($sql);
-			$stmt->bindParam(':programID', $this->programID);
-			$stmt->bindParam(':commonPlaceID', $commonLocationID );
-			
-			try
-			{
-				if( $stmt->execute() )
-				{
-					$row = $stmt->fetch(PDO::FETCH_ASSOC);
-					$commonPlaceName = $row["commonPlace"];
-				}
-			} catch ( PDOException $e ) {
-				echo "GEt common location Failed!";
+  public function getCommonLocation( $commonLocationID )
+  {
+    $commonPlaceName = NULL;
+
+    $core = Core::dbOpen();
+    $sql = "SELECT commonPlace FROM program_common_location WHERE programID = :programID AND commonPlaceID = :commonPlaceID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $this->programID);
+    $stmt->bindParam(':commonPlaceID', $commonLocationID );
+
+    try
+    {
+      if( $stmt->execute() )
+      {
+				$row = $stmt->fetch(PDO::FETCH_ASSOC);
+				$commonPlaceName = $row["commonPlace"];
 			}
-			
-			return $commonPlaceName;
+		} catch ( PDOException $e ) {
+			echo "GEt common location Failed!";
 		}
+			
+		return $commonPlaceName;
+	}
+  
+  /*************************************************************************************************
+   function: deleteCommonLocation
+   purpose: check to see if a location is in use, delete if not in use
+   input: $commonLocationID = id of the common location to be deleted
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function deleteCommonLocation( $commonLocationID )
+  {
+    $core = Core::dbOpen();
+    
+    $sql = "SELECT commonPlaceID FROM citation WHERE commonPlaceID = :commonPlaceID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':commonPlaceID', $commonLocationID);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() ) {
+        if( $stmt->rowCount() == 0 ) {
+          //safe to delete
+          $core = Core::dbOpen();
+          $sql2 = "DELETE FROM program_common_location WHERE commonPlaceID = :commonPlaceID";
+          $stmt2 = $core->dbh->prepare($sql2);
+          $stmt2->bindParam(':commonPlaceID', $commonLocationID);
+          Core::dbClose();
+          
+          try {
+            if( $stmt2->execute() ) {
+              return true;
+            } else {
+              return false;
+            }
+          } catch (PDOException $e) {
+            return false;
+          }
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    } catch (PDOException $e) {
+      return false;
+    }
+  }
 		
-	  /*************************************************************************************************
+  /*************************************************************************************************
    function: addOfficer
    purpose: inserts the officer into the database
    input: $firstname = officer's first name
@@ -424,7 +476,7 @@ class Program {
           $phone = phone number to contact officer
    output: ID of added officer
   *************************************************************************************************/
-		public function addOfficer( $firstname, $lastname, $idNumber, $phone )
+	public function addOfficer( $firstname, $lastname, $idNumber, $phone )
 		{
 			$officerID = NULL;
 						
@@ -451,29 +503,80 @@ class Program {
 			}			
 			return $officerID;
 		}
+  
+  /*************************************************************************************************
+   function: editOfficer
+   purpose: edit existing officer
+   input: $firstName = officer first name
+          $lastName = officer last name
+          $idNumber = officer ID number
+          $phone = officer phone number
+          $id = officer database ID number
+   output: Location name string
+  *************************************************************************************************/
+  public function editOfficer( $firstName, $lastName, $idNumber, $phone, $id ) {
+    $core = Core::dbOpen();
+    $sql = "UPDATE program_officers SET firstname = :firstname, lastname = :lastname,
+            idNumber = :idNumber, phone = :phone WHERE officerID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':firstname', $firstName);
+    $stmt->bindParam(':lastname', $lastName);
+    $stmt->bindParam(':idNumber', $idNumber);
+    $stmt->bindParam(':phone', $phone);
+    $stmt->bindparam(':id', $id);
+    Core::dbClose();
     
-    public function editOfficer( $firstName, $lastName, $idNumber, $phone, $id ) {
-      $core = Core::dbOpen();
-      $sql = "UPDATE program_officers SET firstname = :firstname, lastname = :lastname,
-              idNumber = :idNumber, phone = :phone WHERE officerID = :id";
-      $stmt = $core->dbh->prepare($sql);
-      $stmt->bindParam(':firstname', $firstName);
-      $stmt->bindParam(':lastname', $lastName);
-      $stmt->bindParam(':idNumber', $idNumber);
-      $stmt->bindParam(':phone', $phone);
-      $stmt->bindparam(':id', $id);
-      Core::dbClose();
-      
-      try {
-        if( $stmt->execute() ) {
-          return true;
+    try {
+      if( $stmt->execute() ) {
+        return true;
+      }
+    } catch (PDOException $e) {
+      echo "Edit Officer Failed!";
+    }
+    return false;
+  }
+
+  /*************************************************************************************************
+   function: deleteOfficer
+   purpose: check if an officer is in use within the program, delete if not in use
+   input: $id = id of officer to be deleted
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function deleteOfficer ( $id ) {
+    $core = Core::dbOpen();
+    $sql = "SELECT officerID FROM citation WHERE officerID = :id
+            UNION
+            SELECT officerID FROM workshop WHERE officerID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':id', $id);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() ) {
+        if( $stmt->rowCount == 0) {
+          $core = Core::dbOpen();
+          $sql2 = "DELETE FROM program_officers WHERE officerID = :id";
+          $stmt2 = $core->dbh->prepare($sql2);
+          $stmt2->bindParam(':id', $id);
+          Core::dbClose();
+          
+          try {
+            if( $stmt2->execute() )
+              return true;
+            else
+              return false;
+          } catch (PDOException $e) {
+            return false;
+          }
         }
-      } catch (PDOException $e) {
-        echo "Edit Officer Failed!";
+        return false;
       }
       return false;
+    } catch (PDOException $e) {
+      return false;
     }
-		
+  }
+  
 	/*************************************************************************************************
    function: addStatute
    purpose: inserts the statute into the database
@@ -483,7 +586,7 @@ class Program {
           $description = details of the statute
    output: ID of added statute
   *************************************************************************************************/
-	public function addStatute( $programID,	$code,	$title, $description )
+	public function addStatute( $code,	$title, $description )
 	{
 		$statuteID = NULL;
 				
@@ -510,6 +613,15 @@ class Program {
 		return $statuteID;
 	}
 
+  /*************************************************************************************************
+   function: editStatute
+   purpose: edit existing statute
+   input: $code = statute code
+          $title = title of statute
+          $description = details of the statute
+          $statuteID = id of statute in database
+   output: ID of added statute
+  *************************************************************************************************/
   public function editStatute( $code, $title, $description, $statuteID ) {
     $core = Core::dbOpen();
     $sql = "UPDATE program_statutes SET statute = :statute, title = :title,
@@ -527,6 +639,45 @@ class Program {
       }
     } catch (PDOException $e) {
       echo "Edit Officer Failed!";
+    }
+    return false;
+  }
+  
+  /*************************************************************************************************
+   function: deleteStatute
+   purpose: check to see if a statute is in use within the program, delete if not in use
+   input: $statuteID = id of statute to be deleted
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function deleteStatute( $statuteID ) {
+    $core = Core::dbOpen();
+    $sql = "SELECT statuteID FROM citation_offense WHERE statuteID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':id', $statuteID);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() ) {
+        if( $stmt->rowCount() == 0 ) {
+          $core = Core::dbOpen();
+          $sql2 = "DELETE FROM program_statutes WHERE statuteID = :id";
+          $stmt2 = $core->dbh->prepare($sql2);
+          $stmt2->bindParam(':id', $statuteID);
+          Core::dbClose();
+          
+          try {
+            if( $stmt2->execute() )
+              return true;
+            else
+              return false;
+          } catch (PDOException $e) {
+            return false;
+          }
+        }
+        return false;
+      }
+    } catch (PDOException $e) {
+      return false;
     }
     return false;
   }
@@ -563,6 +714,13 @@ class Program {
   	return false;
   }
   
+  /*************************************************************************************************
+   function: addPosition
+   purpose: add new position for the program to the database
+   input: $programID = id of program
+          $position = name of position
+   output: boolean true/false
+  *************************************************************************************************/
   public function addPosition( $programID, $position )
   {
     $core = Core::dbOpen();
@@ -581,6 +739,14 @@ class Program {
     return false;
   }
   
+  /*************************************************************************************************
+   function: editPosition
+   purpose: edit existing position in database
+   input: $programID = id of program
+          $position = name of position
+          $positionID = id in database of position
+   output: boolean true/false
+  *************************************************************************************************/
   public function editPosition( $programID, $position, $positionID )
   {
     $core = Core::dbOpen();
@@ -600,14 +766,52 @@ class Program {
     }
     return false;
   }
+  
+  /*************************************************************************************************
+   function: deletePosition
+   purpose: check to see if a court position is in use within the program, delete if not in use
+   input: $id = id of court position to be deleted
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function deletePosition( $id )
+  {
+    $core = Core::dbOpen();
+    $sql = "SELECT positionID FROM volunteer_position WHERE positionID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':id', $id);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() ) {
+        if( $stmt->rowCount() == 0) {
+          $core = Core::dbOpen();
+          $sql2 = "DELETE FROM court_position WHERE positionID = :id";
+          $stmt2 = $core->dbh->prepare($sql2);
+          $stmt2->bindParam(':id', $id);
+          Core::dbClose();
+          
+          try {
+            if( $stmt2->execute() )
+              return true;
+            else
+              return false;
+          } catch (PDOException $e) {
+            return false;
+          }
+        }
+      } return false;
+    } catch (PDOException $e) {
+      return false;
+    }
+  }
+  
 	/*************************************************************************************************
    function: addSentence
    purpose: inserts the sentence into the database
-   input: $programID = unused variable, uses object's programID
-          $code = statute code
-          $title = title of statute
-          $description = details of the statute
-   output: ID of added statute
+   input: $name = sentence name
+          $description = description of sentence
+          $additional = addition field for sentence
+   output: ID of added sentence
   *************************************************************************************************/
 	public function addSentence( $name,	$description, $additional )
 	{						
@@ -634,6 +838,15 @@ class Program {
 		return $sentenceID;
 	}
 
+  /*************************************************************************************************
+   function: editSentence
+   purpose: edit existing sentence in database
+   input: $name = sentence name
+          $description = description of sentence
+          $additional = addition field for sentence
+          $sentenceID = id of sentence in database
+   output: boolean true/false
+  *************************************************************************************************/
   public function editSentence( $name, $description, $additional, $sentenceID )
   {
     $core = Core::dbOpen();
@@ -654,8 +867,187 @@ class Program {
     }
     return false;
   }
+  
+  /*************************************************************************************************
+   function: deleteSentence
+   purpose: check to see if a sentence is in use within the program, delete if not in use
+   input: $id = id of sentence to be deleted
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function deleteSentence( $id )
+  {
+    $core = Core::dbOpen();
+    $sql = "SELECT sentenceID FROM defendant_sentence WHERE sentenceID = :id";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':id', $id);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() ) {
+        if( $stmt->rowCount() == 0) {
+          $core = Core::dbOpen();
+          $sql2 = "DELETE FROM program_sentences WHERE sentenceID = :id";
+          $stmt2 = $core->dbh->prepare($sql2);
+          $stmt2->bindParam(':id', $id);
+          Core::dbClose();
+          
+          try {
+            if( $stmt2->execute() )
+              return true;
+          } catch (PDOException $e) {
+            return false;
+          }
+        }
+      } return false;
+    } catch (PDOException $e) {
+      return false;
+    }
+  }
+  
+  /*************************************************************************************************
+   function: addProgramAccess
+   purpose: give another program the ability to generate reports using your data
+   input: $code = code of the program allowed to access data
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function addProgramAccess( $code )
+  {
+    $core = Core::dbOpen();
+    $sql = "SELECT programID FROM program WHERE code = :code AND programID != :programID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':code', $code);
+    $stmt->bindParam(':programID', $this->programID);
+    Core::dbClose();
+    
+    try {
+      if( $stmt->execute() ) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $id = $row["programID"];
+        $core = Core::dbOpen();
+        $sql2 = "INSERT INTO report_access (programID, access_program) VALUES
+                 (:programID, :access_program)";
+        $stmt2 = $core->dbh->prepare($sql2);
+        $stmt2->bindParam(':programID', $id);
+        $stmt2->bindParam(':access_program', $this->programID);
+        Core::dbClose();
+        
+        try {
+          if( $stmt2->execute() )
+            return true;
+        } catch (PDOException $e) {
+          return false;
+        }
+      }
+    } catch (PDOException $e) {
+      return false;
+    }
+    return false;
+  }
+  
+  /*************************************************************************************************
+   function: getProgramAccess
+   purpose: retrieve programs that can access your program's data
+   input: None
+   output: PHP array
+  *************************************************************************************************/
+  public function getProgramAccess()
+  {
+    // database connection and sql query
+    $core = Core::dbOpen();
+    $sql = "SELECT p.name, ra.access_program
+            FROM report_access ra
+            JOIN program p ON p.programID = ra.access_program
+            WHERE ra.programID = :programID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $this->programID );
+    Core::dbClose();
+    
+    try
+    {
+      if( $stmt->execute() )
+      {
+        //returns position as key and ID as value
+        $positions = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+        return $positions;
+      }
+    }
+    catch ( PDOException $e )
+    {
+      echo "Get court positions failed";
+    }
+    
+    return false;
+  }
+  
+  /*************************************************************************************************
+   function: deleteProgramAccess
+   purpose: remove a program from being able to access your program's data
+   input: $id = id of the program to be removed
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function deleteProgramAccess( $id )
+  {
+    $core = Core::dbOpen();
+    $sql = "DELETE FROM report_access 
+            WHERE programID = :programID AND access_program = :access_program";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $id);
+    $stmt->bindParam(':access_program', $this->programID);
+    Core::dbClose();
+    
+    if( $stmt->execute() )
+      return true;
+    else
+      return false;
+  }
 	
-  // public function removeProgram() { }  --- set deleted flag
+  /*************************************************************************************************
+   function: removeProgram
+   purpose: set the 'active' flag to false for the given program
+   input: None
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function removeProgram()
+  {
+    $active = 0;
+    $core = Core::dbOpen();
+    $sql = "UPDATE program SET active = :active WHERE programID = :programID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':active', $active);
+    $stmt->bindParam(':programID', $this->programID);
+    Core::dbClose();
+    
+    if( $stmt->execute() )
+      return true;
+    else
+      return false;
+  }
+  
+  /*************************************************************************************************
+   function: deleteProgram
+   purpose: delete a program from the database
+   input: None
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function deleteProgram()
+  {
+    $core = Core::dbOpen();
+    
+    $sql = "DELETE FROM court_position WHERE programID = :programID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $this->programID);
+    $stmt->execute();
+    
+    $sql = "DELETE FROM program_locations WHERE programID = :programID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $this->programID);
+    $stmt->execute();
+    
+    $sql = "DELETE FROM program WHERE programID = :programID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':programID', $this->programID);
+    $stmt->execute();
+  }
 	
 	// getters
 	public function getProgramID() { return $this->programID; }

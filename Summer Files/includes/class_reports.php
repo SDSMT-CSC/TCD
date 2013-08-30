@@ -13,6 +13,15 @@ class Reports {
     $this->reportEndDate = NULL;
   }
   
+  /*************************************************************************************************
+   function: buildHeader
+   purpose: build header for all reports
+   input: $programID = programID to build header for
+          $type = report type
+          $start = report start date
+          $end = report end date
+   output: None
+  *************************************************************************************************/
   public function buildHeader( $programID, $type, $start, $end )
   {    
     $core = Core::dbOpen();
@@ -34,16 +43,32 @@ class Reports {
     $this->reportEndDate = $end;
   }
   
+  /*************************************************************************************************
+   function: print header
+   purpose: print the header
+   input: none
+   output: html output
+  *************************************************************************************************/
   public function printHeader()
   {
     //echo '<div style="text-align:center">'.
-    echo $this->programName.'<br>';
-    echo $this->reportType.'<br>';
-    echo "for the period of<br>";
-    echo $this->reportStartDate.' to '.$this->reportEndDate.'<br><br>';
+    echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+    echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"/includes/css/print.css\" media=\"print\" />";
+    echo '<h1>'.$this->programName.'</h1>';
+    echo '<h2>'.$this->reportType.'</h2>';
+    echo "<h3>for the period of</h3>";
+    echo '<h4>'.$this->reportStartDate.' to '.$this->reportEndDate.'</h4>';
     //echo </div>;
   }
   
+  /*************************************************************************************************
+   function: getVolunteers
+   purpose: get volunteers to print information on
+   input: $start = start date
+          $end = end date
+          $programID = program to fetch volunteers for
+   output: volunteer array
+  *************************************************************************************************/
   public function getVolunteers( $start, $end, $programID )
   {
     $court = array();
@@ -102,11 +127,11 @@ class Reports {
             ORDER BY lastName";
     $stmt = $core->dbh->prepare($sql);
     foreach( $courtCase as $key => $court_caseID) {
+      echo $court_caseID;
       $stmt->bindParam(':court_caseID', $court_caseID);
       try {
         if( $stmt->execute() ) {
           while( $aRow = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            //$volunteers[] = $aRow;
             $row = array();
             $row["name"] = $aRow["lastName"].", ".$aRow["firstName"];
             $row["position"] = $aRow["position"];
@@ -123,14 +148,20 @@ class Reports {
     }
     Core::dbClose();
     
-    //var_dump($volunteers);
     return $volunteers;
   }
   
-  public function printVolunteers( $volunteers )
+  /*************************************************************************************************
+   function: printVolunteers
+   purpose: print information on volunteers 
+   input: $volunteers = array of volunteers
+   output: html output
+  *************************************************************************************************/
+  public function printVolunteers( $start, $end, $programID )
   {
+    $volunteers = $this->getVolunteers( $start, $end, $programID );
     //set up table
-    echo "<table>";
+    echo "<table class=\"top\">";
     echo "  <thead>";
     echo "    <tr>";
     echo "      <th>Name</th>";
@@ -174,6 +205,14 @@ class Reports {
     }
   }
 
+  /*************************************************************************************************
+   function: getDemographics
+   purpose: print demographics for the given program
+   input: $start = report start date
+          $end = report end date
+          $programID = program to do information for
+   output: array of defendant information
+  *************************************************************************************************/
   public function getDemographics( $start, $end, $programID )
   {
     $defendant = array();
@@ -208,8 +247,18 @@ class Reports {
     return $defendant;
   }
 
-  public function printDemographics( $defendants )
+  /*************************************************************************************************
+   function: printDemographics
+   purpose: print demographics information to html page
+   input: $defendants = defendant information array
+   output: html output
+  *************************************************************************************************/
+  public function printDemographics( $start, $end, $programID )
   {
+    $defendants = array();
+    foreach($programID as $id)
+      $defendants = array_merge($defendants, $this->getDemographics( $start, $end, $id ));
+    
     //print number of defendants entered within program in time frame
     echo "All data is where the Defendent Added date falls within the date range<br>";
     $count = count($defendants);
@@ -282,7 +331,7 @@ class Reports {
     
     //print demo by sex
     echo "<p>Demographics By Sex</p>";
-    echo "<table>";
+    echo "<table class=\"top\">";
     echo "  <thead>";
     echo "    <tr>";
     echo "      <th></th><th>Sex</th><th></th>";
@@ -314,6 +363,7 @@ class Reports {
     //print demographics by offense
     echo "<p>Demographics by Offense</p>";
     $this->printOffenses( $offense );
+    echo "<div class=\"top\"></div>";
     
     echo "<p>Court Statistics</p>";
     
@@ -323,6 +373,14 @@ class Reports {
     $this->basicTablePrint( $race, "Race", $count);
   }
 
+  /*************************************************************************************************
+   function: basicTablePrint
+   purpose: print simple tables
+   input: $printArray = array to have information listed
+          $colName = name for first column
+          $count = count of defendants
+   output: html output
+  *************************************************************************************************/
   public function basicTablePrint( $printArray, $colName, $count ) {
     echo "<table>";
     echo "  <thead>";
@@ -340,6 +398,12 @@ class Reports {
     echo "</table><br>";
   }
   
+  /*************************************************************************************************
+   function: printOffenses
+   purpose: print offense information
+   input: $offenses = array of offenses
+   output: html output
+  *************************************************************************************************/
   public function printOffenses( $offenses ) {
     $totalCount = $offenses["totalCount"];
     unset( $offenses["totalCount"]);
@@ -377,6 +441,12 @@ class Reports {
     }
   }
   
+  /*************************************************************************************************
+   function: moveToEnd
+   purpose: have not entered information be moved to end
+   input: $arr = array to be rearranged
+   output: arr = returned variable
+  *************************************************************************************************/
   public function moveToEnd( $arr )
   {
     $val = $arr["Not Entered"];
@@ -385,6 +455,12 @@ class Reports {
     return $arr;
   }
   
+  /*************************************************************************************************
+   function: getOffenses
+   purpose: get offenses defendants committed
+   input: $defendants = defendant array
+   output: array of offenses
+  *************************************************************************************************/
   public function getOffenses( $defendants )
   {
     $offenses = array();
@@ -458,6 +534,12 @@ class Reports {
     return $offense;
   }
   
+  /*************************************************************************************************
+   function: getLocation
+   purpose: get location from id
+   input: $location = locationID to retrieve
+   output: location2 = locaion city and state
+  *************************************************************************************************/
   public function getLocation( $location )
   {
     $location2 = array();
@@ -489,27 +571,4 @@ class Reports {
   }
   
 } //end class
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ?>

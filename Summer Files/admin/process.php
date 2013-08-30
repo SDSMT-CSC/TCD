@@ -1,10 +1,13 @@
 <?
+//BUG: Forms on program_data.php are submitting twice and the action isn't being
+//updated. Checking to see if 'submit' is included instead of looking at action.
 include($_SERVER['DOCUMENT_ROOT']."/includes/secure.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_location.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_school.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_citation.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_sentence.php");
 include($_SERVER['DOCUMENT_ROOT']."/includes/class_court_location.php");
+include($_SERVER['DOCUMENT_ROOT']."/includes/class_workshop_location.php");
 
 // make sure only certain levels of user get access to this area
 if( $user_type > 3 )
@@ -71,6 +74,7 @@ if( $action == "Add Program" || $action == "Edit Program" )
   $mod_program->timezoneID = $_POST["timezoneID"];
   $mod_program->active = $_POST["active"];
   
+    
   // log the event on success
   if( $mod_program->updateProgram() )
     $user->addEvent($action . ": " . $mod_program->getName() );  
@@ -105,10 +109,16 @@ if( $action == "Edit Location") {
 ///////////////////////////////////////////////////////////////////////////////
 
 if( $action == "Edit Common Location") {
-  if( $_POST["common-locationID"] != '') {
-    $program->editCommonLocation( $_POST["common-locationID"], $_POST["common-location"]);
+  if (isset($_POST["submit"] ) ) {
+    if( $_POST["common-locationID"] != '') {
+      $program->editCommonLocation( $_POST["common-locationID"], $_POST["common-location"] );
+      $user->addEvent($action); 
+    } else {
+      $program->addCommonLocation( $_POST["common-location"] );
+      $user->addEvent($action); 
+    }
   } else {
-    $program->addCommonLocation( $_POST["common-location"]);
+    $program->deleteCommonLocation( $_POST["common-locationID"] );
   }
   
   header("location: program_data.php?action=Edit%20Common%20Location");
@@ -117,12 +127,16 @@ if( $action == "Edit Common Location") {
 ///////////////////////////////////////////////////////////////////////////////
 
 if( $action == "Edit Officers") {
-  if( $_POST["officer-id"] != '') {
-    $program->editOfficer( $_POST["officer-firstname"], $_POST["officer-lastname"], 
-    $_POST["officer-idNumber"], $_POST["officer-phone"], $_POST["officer-id"]);
+  if (isset($_POST["submit"] ) ) {
+    if( $_POST["officer-id"] != '') {
+      $program->editOfficer( $_POST["officer-firstname"], $_POST["officer-lastname"], 
+      $_POST["officer-idNumber"], $_POST["officer-phone"], $_POST["officer-id"]);
+    } else {
+      $program->addOfficer( $_POST["officer-firstname"], $_POST["officer-lastname"], 
+      $_POST["officer-idNumber"], $_POST["officer-phone"]);
+    }
   } else {
-    $program->addOfficer( $_POST["officer-firstname"], $_POST["officer-lastname"], 
-    $_POST["officer-idNumber"], $_POST["officer-phone"]);
+    $program->deleteOfficer( $_POST["officer-id"]);
   }
   
   header("location: program_data.php?action=Edit%20Officers");
@@ -131,29 +145,36 @@ if( $action == "Edit Officers") {
 ///////////////////////////////////////////////////////////////////////////////
 
 if( $action == "Edit Statutes") {
-  if( $_POST["statuteID"] != '') {
-    $program->editStatute( $_POST["statute-code"], $_POST["statute-title"],
-    $_POST["statute-description"], $_POST["statuteID"]);
+  if( isset( $_POST["submit"] ) ) {
+    if( $_POST["statuteID"] != '') {
+      $program->editStatute( $_POST["statute-code"], $_POST["statute-title"],
+      $_POST["statute-description"], $_POST["statuteID"] );
+    } else {
+      $program->addStatute( $_POST["statute-code"],
+      $_POST["statute-title"], $_POST["statute-description"] );
+    }
   } else {
-    $program->addStatute( $user_programID, $_POST["statute-code"],
-    $_POST["statute-title"], $_POST["statute-description"]);
+    $program->deleteStatute( $_POST["statuteID"] );
   }
-  
+
   header("location: program_data.php?action=Edit%20Statutes");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
 if( $action == "Edit Schools") {
-  if( $_POST["schoolID"] != '') {
-    $school = new School( $user_programID );
-    $school->editSchool( $_POST["school-name"], $_POST["school-address"],
-    $_POST["school-city"], $_POST["school-state"], $_POST["school-zip"],
-    $_POST["schoolID"]);
+  $school = new School( $user_programID );
+  if( isset( $_POST["submit"] ) ) {
+    if( $_POST["schoolID"] != '') {
+      $school->editSchool( $_POST["school-name"], $_POST["school-address"],
+      $_POST["school-city"], $_POST["school-state"], $_POST["school-zip"],
+      $_POST["schoolID"] );
+    } else {
+      $school->addSchool( $_POST["school-name"], $_POST["school-address"],
+      $_POST["school-city"], $_POST["school-state"], $_POST["school-zip"] );
+    }
   } else {
-    $school = new School( $user_programID );
-    $school->addSchool( $_POST["school-name"], $_POST["school-address"],
-    $_POST["school-city"], $_POST["school-state"], $_POST["school-zip"]);
+    $school->deleteSchool( $_POST["schoolID"] );
   }
   
   header("location: program_data.php?action=Edit%20Schools");
@@ -162,10 +183,14 @@ if( $action == "Edit Schools") {
 ///////////////////////////////////////////////////////////////////////////////
 
 if( $action == "Edit Positions") {
-  if( $_POST["positionID"] != '' ){
-    $program->editPosition( $user_programID, $_POST["position"], $_POST["positionID"]);
+  if( isset( $_POST["submit"] ) ) {
+    if( $_POST["positionID"] != '' ){
+      $program->editPosition( $user_programID, $_POST["position"], $_POST["positionID"] );
+    } else {
+      $program->addPosition( $user_programID, $_POST["position"] );
+    }
   } else {
-    $program->addPosition( $user_programID, $_POST["position"]);
+    $program->deletePosition( $_POST["positionID"] );
   }
   
   header("location: program_data.php?action=Edit%20Positions");
@@ -184,11 +209,16 @@ if( $action == "Edit Court Locations") {
   $location = new Location( $user_programID );
   $courtLocation->locationID = $location->addLocation( $_POST["court-city"], $_POST["court-state"], $_POST["court-zip"] );
   
-  if( $_POST["court-location-id"] != '') {
-    $courtLocation->setCourtLocationID( $_POST["court-location-id"] );
-    $courtLocation->editCourtLocation();
+  if( isset( $_POST["submit"] ) ) {
+    if( $_POST["court-location-id"] != '') {
+      $courtLocation->setCourtLocationID( $_POST["court-location-id"] );
+      $courtLocation->editCourtLocation();
+    } else {
+      $courtLocation->updateCourtLocation();
+    }
   } else {
-    $courtLocation->updateCourtLocation();
+    $courtLocation->setCourtLocationID( $_POST["court-location-id"] );
+    $courtLocation->deleteCourtLocation();
   }
   
   header("location: program_data.php?action=Edit%20Court%20Locations");
@@ -197,15 +227,60 @@ if( $action == "Edit Court Locations") {
 ///////////////////////////////////////////////////////////////////////////////
 
 if( $action == "Edit Sentence") {
-  if( $_POST["sentenceID"] != '') {
-    $program->editSentence( $_POST["sentence-name"], $_POST["sentence-description"],
-    $_POST["sentence-additional"], $_POST["sentenceID"]);
+  if( isset( $_POST["submit"] ) ) {
+    if( $_POST["sentenceID"] != '') {
+      $program->editSentence( $_POST["sentence-name"], $_POST["sentence-description"],
+      $_POST["sentence-additional"], $_POST["sentenceID"] );
+    } else {
+      $program->addSentence( $_POST["sentence-name"], $_POST["sentence-description"],
+      $_POST["sentence-additional"] );
+    }
   } else {
-    $program->addSentence( $_POST["sentence-name"], $_POST["sentence-description"],
-    $_POST["sentence-additional"]);
+    $program->deleteSentence( $_POST["sentenceID"] );
   }
   
   header("location: program_data.php?action=Edit%20Sentence");
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+if( $action == "Edit Workshop") {
+  $workshop = new WorkshopLocation( $user_programID );
+  $workshop->name = $_POST["workshop-name"];
+  $workshop->address = $_POST["workshop-address"];
+  $workshop->locationID = $_POST["location-id"];
+  
+  if( $_POST["workshop-location-id"] == '') {
+    $workshop->updateWorkshopLocation();
+  } else {
+    $workshop->editWorkshopLocation( $_POST["workshop-location-id"] );
+  }
+  
+  header("location: program_data.php?action=Edit%20Workshop%20Location" );
+}
+if( $action == "Delete Workshop") {
+  $workshop = new WorkshopLocation( $user_programID );
+  $workshop->deleteWorkshopLocation( $_POST["workshop-location-id"] );
+  
+  header("location: program_data.php?action=Edit%20Workshop%20Location" );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+if( $action == "Program Access") {
+  $program->addProgramAccess( $_POST["program-code"] );
+  header("location: program_data.php?action=Record%20Access" );
+}
+if( $action == "Delete Program Access") {
+  $program->deleteProgramAccess( $_POST["programID"] );
+  header("location: program_data.php?action=Record%20Access" );
+}
+
+if( $action == "Delete Program" ) {
+  $mod_program = new Program();
+  $mod_program->getFromID($_POST["programID"]);
+  $mod_program->removeProgram();
+  //$mod_program->deleteProgram(); //DO NOT USE, FULL DELETE
+  header("location: view_program.php?id=".$mod_program->getProgramID() );
+}
 ?>

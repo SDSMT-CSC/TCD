@@ -8,7 +8,7 @@ class Defendant {
 	private $middleName;
 	private $phoneNumber;
 	private $dateOfBirth;
-	private $courtCaseNumber;
+	private $courtFileNumber;
 	private $agencyNumber;
 	private $expungeDate;
 	private $closeDate;
@@ -51,7 +51,7 @@ class Defendant {
 		$this->middleName = NULL;
 		$this->phoneNumber = NULL;
 		$this->dateOfBirth = NULL;
-		$this->courtCaseNumber = NULL;
+		$this->courtFileNumber = NULL;
 		$this->agencyNumber = NULL;
 		$this->expungeDate = NULL;
 		$this->closeDate = NULL;
@@ -117,7 +117,7 @@ class Defendant {
 				$this->middleName = $row["middleName"];
 				$this->phoneNumber = $row["homePhone"];
 				$this->dateOfBirth = $row["dob"];
-				$this->courtCaseNumber = $row["courtCaseNumber"];
+				$this->courtFileNumber = $row["courtFileNumber"];
 				$this->agencyNumber = $row["agencyCaseNumber"];
 				$this->expungeDate = $row["expungeDate"];
 				$this->closedate = $row["closedate"];
@@ -188,14 +188,18 @@ class Defendant {
   	output: boolean true/false
 	*************************************************************************************************/
   public function updateDefendant()
-  {		
+  {
 		// add new defendant or update existing record
 		if( $this->defendantID == 0 ) {
-			$sql = "INSERT INTO defendant (programID, firstName, lastName, middleName, homePhone, dob, courtCaseNumber, agencyCaseNumber)
-							VALUES (:programID, :firstname, :lastname, :middlename, :homePhone, :dob, :courtCaseNumber, :agencyCaseNumber)";
+			$sql = "INSERT INTO defendant (programID, firstName, lastName, middleName, homePhone, dob, courtFileNumber, agencyCaseNumber)
+							VALUES (:programID, :firstname, :lastname, :middlename, :homePhone, :dob, :courtFileNumber, :agencyCaseNumber)";
 		} else {
+		  //make no changes if defendant is expunged
+		  if( $this->checkIfExpunged() ) {
+		    return false;
+		  }
 			$sql = "UPDATE defendant SET programID = :programID, firstName = :firstname, lastName = :lastname, middleName = :middlename,
-							homePhone = :homePhone, dob = :dob, courtCaseNumber = :courtCaseNumber, agencyCaseNumber = :agencyCaseNumber
+							homePhone = :homePhone, dob = :dob, courtFileNumber = :courtFileNumber, agencyCaseNumber = :agencyCaseNumber
 							WHERE defendantID = :defendantID";
 		}
 		
@@ -209,7 +213,7 @@ class Defendant {
 		$stmt->bindParam(':middlename', $this->middleName);
 		$stmt->bindParam(':homePhone', $this->phoneNumber);
 		$stmt->bindParam(':dob', $this->dateOfBirth);
-		$stmt->bindParam(':courtCaseNumber', $this->courtCaseNumber);
+		$stmt->bindParam(':courtFileNumber', $this->courtFileNumber);
 		$stmt->bindParam(':agencyCaseNumber', $this->agencyNumber);
 		Core::dbClose();
 		
@@ -236,6 +240,10 @@ class Defendant {
 	*************************************************************************************************/
   public function updatePersonal()
 	{
+	  //make no changes if defendant is expunged
+	  if( $this->checkIfExpunged() ) {
+      return false;
+    }
 		// database connection and sql query
 		$sql = "UPDATE defendant SET pAddress	= :pAddress, pLocationID = :pID, mAddress = :mAddress,	
 					  mLocationID	= :mID, schoolID	= :schoolID, schoolContactName	= :schoolContactName, 
@@ -285,8 +293,13 @@ class Defendant {
   	output: boolean true/false
 	*************************************************************************************************/
 	public function updateIntake( $intake, $reschedule, $inteviewer, $referred, $dismissed )
-	{		
-		 // database connection and sql query
+	{
+	  //make no changes if defendant is expunged
+    if( $this->checkIfExpunged() ) {
+      return false;
+    }
+    		
+		// database connection and sql query
     $core = Core::dbOpen();
 		
 		// if options checked, set to timestamp	otherwise leave them as current or if toggled set to null
@@ -534,6 +547,11 @@ class Defendant {
 	*************************************************************************************************/
 	public function updateNotes()
 	{
+	  //make no changes if defendant is expunged
+    if( $this->checkIfExpunged() ) {
+      return false;
+    }
+    
 		// database connection and sql query
     $core = Core::dbOpen();
     $sql = "UPDATE defendant SET notes = :notes WHERE defendantID = :defendantID";
@@ -549,6 +567,195 @@ class Defendant {
       		echo "Program Update Notes Failed!";
     }
 	}
+  
+  /*************************************************************************************************
+   function: deleteDefendant
+   purpose: delete a defendant from the program
+   input: None
+   output: Boolean true/false
+  *************************************************************************************************/
+  public function deleteDefendant()
+  {
+    $core = Core::dbOpen();
+    $citationID;
+    $court_caseID;
+    $sql = "SELECT citationID FROM citation
+            WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    
+    try {
+      if( $stmt->execute() ) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $citationID = $row["citationID"];
+      }
+    } catch (PDOException $e) {
+      return false;
+    }
+    
+    $sql = "SELECT court_caseID FROM court_caseID
+            WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    
+    try {
+      if( $stmt->execute() ) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $court_caseID = $row["court_caseID"];
+      }
+    } catch (PDOException $e) {
+      return false;
+    }
+    
+    $sql = "DELETE FROM citation WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    $stmt->execute();
+  
+    $sql = "DELETE FROM citation_offense WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    $stmt->execute();
+   
+    if( $citationID != NULL) {
+      $sql = "DELETE FROM citation_stolen_items WHERE citationID = :citationID";
+      $stmt = $core->dbh->prepare($sql);
+      $stmt->bindParam(':citationID', $citationID);
+      $stmt->execute();
+    
+      $sql = "DELETE FROM citation_vehicle WHERE citationID = :citationID";
+      $stmt = $core->dbh->prepare($sql);
+      $stmt->bindParam(':citationID', $citationID);
+      $stmt->execute();
+    }
+  
+    $sql = "DELETE FROM court_case WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    $stmt->execute();
+   
+    $sql = "DELETE FROM court_jury_defendant WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    $stmt->execute();
+   
+    if( $court_caseID != NULL) {
+      $sql = "DELETE FROM court_jury_defendant WHERE court_caseID = :court_caseID";
+      $stmt = $core->dbh->prepare($sql);
+      $stmt->bindParam(':court_caseID', $court_caseID);
+      $stmt->execute();
+    
+      $sql = "DELETE FROM court_jury_volunteer WHERE court_caseID = :court_caseID";
+      $stmt = $core->dbh->prepare($sql);
+      $stmt->bindParam(':court_caseID', $court_caseID);
+      $stmt->execute();
+     
+      $sql = "DELETE FROM court_member WHERE court_caseID = :court_caseID";
+      $stmt = $core->dbh->prepare($sql);
+      $stmt->bindParam(':court_caseID', $court_case);
+      $stmt->execute();
+    }
+  
+    $sql = "DELETE FROM defendant_sentence WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    $stmt->execute();
+   
+    $sql = "DELETE FROM guardian WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    $stmt->execute();
+    
+    $sql = "DELETE FROM intake_information WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    $stmt->execute();
+    
+    $sql = "DELETE FROM workshop_roster WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    $stmt->execute();
+ 
+    $sql = "DELETE FROM defendant WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    $stmt->execute();
+    
+    Core::dbClose();
+    
+    return true;
+  }
+  
+  /*************************************************************************************************
+   function: expungeDefendant
+   purpose: expunge a defendant from the program based on program's expunge level
+   input: $programExpunge = Expunge level of the program
+   output: Boolean true/false
+   * NOTE: 0 = No Expunge
+           1 = Full Expunge
+           2 = Partial Expunge
+           3 = Sealed
+  *************************************************************************************************/
+  public function expungeDefendant( $programExpunge )
+  {
+    $empty = NULL;
+    $core = Core::dbOpen();
+    //remove information from defendant if needed
+    if( $programExpunge == 1 ) {        //full expunge, delete from system
+      $this->deleteDefendant();
+      return true;
+    }
+    if( $programExpunge == 2 ) {      //partial expunge, remove identifying information
+      $sql = "UPDATE defendant SET firstName = :firstName, lastName = :lastName,
+              middleName = :middleName, homePhone = :homePhone, 
+              pAddress = :pAddress, mAddress = :mAddress, licenseNum = :licenseNum
+              WHERE defendantID = :defendantID";
+      $stmt = $core->dbh->prepare($sql);
+      $stmt->bindParam(':firstName', $empty);
+      $stmt->bindParam(':lastName', $empty);
+      $stmt->bindParam(':middleName', $empty);
+      $stmt->bindParam(':homePhone', $empty);
+      $stmt->bindParam(':dob', $empty);
+      $stmt->bindParam(':pAddress', $empty);
+      $stmt->bindParam(':mAddress', $empty);
+      $stmt->bindParam(':licenseNum', $empty);
+      $stmt->bindParam(':defendantID', $this->defendantID);
+      $stmt->execute();
+      
+      $sql = "DELETE FROM guardian WHERE defendantID = :defendantID";
+      $stmt = $core->dbh->prepare($sql);
+      $stmt->bindParam(':defendantID', $this->defendantID);
+      $stmt->execute();
+    }
+    //set date for both partial and seal
+    $sql = "UPDATE defendant SET expungeDate = :expungeDate WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':expungeDate', $core->convertToServerDate( date("m/d/y h:i A"), $_SESSION["timezone"] ));
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    $stmt->execute();
+    
+    Core::dbClose();
+    return true;
+  }
+  
+  public function checkIfExpunged()
+  {
+    $core = Core::dbOpen();
+    $sql = "SELECT expungeDate IS NULL FROM defendant WHERE defendantID = :defendantID";
+    $stmt = $core->dbh->prepare($sql);
+    $stmt->bindParam(':defendantID', $this->defendantID);
+    try {
+      if( $stmt->execute() ) {
+        $row = $stmt->fetch();
+        if( $row == 0 )
+          return true;
+        else
+          return false;
+      }
+    } catch(PDOException $e) {
+      return false;
+    }
+  }
 	
 	// setters
 	public function setDefendantID( $str ) { $this->defendantID = $str; }
@@ -558,7 +765,7 @@ class Defendant {
 	public function setMiddleName( $str ) { $this->middleName = $str; }
 	public function setPhoneNumber( $str ) { $this->phoneNumber = $str; }
 	public function setDateOfBirth( $str ) { $this->dateOfBirth = $str; }
-	public function setCourtCaseNumber( $str ) { $this->courtCaseNumber = $str; }
+	public function setcourtFileNumber( $str ) { $this->courtFileNumber = $str; }
 	public function setAgencyNumber( $str ) { $this->agencyNumber = $str; }
 	
 	// getters
@@ -569,7 +776,7 @@ class Defendant {
 	public function getMiddleName() { return $this->middleName; }
 	public function getPhoneNumber() { return $this->phoneNumber; }
 	public function getDateOfBirth() { return $this->dateOfBirth; }
-	public function getCourtCaseNumber() { return $this->courtCaseNumber; }
+	public function getcourtFileNumber() { return $this->courtFileNumber; }
 	public function getAgencyNumber() { return $this->agencyNumber; }
 	
 	public function getExpungeDate()
