@@ -1,0 +1,9 @@
+@page { margin: 0.5cm; }
+
+h1 { font-size: 20pt; text-align: center; }
+h2 { font-size: 24pt; bold; text-align: center; }
+h3 { font-size: 12pt; text-align: center; }
+h4 { font-size: 12pt; text-align: center; }
+
+table { width: 100%; }
+.top { page-break-after: always; }
